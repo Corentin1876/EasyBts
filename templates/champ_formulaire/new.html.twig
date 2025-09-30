@@ -1,0 +1,11 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}New ChampFormulaire{% endblock %}
+
+{% block body %}
+    <h1>Create new ChampFormulaire</h1>
+
+    {{ include('champ_formulaire/_form.html.twig') }}
+
+    <a href="{{ path('app_champ_formulaire_index') }}">back to list</a>
+{% endblock %}

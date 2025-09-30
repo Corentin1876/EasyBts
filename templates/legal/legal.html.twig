@@ -1,0 +1,74 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Mentions légales - Inscription BTS{% endblock %}
+
+{% block body %}
+<div class="fr-container fr-py-6w">
+    <div class="fr-grid-row">
+        <div class="fr-col-12 fr-col-lg-8">
+            <nav class="fr-breadcrumb" aria-label="vous êtes ici :">
+                <button class="fr-breadcrumb__button" aria-expanded="false" aria-controls="breadcrumb-3">Voir le fil d'Ariane</button>
+                <div class="fr-collapse" id="breadcrumb-3">
+                    <ol class="fr-breadcrumb__list">
+                        <li><a class="fr-breadcrumb__link" href="{{ path('app_home') }}">Accueil</a></li>
+                        <li><a class="fr-breadcrumb__link" aria-current="page">Mentions légales</a></li>
+                    </ol>
+                </div>
+            </nav>
+            
+            <h1 class="fr-h1">Mentions légales</h1>
+            
+            <h2 class="fr-h2">Éditeur du site</h2>
+            <div class="fr-highlight">
+                <p><strong>Ministère de l'Éducation Nationale et de la Jeunesse</strong><br>
+                110 rue de Grenelle<br>
+                75357 Paris 07 SP<br>
+                Téléphone : 01 55 55 10 10<br>
+                <a href="https://www.education.gouv.fr" target="_blank" rel="noopener">www.education.gouv.fr</a></p>
+            </div>
+            
+            <h2 class="fr-h2">Directeur de la publication</h2>
+            <p>Ministre de l'Éducation Nationale et de la Jeunesse</p>
+            
+            <h2 class="fr-h2">Hébergement</h2>
+            <p>Ce site est hébergé par :</p>
+            <div class="fr-highlight">
+                <p><strong>[Nom de l'hébergeur]</strong><br>
+                [Adresse de l'hébergeur]<br>
+                Téléphone : [Numéro de téléphone]<br>
+                <a href="#" target="_blank" rel="noopener">[Site web de l'hébergeur]</a></p>
+            </div>
+            
+            <h2 class="fr-h2">Conception et développement</h2>
+            <p>Site développé en interne par les équipes du Ministère de l'Éducation Nationale.</p>
+            
+            <h2 class="fr-h2">Propriété intellectuelle</h2>
+            <p>Sauf mention explicite de propriété intellectuelle détenue par des tiers, les contenus de ce site sont proposés sous <a href="https://github.com/etalab/licence-ouverte/blob/master/LO.md" target="_blank" rel="noopener">licence etalab-2.0</a>.</p>
+            
+            <p>Cette licence vous permet de réutiliser librement les informations disponibles sur ce site à des fins commerciales ou non commerciales.</p>
+            
+            <h2 class="fr-h2">Crédits</h2>
+            <p>Ce site utilise le Système de Design de l'État français :</p>
+            <ul class="fr-list">
+                <li><a href="https://www.systeme-de-design.gouv.fr/" target="_blank" rel="noopener">DSFR - Système de Design de l'État</a></li>
+                <li>Pictogrammes issus de la bibliothèque <a href="https://remixicon.com/" target="_blank" rel="noopener">Remix Icon</a></li>
+            </ul>
+            
+            <h2 class="fr-h2">Contact</h2>
+            <p>Pour toute question concernant ce site, vous pouvez nous contacter :</p>
+            <ul class="fr-list">
+                <li><a href="{{ path('app_contact') }}">Via le formulaire de contact</a></li>
+                <li>Par courriel : <a href="mailto:contact@inscription-bts.education.gouv.fr">contact@inscription-bts.education.gouv.fr</a></li>
+            </ul>
+            
+            <div class="fr-notice fr-notice--info fr-mt-6w">
+                <div class="fr-container">
+                    <div class="fr-notice__body">
+                        <p><strong>Dernière mise à jour :</strong> {{ "now"|date("d/m/Y") }}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

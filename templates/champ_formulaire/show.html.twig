@@ -1,0 +1,30 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}ChampFormulaire{% endblock %}
+
+{% block body %}
+    <h1>ChampFormulaire</h1>
+
+    <table class="table">
+        <tbody>
+            <tr>
+                <th>Id</th>
+                <td>{{ champ_formulaire.id }}</td>
+            </tr>
+            <tr>
+                <th>Diplome</th>
+                <td>{{ champ_formulaire.diplome }}</td>
+            </tr>
+            <tr>
+                <th>Langue</th>
+                <td>{{ champ_formulaire.langue }}</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <a href="{{ path('app_champ_formulaire_index') }}">back to list</a>
+
+    <a href="{{ path('app_champ_formulaire_edit', {'id': champ_formulaire.id}) }}">edit</a>
+
+    {{ include('champ_formulaire/_delete_form.html.twig') }}
+{% endblock %}

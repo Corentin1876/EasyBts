@@ -1,0 +1,192 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Données personnelles - Inscription BTS{% endblock %}
+
+{% block body %}
+<div class="fr-container fr-py-6w">
+    <div class="fr-grid-row">
+        <div class="fr-col-12 fr-col-lg-10">
+            <nav class="fr-breadcrumb" aria-label="vous êtes ici :">
+                <button class="fr-breadcrumb__button" aria-expanded="false" aria-controls="breadcrumb-4">Voir le fil d'Ariane</button>
+                <div class="fr-collapse" id="breadcrumb-4">
+                    <ol class="fr-breadcrumb__list">
+                        <li><a class="fr-breadcrumb__link" href="{{ path('app_home') }}">Accueil</a></li>
+                        <li><a class="fr-breadcrumb__link" aria-current="page">Données personnelles</a></li>
+                    </ol>
+                </div>
+            </nav>
+            
+            <h1 class="fr-h1">Protection des données personnelles</h1>
+            <p class="fr-text--lead">Le Ministère de l'Éducation Nationale s'engage à protéger vos données personnelles conformément au Règlement Général sur la Protection des Données (RGPD).</p>
+            
+            <div class="fr-alert fr-alert--info fr-my-4w">
+                <h3 class="fr-alert__title">Vos droits</h3>
+                <p>Vous disposez d'un droit d'accès, de rectification, de suppression et de portabilité de vos données personnelles.</p>
+            </div>
+            
+            <h2 class="fr-h2">Responsable de traitement</h2>
+            <p><strong>Ministère de l'Éducation Nationale et de la Jeunesse</strong><br>
+            110 rue de Grenelle, 75357 Paris 07 SP</p>
+            
+            <h2 class="fr-h2">Finalités du traitement</h2>
+            <p>Vos données personnelles sont collectées et traitées pour :</p>
+            <ul class="fr-list">
+                <li>Gérer les inscriptions aux formations BTS</li>
+                <li>Assurer le suivi des candidatures</li>
+                <li>Communiquer avec les candidats</li>
+                <li>Produire des statistiques anonymisées</li>
+                <li>Respecter les obligations légales et réglementaires</li>
+            </ul>
+            
+            <h2 class="fr-h2">Base légale</h2>
+            <p>Le traitement de vos données personnelles est fondé sur :</p>
+            <ul class="fr-list">
+                <li><strong>Mission d'intérêt public</strong> : organisation de l'enseignement supérieur</li>
+                <li><strong>Obligation légale</strong> : respect du code de l'éducation</li>
+                <li><strong>Consentement</strong> : pour l'envoi de communications non obligatoires</li>
+            </ul>
+            
+            <h2 class="fr-h2">Données collectées</h2>
+            <div class="fr-table fr-table--bordered">
+                <table>
+                    <thead>
+                        <tr>
+                            <th scope="col">Type de données</th>
+                            <th scope="col">Exemples</th>
+                            <th scope="col">Caractère obligatoire</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Données d'identité</td>
+                            <td>Nom, prénom, date de naissance</td>
+                            <td>Obligatoire</td>
+                        </tr>
+                        <tr>
+                            <td>Données de contact</td>
+                            <td>Adresse, téléphone, email</td>
+                            <td>Obligatoire</td>
+                        </tr>
+                        <tr>
+                            <td>Données scolaires</td>
+                            <td>Diplômes, établissement d'origine</td>
+                            <td>Obligatoire</td>
+                        </tr>
+                        <tr>
+                            <td>Données de connexion</td>
+                            <td>Logs, adresse IP, cookies</td>
+                            <td>Automatique</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            
+            <h2 class="fr-h2">Destinataires des données</h2>
+            <p>Vos données peuvent être transmises aux :</p>
+            <ul class="fr-list">
+                <li>Établissements d'enseignement supérieur concernés par votre candidature</li>
+                <li>Services du rectorat compétent</li>
+                <li>Prestataires techniques (hébergement, maintenance) sous contrat</li>
+                <li>Autorités administratives dans le cadre légal</li>
+            </ul>
+            
+            <h2 class="fr-h2">Durée de conservation</h2>
+            <div class="fr-table fr-table--bordered">
+                <table>
+                    <thead>
+                        <tr>
+                            <th scope="col">Type de données</th>
+                            <th scope="col">Durée de conservation</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Dossiers de candidature validés</td>
+                            <td>Durée de la scolarité + 5 ans</td>
+                        </tr>
+                        <tr>
+                            <td>Dossiers de candidature non retenus</td>
+                            <td>3 ans</td>
+                        </tr>
+                        <tr>
+                            <td>Données de connexion</td>
+                            <td>1 an</td>
+                        </tr>
+                        <tr>
+                            <td>Cookies</td>
+                            <td>13 mois maximum</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            
+            <h2 class="fr-h2">Vos droits</h2>
+            <p>Conformément au RGPD, vous disposez des droits suivants :</p>
+            
+            <div class="fr-accordions-group">
+                <section class="fr-accordion">
+                    <h3 class="fr-accordion__title">
+                        <button class="fr-accordion__btn" aria-expanded="false" aria-controls="accordion-1">Droit d'accès</button>
+                    </h3>
+                    <div class="fr-collapse" id="accordion-1">
+                        <div class="fr-accordion__body">
+                            <div class="fr-accordion__inner">
+                                <p>Vous pouvez demander l'accès aux données personnelles que nous détenons sur vous.</p>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+                
+                <section class="fr-accordion">
+                    <h3 class="fr-accordion__title">
+                        <button class="fr-accordion__btn" aria-expanded="false" aria-controls="accordion-2">Droit de rectification</button>
+                    </h3>
+                    <div class="fr-collapse" id="accordion-2">
+                        <div class="fr-accordion__body">
+                            <div class="fr-accordion__inner">
+                                <p>Vous pouvez demander la correction de données inexactes ou incomplètes.</p>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+                
+                <section class="fr-accordion">
+                    <h3 class="fr-accordion__title">
+                        <button class="fr-accordion__btn" aria-expanded="false" aria-controls="accordion-3">Droit d'effacement</button>
+                    </h3>
+                    <div class="fr-collapse" id="accordion-3">
+                        <div class="fr-accordion__body">
+                            <div class="fr-accordion__inner">
+                                <p>Vous pouvez demander la suppression de vos données dans certains cas (retrait du consentement, données non nécessaires, etc.).</p>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </div>
+            
+            <h2 class="fr-h2">Exercer vos droits</h2>
+            <p>Pour exercer vos droits, contactez-nous :</p>
+            <div class="fr-highlight">
+                <ul class="fr-list">
+                    <li><strong>Email :</strong> <a href="mailto:dpo@education.gouv.fr">dpo@education.gouv.fr</a></li>
+                    <li><strong>Courrier :</strong><br>
+                    Délégué à la Protection des Données<br>
+                    Ministère de l'Éducation Nationale<br>
+                    110 rue de Grenelle<br>
+                    75357 Paris 07 SP</li>
+                    <li><strong>Formulaire :</strong> <a href="{{ path('app_contact') }}">Contact en ligne</a></li>
+                </ul>
+            </div>
+            
+            <div class="fr-notice fr-notice--info fr-mt-4w">
+                <div class="fr-container">
+                    <div class="fr-notice__body">
+                        <p class="fr-notice__title">Réclamation</p>
+                        <p>Si vous estimez que vos droits ne sont pas respectés, vous pouvez saisir la <a href="https://www.cnil.fr/" target="_blank" rel="noopener">CNIL</a>.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
