@@ -35,7 +35,23 @@
 <section class="fr-container fr-pb-6v">
     <div class="fr-grid-row fr-grid-row--gutters">
         <div class="fr-col-12 fr-col-lg-8">
-            <form class="fr-form" method="post">
+            {% for message in app.flashes('success') %}
+                <div class="fr-alert fr-alert--success fr-mb-4w">
+                    <p>{{ message }}</p>
+                </div>
+            {% endfor %}
+            {% for message in app.flashes('warning') %}
+                <div class="fr-alert fr-alert--warning fr-mb-4w">
+                    <p>{{ message }}</p>
+                </div>
+            {% endfor %}
+            {% for message in app.flashes('error') %}
+                <div class="fr-alert fr-alert--error fr-mb-4w">
+                    <p>{{ message }}</p>
+                </div>
+            {% endfor %}
+
+            {{ form_start(form, {'attr': {'class': 'fr-form'}}) }}
                 <fieldset class="fr-fieldset">
                     <legend class="fr-fieldset__legend fr-text--regular" id="contact-legend">
                         <h2 class="fr-h3">Formulaire de contact</h2>
@@ -44,92 +60,70 @@
                     <div class="fr-fieldset__content">
                         <!-- Civilité -->
                         <div class="fr-select-group">
-                            <label class="fr-label" for="civilite">
-                                Civilité
-                                <span class="fr-hint-text">Sélectionnez votre civilité</span>
-                            </label>
-                            <select class="fr-select" id="civilite" name="civilite" required>
-                                <option value="" selected disabled>Sélectionner</option>
-                                <option value="mr">Monsieur</option>
-                                <option value="mme">Madame</option>
-                            </select>
+                            {{ form_label(form.civilite) }}
+                            {{ form_widget(form.civilite) }}
+                            {{ form_help(form.civilite) }}
+                            {{ form_errors(form.civilite) }}
                         </div>
 
                         <!-- Nom et Prénom -->
                         <div class="fr-grid-row fr-grid-row--gutters">
                             <div class="fr-col-12 fr-col-md-6">
                                 <div class="fr-input-group">
-                                    <label class="fr-label" for="nom">
-                                        Nom
-                                        <span class="fr-hint-text">Votre nom de famille</span>
-                                    </label>
-                                    <input class="fr-input" type="text" id="nom" name="nom" required>
+                                    {{ form_label(form.nom) }}
+                                    {{ form_widget(form.nom) }}
+                                    {{ form_help(form.nom) }}
+                                    {{ form_errors(form.nom) }}
                                 </div>
                             </div>
                             <div class="fr-col-12 fr-col-md-6">
                                 <div class="fr-input-group">
-                                    <label class="fr-label" for="prenom">
-                                        Prénom
-                                        <span class="fr-hint-text">Votre prénom</span>
-                                    </label>
-                                    <input class="fr-input" type="text" id="prenom" name="prenom" required>
+                                    {{ form_label(form.prenom) }}
+                                    {{ form_widget(form.prenom) }}
+                                    {{ form_help(form.prenom) }}
+                                    {{ form_errors(form.prenom) }}
                                 </div>
                             </div>
                         </div>
 
                         <!-- Email -->
                         <div class="fr-input-group">
-                            <label class="fr-label" for="email">
-                                Adresse électronique
-                                <span class="fr-hint-text">Format attendu : nom@exemple.fr</span>
-                            </label>
-                            <input class="fr-input" type="email" id="email" name="email" required>
+                            {{ form_label(form.email) }}
+                            {{ form_widget(form.email) }}
+                            {{ form_help(form.email) }}
+                            {{ form_errors(form.email) }}
                         </div>
 
                         <!-- Téléphone -->
                         <div class="fr-input-group">
-                            <label class="fr-label" for="telephone">
-                                Numéro de téléphone (optionnel)
-                                <span class="fr-hint-text">Format : 0X XX XX XX XX</span>
-                            </label>
-                            <input class="fr-input" type="tel" id="telephone" name="telephone">
+                            {{ form_label(form.telephone) }}
+                            {{ form_widget(form.telephone) }}
+                            {{ form_help(form.telephone) }}
+                            {{ form_errors(form.telephone) }}
                         </div>
 
                         <!-- Sujet -->
                         <div class="fr-select-group">
-                            <label class="fr-label" for="sujet">
-                                Sujet de votre demande
-                                <span class="fr-hint-text">Sélectionnez le sujet qui correspond le mieux à votre demande</span>
-                            </label>
-                            <select class="fr-select" id="sujet" name="sujet" required>
-                                <option value="" selected disabled>Sélectionner un sujet</option>
-                                <option value="inscription">Question sur l'inscription</option>
-                                <option value="documents">Documents requis</option>
-                                <option value="specialisations">Spécialisations disponibles</option>
-                                <option value="calendrier">Calendrier et dates importantes</option>
-                                <option value="technique">Problème technique</option>
-                                <option value="autre">Autre demande</option>
-                            </select>
+                            {{ form_label(form.sujet) }}
+                            {{ form_widget(form.sujet) }}
+                            {{ form_help(form.sujet) }}
+                            {{ form_errors(form.sujet) }}
                         </div>
 
                         <!-- Message -->
                         <div class="fr-input-group">
-                            <label class="fr-label" for="message">
-                                Votre message
-                                <span class="fr-hint-text">Décrivez votre demande de manière détaillée</span>
-                            </label>
-                            <textarea class="fr-input" id="message" name="message" rows="6" required></textarea>
+                            {{ form_label(form.message) }}
+                            {{ form_widget(form.message) }}
+                            {{ form_help(form.message) }}
+                            {{ form_errors(form.message) }}
                         </div>
 
                         <!-- Checkbox -->
                         <div class="fr-checkbox-group">
-                            <input type="checkbox" id="consent" name="consent" required>
-                            <label class="fr-label" for="consent">
-                                J'accepte que mes données personnelles soient utilisées pour traiter ma demande
-                                <span class="fr-hint-text">
-                                    Vos données sont traitées conformément à notre politique de confidentialité
-                                </span>
-                            </label>
+                            {{ form_widget(form.consent) }}
+                            {{ form_label(form.consent) }}
+                            {{ form_help(form.consent) }}
+                            {{ form_errors(form.consent) }}
                         </div>
                     </div>
                 </fieldset>
@@ -143,7 +137,7 @@
                         Effacer
                     </button>
                 </div>
-            </form>
+            {{ form_end(form) }}
         </div>
 
         <!-- Informations de contact -->

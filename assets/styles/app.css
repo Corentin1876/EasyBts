@@ -1,2 +1,20 @@
 @import '@gouvfr/dsfr/dist/dsfr.min.css';
 @import '@gouvfr/dsfr/dist/utility/utility.min.css';
+
+/* Layout pour garder le footer en bas */
+html, body {
+    height: 100%;
+}
+
+body {
+    display: flex;
+    flex-direction: column;
+}
+
+main {
+    flex: 1 0 auto;
+}
+
+.fr-footer {
+    flex-shrink: 0;
+}
