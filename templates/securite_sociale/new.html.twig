@@ -1,0 +1,11 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}New SecuriteSociale{% endblock %}
+
+{% block body %}
+    <h1>Create new SecuriteSociale</h1>
+
+    {{ include('securite_sociale/_form.html.twig') }}
+
+    <a href="{{ path('app_securite_sociale_index') }}">back to list</a>
+{% endblock %}

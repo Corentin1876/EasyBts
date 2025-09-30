@@ -1,0 +1,65 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Responsable index{% endblock %}
+
+{% block body %}
+    <h1>Responsable index</h1>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Nom</th>
+                <th>Prenom</th>
+                <th>Profession</th>
+                <th>CodePostal</th>
+                <th>Adresse</th>
+                <th>Ville</th>
+                <th>Tellephone</th>
+                <th>Mail</th>
+                <th>Nom_Employeur</th>
+                <th>Adresse_Employeur</th>
+                <th>Lien_avec_eleve</th>
+                <th>Autorisation_Communication</th>
+                <th>Tell_Domicile</th>
+                <th>Tell_Travail</th>
+                <th>Tell_Mobile</th>
+                <th>Acceptation_SMS</th>
+                <th>actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for responsable in responsables %}
+            <tr>
+                <td>{{ responsable.id }}</td>
+                <td>{{ responsable.nom }}</td>
+                <td>{{ responsable.prenom }}</td>
+                <td>{{ responsable.profession }}</td>
+                <td>{{ responsable.CodePostal }}</td>
+                <td>{{ responsable.adresse }}</td>
+                <td>{{ responsable.ville }}</td>
+                <td>{{ responsable.tellephone }}</td>
+                <td>{{ responsable.mail }}</td>
+                <td>{{ responsable.NomEmployeur }}</td>
+                <td>{{ responsable.AdresseEmployeur }}</td>
+                <td>{{ responsable.lienAvecEleve }}</td>
+                <td>{{ responsable.AutorisationCommunication ? 'Yes' : 'No' }}</td>
+                <td>{{ responsable.TellDomicile }}</td>
+                <td>{{ responsable.TellTravail }}</td>
+                <td>{{ responsable.TellMobile }}</td>
+                <td>{{ responsable.AcceptationSMS ? 'Yes' : 'No' }}</td>
+                <td>
+                    <a href="{{ path('app_responsable_show', {'id': responsable.id}) }}">show</a>
+                    <a href="{{ path('app_responsable_edit', {'id': responsable.id}) }}">edit</a>
+                </td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="18">no records found</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    <a href="{{ path('app_responsable_new') }}">Create new</a>
+{% endblock %}

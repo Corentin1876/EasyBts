@@ -1,0 +1,86 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Responsable{% endblock %}
+
+{% block body %}
+    <h1>Responsable</h1>
+
+    <table class="table">
+        <tbody>
+            <tr>
+                <th>Id</th>
+                <td>{{ responsable.id }}</td>
+            </tr>
+            <tr>
+                <th>Nom</th>
+                <td>{{ responsable.nom }}</td>
+            </tr>
+            <tr>
+                <th>Prenom</th>
+                <td>{{ responsable.prenom }}</td>
+            </tr>
+            <tr>
+                <th>Profession</th>
+                <td>{{ responsable.profession }}</td>
+            </tr>
+            <tr>
+                <th>CodePostal</th>
+                <td>{{ responsable.CodePostal }}</td>
+            </tr>
+            <tr>
+                <th>Adresse</th>
+                <td>{{ responsable.adresse }}</td>
+            </tr>
+            <tr>
+                <th>Ville</th>
+                <td>{{ responsable.ville }}</td>
+            </tr>
+            <tr>
+                <th>Tellephone</th>
+                <td>{{ responsable.tellephone }}</td>
+            </tr>
+            <tr>
+                <th>Mail</th>
+                <td>{{ responsable.mail }}</td>
+            </tr>
+            <tr>
+                <th>Nom_Employeur</th>
+                <td>{{ responsable.NomEmployeur }}</td>
+            </tr>
+            <tr>
+                <th>Adresse_Employeur</th>
+                <td>{{ responsable.AdresseEmployeur }}</td>
+            </tr>
+            <tr>
+                <th>Lien_avec_eleve</th>
+                <td>{{ responsable.lienAvecEleve }}</td>
+            </tr>
+            <tr>
+                <th>Autorisation_Communication</th>
+                <td>{{ responsable.AutorisationCommunication ? 'Yes' : 'No' }}</td>
+            </tr>
+            <tr>
+                <th>Tell_Domicile</th>
+                <td>{{ responsable.TellDomicile }}</td>
+            </tr>
+            <tr>
+                <th>Tell_Travail</th>
+                <td>{{ responsable.TellTravail }}</td>
+            </tr>
+            <tr>
+                <th>Tell_Mobile</th>
+                <td>{{ responsable.TellMobile }}</td>
+            </tr>
+            <tr>
+                <th>Acceptation_SMS</th>
+                <td>{{ responsable.AcceptationSMS ? 'Yes' : 'No' }}</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <a href="{{ path('app_responsable_index') }}">back to list</a>
+
+    <a href="{{ path('app_responsable_edit', {'id': responsable.id}) }}">edit</a>
+
+    {{ include('responsable/_delete_form.html.twig') }}
+{% endblock %}

@@ -1,0 +1,41 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Sante index{% endblock %}
+
+{% block body %}
+    <h1>Sante index</h1>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Date_Dernier_Rappel_Vaccin_Antitetanique</th>
+                <th>ObservationParticuliere</th>
+                <th>Adresse</th>
+                <th>Tel_MedecinTraitant</th>
+                <th>actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for sante in santes %}
+            <tr>
+                <td>{{ sante.id }}</td>
+                <td>{{ sante.DateDernierRappelVaccinAntitetanique ? sante.DateDernierRappelVaccinAntitetanique|date('Y-m-d') : '' }}</td>
+                <td>{{ sante.ObservationParticuliere }}</td>
+                <td>{{ sante.adresse }}</td>
+                <td>{{ sante.TelMedecinTraitant }}</td>
+                <td>
+                    <a href="{{ path('app_sante_show', {'id': sante.id}) }}">show</a>
+                    <a href="{{ path('app_sante_edit', {'id': sante.id}) }}">edit</a>
+                </td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="6">no records found</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    <a href="{{ path('app_sante_new') }}">Create new</a>
+{% endblock %}

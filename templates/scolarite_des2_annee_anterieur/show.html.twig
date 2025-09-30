@@ -1,0 +1,42 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}ScolariteDes2AnneeAnterieur{% endblock %}
+
+{% block body %}
+    <h1>ScolariteDes2AnneeAnterieur</h1>
+
+    <table class="table">
+        <tbody>
+            <tr>
+                <th>Id</th>
+                <td>{{ scolarite_des2_annee_anterieur.id }}</td>
+            </tr>
+            <tr>
+                <th>Classe</th>
+                <td>{{ scolarite_des2_annee_anterieur.Classe }}</td>
+            </tr>
+            <tr>
+                <th>LangueLV1</th>
+                <td>{{ scolarite_des2_annee_anterieur.LangueLV1 }}</td>
+            </tr>
+            <tr>
+                <th>LangueLV2</th>
+                <td>{{ scolarite_des2_annee_anterieur.LangueLV2 }}</td>
+            </tr>
+            <tr>
+                <th>Option_Matiere</th>
+                <td>{{ scolarite_des2_annee_anterieur.OptionMatiere }}</td>
+            </tr>
+            <tr>
+                <th>Etablisement</th>
+                <td>{{ scolarite_des2_annee_anterieur.Etablisement }}</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <a href="{{ path('app_scolarite_des2_annee_anterieur_index') }}">back to list</a>
+
+    <a href="{{ path('app_scolarite_des2_annee_anterieur_edit', {'id': scolarite_des2_annee_anterieur.id}) }}">edit</a>
+
+    {{ include('scolarite_des2_annee_anterieur/_delete_form.html.twig') }}
+{% endblock %}

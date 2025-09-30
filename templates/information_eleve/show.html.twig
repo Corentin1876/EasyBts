@@ -1,0 +1,106 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}InformationEleve{% endblock %}
+
+{% block body %}
+    <h1>InformationEleve</h1>
+
+    <table class="table">
+        <tbody>
+            <tr>
+                <th>Id</th>
+                <td>{{ information_eleve.id }}</td>
+            </tr>
+            <tr>
+                <th>NiveauClasse</th>
+                <td>{{ information_eleve.NiveauClasse }}</td>
+            </tr>
+            <tr>
+                <th>Sexe</th>
+                <td>{{ information_eleve.Sexe }}</td>
+            </tr>
+            <tr>
+                <th>NumeroSecuriterSocial</th>
+                <td>{{ information_eleve.NumeroSecuriterSocial }}</td>
+            </tr>
+            <tr>
+                <th>Date_Entree</th>
+                <td>{{ information_eleve.DateEntree ? information_eleve.DateEntree|date('Y-m-d') : '' }}</td>
+            </tr>
+            <tr>
+                <th>Nationalite</th>
+                <td>{{ information_eleve.Nationalite }}</td>
+            </tr>
+            <tr>
+                <th>Naissance_Departement</th>
+                <td>{{ information_eleve.NaissanceDepartement }}</td>
+            </tr>
+            <tr>
+                <th>Naissance_Commune</th>
+                <td>{{ information_eleve.NaissanceCommune }}</td>
+            </tr>
+            <tr>
+                <th>Redoublement</th>
+                <td>{{ information_eleve.Redoublement ? 'Yes' : 'No' }}</td>
+            </tr>
+            <tr>
+                <th>Transport</th>
+                <td>{{ information_eleve.Transport ? 'Yes' : 'No' }}</td>
+            </tr>
+            <tr>
+                <th>TypeTransport</th>
+                <td>{{ information_eleve.TypeTransport }}</td>
+            </tr>
+            <tr>
+                <th>NumeroImmatriculationVehicule</th>
+                <td>{{ information_eleve.NumeroImmatriculationVehicule }}</td>
+            </tr>
+            <tr>
+                <th>Specialiter</th>
+                <td>{{ information_eleve.Specialiter }}</td>
+            </tr>
+            <tr>
+                <th>Langues</th>
+                <td>{{ information_eleve.Langues }}</td>
+            </tr>
+            <tr>
+                <th>Dernier_Diplome</th>
+                <td>{{ information_eleve.DernierDiplome }}</td>
+            </tr>
+            <tr>
+                <th>RegimeChoisi</th>
+                <td>{{ information_eleve.RegimeChoisi }}</td>
+            </tr>
+            <tr>
+                <th>DateChoixRegime</th>
+                <td>{{ information_eleve.DateChoixRegime ? information_eleve.DateChoixRegime|date('Y-m-d') : '' }}</td>
+            </tr>
+            <tr>
+                <th>Autorisation_Droit_Image</th>
+                <td>{{ information_eleve.AutorisationDroitImage ? 'Yes' : 'No' }}</td>
+            </tr>
+            <tr>
+                <th>PosibiliteDeChangementFinTrimestre</th>
+                <td>{{ information_eleve.PosibiliteDeChangementFinTrimestre ? 'Yes' : 'No' }}</td>
+            </tr>
+            <tr>
+                <th>Acceptation_SMS</th>
+                <td>{{ information_eleve.AcceptationSMS ? 'Yes' : 'No' }}</td>
+            </tr>
+            <tr>
+                <th>AutorisationCommunication</th>
+                <td>{{ information_eleve.AutorisationCommunication ? 'Yes' : 'No' }}</td>
+            </tr>
+            <tr>
+                <th>Est_majeur</th>
+                <td>{{ information_eleve.estMajeur ? 'Yes' : 'No' }}</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <a href="{{ path('app_information_eleve_index') }}">back to list</a>
+
+    <a href="{{ path('app_information_eleve_edit', {'id': information_eleve.id}) }}">edit</a>
+
+    {{ include('information_eleve/_delete_form.html.twig') }}
+{% endblock %}

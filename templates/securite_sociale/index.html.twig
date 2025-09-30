@@ -1,0 +1,37 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}SecuriteSociale index{% endblock %}
+
+{% block body %}
+    <h1>SecuriteSociale index</h1>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Nom</th>
+                <th>Adresse</th>
+                <th>actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for securite_sociale in securite_sociales %}
+            <tr>
+                <td>{{ securite_sociale.id }}</td>
+                <td>{{ securite_sociale.nom }}</td>
+                <td>{{ securite_sociale.adresse }}</td>
+                <td>
+                    <a href="{{ path('app_securite_sociale_show', {'id': securite_sociale.id}) }}">show</a>
+                    <a href="{{ path('app_securite_sociale_edit', {'id': securite_sociale.id}) }}">edit</a>
+                </td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="4">no records found</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    <a href="{{ path('app_securite_sociale_new') }}">Create new</a>
+{% endblock %}

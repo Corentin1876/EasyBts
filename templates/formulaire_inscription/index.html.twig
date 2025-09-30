@@ -1,0 +1,41 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}FormulaireInscription index{% endblock %}
+
+{% block body %}
+    <h1>FormulaireInscription index</h1>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Type_formulaire</th>
+                <th>Est_signe</th>
+                <th>Date_soumission</th>
+                <th>Statut</th>
+                <th>actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for formulaire_inscription in formulaire_inscriptions %}
+            <tr>
+                <td>{{ formulaire_inscription.id }}</td>
+                <td>{{ formulaire_inscription.typeFormulaire }}</td>
+                <td>{{ formulaire_inscription.estSigne ? 'Yes' : 'No' }}</td>
+                <td>{{ formulaire_inscription.dateSoumission ? formulaire_inscription.dateSoumission|date('Y-m-d') : '' }}</td>
+                <td>{{ formulaire_inscription.statut }}</td>
+                <td>
+                    <a href="{{ path('app_formulaire_inscription_show', {'id': formulaire_inscription.id}) }}">show</a>
+                    <a href="{{ path('app_formulaire_inscription_edit', {'id': formulaire_inscription.id}) }}">edit</a>
+                </td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="6">no records found</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    <a href="{{ path('app_formulaire_inscription_new') }}">Create new</a>
+{% endblock %}

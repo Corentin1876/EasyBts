@@ -1,0 +1,30 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}SecuriteSociale{% endblock %}
+
+{% block body %}
+    <h1>SecuriteSociale</h1>
+
+    <table class="table">
+        <tbody>
+            <tr>
+                <th>Id</th>
+                <td>{{ securite_sociale.id }}</td>
+            </tr>
+            <tr>
+                <th>Nom</th>
+                <td>{{ securite_sociale.nom }}</td>
+            </tr>
+            <tr>
+                <th>Adresse</th>
+                <td>{{ securite_sociale.adresse }}</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <a href="{{ path('app_securite_sociale_index') }}">back to list</a>
+
+    <a href="{{ path('app_securite_sociale_edit', {'id': securite_sociale.id}) }}">edit</a>
+
+    {{ include('securite_sociale/_delete_form.html.twig') }}
+{% endblock %}
