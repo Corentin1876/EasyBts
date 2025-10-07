@@ -58,11 +58,24 @@
                     <div class="fr-header__tools">
                         <div class="fr-header__tools-links">
                             <ul class="fr-btns-group">
+                                {% if app.user %}
+                                <li>
+                                    <a class="fr-btn fr-btn--tertiary-no-outline" href="{{ path('app_logout') }}">
+                                        Déconnexion
+                                    </a>
+                                </li>
+                                <li>
+                                    <span class="fr-btn fr-btn--secondary">
+                                        👤 {{ app.user.prenom }} {{ app.user.nom }}
+                                    </span>
+                                </li>
+                                {% else %}
                                 <li>
                                     <a class="fr-btn" href="{{ path('app_inscription') }}">
                                         👤 Se connecter
                                     </a>
                                 </li>
+                                {% endif %}
                             </ul>
                         </div>
                     </div>
@@ -80,12 +93,23 @@
                             <li class="fr-nav__item">
                                 <a class="fr-nav__link" href="{{ path('app_home') }}">Accueil</a>
                             </li>
+                            {% if not app.user %}
                             <li class="fr-nav__item">
                                 <a class="fr-nav__link" href="{{ path('app_inscription') }}">Inscription</a>
                             </li>
+                            {% else %}
+                            <li class="fr-nav__item">
+                                <a class="fr-nav__link" href="{{ path('app_bts_liste') }}">Inscription BTS</a>
+                            </li>
+                            {% endif %}
                             <li class="fr-nav__item">
                                 <a class="fr-nav__link" href="{{ path('app_contact') }}">Contact</a>
                             </li>
+                            {% if app.user %}
+                            <li class="fr-nav__item">
+                                <a class="fr-nav__link" href="{{ path('app_logout') }}">Déconnexion</a>
+                            </li>
+                            {% endif %}
                         </ul>
                     </nav>
                 </div>
@@ -101,11 +125,19 @@
                     Accueil
                 </a>
             </li>
+            {% if not app.user %}
             <li class="fr-nav__item">
                 <a class="fr-nav__link" href="{{ path('app_inscription') }}" {% if app.request.get('_route') == 'app_inscription' %}aria-current="page"{% endif %}>
                     Inscription
                 </a>
             </li>
+            {% else %}
+            <li class="fr-nav__item">
+                <a class="fr-nav__link" href="{{ path('app_bts_liste') }}" {% if app.request.get('_route') starts with 'app_bts' %}aria-current="page"{% endif %}>
+                    Inscription BTS
+                </a>
+            </li>
+            {% endif %}
             <li class="fr-nav__item">
                 <a class="fr-nav__link" href="{{ path('app_contact') }}" {% if app.request.get('_route') == 'app_contact' %}aria-current="page"{% endif %}>
                     Contact

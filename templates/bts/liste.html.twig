@@ -1,0 +1,93 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Choisir votre BTS - Inscription BTS{% endblock %}
+
+{% block body %}
+{% if app.user %}
+<!-- Fil d'ariane -->
+<nav class="fr-breadcrumb" aria-label="vous êtes ici :">
+    <button class="fr-breadcrumb__button" aria-expanded="false" aria-controls="breadcrumb-bts">Voir le fil d'Ariane</button>
+    <div class="fr-collapse" id="breadcrumb-bts">
+        <ol class="fr-breadcrumb__list">
+            <li>
+                <a class="fr-breadcrumb__link" href="{{ path('app_home') }}">Accueil</a>
+            </li>
+            <li>
+                <a class="fr-breadcrumb__link" aria-current="page">Inscription BTS</a>
+            </li>
+        </ol>
+    </div>
+</nav>
+
+<!-- En-tête de page -->
+<section class="fr-container fr-py-6v">
+    <div class="fr-grid-row">
+        <div class="fr-col-12">
+            <h1 class="fr-h1">Inscription aux formations BTS</h1>
+            {% if btsEnCours %}
+            <div class="fr-alert fr-alert--info fr-mb-3v">
+                <h3 class="fr-alert__title">Inscription en cours</h3>
+                <p>Vous avez commencé une inscription pour le <strong>{{ btsEnCours.nom }}</strong>. Cliquez sur le bouton ci-dessous pour continuer où vous vous êtes arrêté.</p>
+                <div class="fr-btns-group fr-btns-group--inline-sm fr-mt-2v">
+                    <a class="fr-btn fr-btn--sm" href="{{ path('app_bts_inscription', {'id': btsEnCours.id}) }}">Continuer</a>
+                    <a class="fr-btn fr-btn--sm fr-btn--secondary" href="{{ path('app_bts_inscription_reset', {'id': btsEnCours.id}) }}" onclick="return confirm('Êtes-vous sûr de vouloir supprimer le dossier en cours ?');">Supprimer le dossier</a>
+                </div>
+            </div>
+            {% else %}
+            <p class="fr-text--lead fr-mb-3v">
+                Choisissez la spécialisation BTS dans laquelle vous souhaitez vous inscrire.
+            </p>
+            {% endif %}
+        </div>
+    </div>
+</section>
+
+<!-- Section BTS disponibles -->
+<section class="fr-container fr-pb-6v">
+    <div class="fr-grid-row fr-grid-row--gutters">
+        {% for specialisation in specialisations %}
+        <div class="fr-col-12 fr-col-md-6 fr-col-lg-4">
+            <div class="fr-card fr-enlarge-link">
+                <div class="fr-card__body">
+                    <div class="fr-card__content">
+                        <h3 class="fr-card__title">
+                            <a href="{{ path('app_bts_inscription', {'id': specialisation.id}) }}" class="fr-card__link">
+                                {{ specialisation.nom }}
+                            </a>
+                        </h3>
+                        <p class="fr-card__desc">
+                            Cliquez pour démarrer votre dossier d'inscription pour cette spécialisation.
+                        </p>
+                    </div>
+                </div>
+                <div class="fr-card__footer">
+                    <a class="fr-btn fr-btn--sm" href="{{ path('app_bts_inscription', {'id': specialisation.id}) }}">
+                        {% if btsEnCours and btsEnCours.id == specialisation.id %}
+                            Continuer mon inscription
+                        {% else %}
+                            Commencer l'inscription
+                        {% endif %}
+                    </a>
+                </div>
+            </div>
+        </div>
+        {% else %}
+        <div class="fr-col-12">
+            <div class="fr-alert fr-alert--info">
+                <p>Aucune spécialisation disponible pour le moment. Veuillez contacter l'administration.</p>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</section>
+{% else %}
+<!-- Message pour utilisateurs non connectés -->
+<section class="fr-container fr-py-6v">
+    <div class="fr-alert fr-alert--warning">
+        <h3 class="fr-alert__title">Connexion requise</h3>
+        <p>Vous devez être connecté pour accéder aux inscriptions BTS.</p>
+        <a class="fr-btn fr-mt-2v" href="{{ path('app_inscription') }}">Se connecter</a>
+    </div>
+</section>
+{% endif %}
+{% endblock %}

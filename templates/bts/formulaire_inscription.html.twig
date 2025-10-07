@@ -1,0 +1,459 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Dossier d'inscription {{ specialisation.nom }} - Inscription BTS{% endblock %}
+
+{% block body %}
+<!-- Fil d'ariane -->
+<nav class="fr-breadcrumb" aria-label="vous êtes ici :">
+    <button class="fr-breadcrumb__button" aria-expanded="false" aria-controls="breadcrumb-form">Voir le fil d'Ariane</button>
+    <div class="fr-collapse" id="breadcrumb-form">
+        <ol class="fr-breadcrumb__list">
+            <li><a class="fr-breadcrumb__link" href="{{ path('app_home') }}">Accueil</a></li>
+            <li><a class="fr-breadcrumb__link" href="{{ path('app_bts_liste') }}">Inscription BTS</a></li>
+            <li><a class="fr-breadcrumb__link" aria-current="page">{{ specialisation.nom }}</a></li>
+        </ol>
+    </div>
+</nav>
+
+<!-- En-tête -->
+<section class="fr-container fr-py-6v">
+    <div class="fr-grid-row">
+        <div class="fr-col-12">
+            <h1 class="fr-h1">Dossier d'inscription {{ specialisation.nom }}</h1>
+            <p class="fr-text--lead fr-mb-3v">
+                Remplissez le formulaire ci-dessous pour finaliser votre inscription. Votre progression est sauvegardée automatiquement.
+            </p>
+            <div class="fr-alert fr-alert--info fr-mb-4v">
+                <p class="fr-mb-1v"><strong>Spécialisation sélectionnée :</strong> {{ specialisation.nom }}</p>
+                <p class="fr-text--sm">Vous pouvez revenir plus tard : votre progression est enregistrée automatiquement même si vous vous déconnectez.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Indicateur de progression -->
+<section class="fr-container fr-mb-4v">
+    <div class="fr-stepper">
+        <h2 class="fr-stepper__title">
+            <span class="fr-stepper__state">Étape <span id="current-step">1</span> sur 5</span>
+        </h2>
+        <div class="fr-stepper__steps" data-fr-current-step="1" data-fr-steps="5"></div>
+        <p class="fr-stepper__details">
+            <span class="fr-text--bold" id="step-title">Identité de l'étudiant</span>
+        </p>
+    </div>
+</section>
+
+<!-- Formulaire d'inscription -->
+<section class="fr-container fr-pb-6v">
+    <form class="fr-form" id="inscription-form" method="post" action="{{ path('app_bts_inscription_submit', {'id': specialisation.id}) }}">
+
+        <!-- Section 1: Identité de l'étudiant -->
+        <div class="form-step" id="step-1">
+            <div class="fr-card">
+                <div class="fr-card__body">
+                    <h2 class="fr-h2 fr-mb-3v">Identité de l'étudiant</h2>
+
+                    <div class="fr-grid-row fr-grid-row--gutters">
+                        <div class="fr-col-12 fr-col-md-6">
+                            <div class="fr-input-group">
+                                <label class="fr-label" for="nom">Nom (en majuscule) <span class="fr-text--red">*</span></label>
+                                <input class="fr-input" type="text" id="nom" name="nom" value="{{ app.user.nom|upper }}" required style="text-transform: uppercase;">
+                            </div>
+                        </div>
+                        <div class="fr-col-12 fr-col-md-6">
+                            <div class="fr-input-group">
+                                <label class="fr-label" for="prenom">Prénom <span class="fr-text--red">*</span></label>
+                                <input class="fr-input" type="text" id="prenom" name="prenom" value="{{ app.user.prenom }}" required>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="fr-grid-row fr-grid-row--gutters">
+                        <div class="fr-col-12 fr-col-md-6">
+                            <div class="fr-select-group">
+                                <label class="fr-label" for="sexe">Sexe <span class="fr-text--red">*</span></label>
+                                <select class="fr-select" id="sexe" name="sexe" required>
+                                    <option value="" selected disabled>Sélectionner</option>
+                                    <option value="M">Masculin</option>
+                                    <option value="F">Féminin</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="fr-col-12 fr-col-md-6">
+                            <div class="fr-input-group">
+                                <label class="fr-label" for="date_naissance">Date de naissance <span class="fr-text--red">*</span></label>
+                                <input class="fr-input" type="date" id="date_naissance" name="date_naissance" value="{{ app.user.dateNaissance ? app.user.dateNaissance|date('Y-m-d') : '' }}" required>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="fr-grid-row fr-grid-row--gutters">
+                        <div class="fr-col-12 fr-col-md-6">
+                            <div class="fr-input-group">
+                                <label class="fr-label" for="nationalite">Nationalité <span class="fr-text--red">*</span></label>
+                                <input class="fr-input" type="text" id="nationalite" name="nationalite" required>
+                            </div>
+                        </div>
+                        <div class="fr-col-12 fr-col-md-6">
+                            <div class="fr-input-group">
+                                <label class="fr-label" for="numero_secu">Numéro de sécurité sociale</label>
+                                <input class="fr-input" type="text" id="numero_secu" name="numero_secu" maxlength="15">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="fr-grid-row fr-grid-row--gutters">
+                        <div class="fr-col-12 fr-col-md-6">
+                            <div class="fr-input-group">
+                                <label class="fr-label" for="dep_naissance">Département de naissance <span class="fr-text--red">*</span></label>
+                                <input class="fr-input" type="text" id="dep_naissance" name="dep_naissance" required>
+                            </div>
+                        </div>
+                        <div class="fr-col-12 fr-col-md-6">
+                            <div class="fr-input-group">
+                                <label class="fr-label" for="commune_naissance">Commune de naissance <span class="fr-text--red">*</span></label>
+                                <input class="fr-input" type="text" id="commune_naissance" name="commune_naissance" required>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="fr-grid-row fr-grid-row--gutters">
+                        <div class="fr-col-12 fr-col-md-6">
+                            <div class="fr-input-group">
+                                <label class="fr-label" for="tel_eleve">Téléphone mobile de l'élève <span class="fr-text--red">*</span></label>
+                                <input class="fr-input" type="tel" id="tel_eleve" name="tel_eleve" value="{{ app.user.telephone }}" required>
+                            </div>
+                        </div>
+                        <div class="fr-col-12 fr-col-md-6">
+                            <div class="fr-input-group">
+                                <label class="fr-label" for="email_eleve">Courriel de l'élève <span class="fr-text--red">*</span></label>
+                                <input class="fr-input" type="email" id="email_eleve" name="email_eleve" value="{{ app.user.email }}" required readonly>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="fr-input-group">
+                        <label class="fr-label" for="date_entree">Date d'entrée <span class="fr-text--red">*</span></label>
+                        <input class="fr-input" type="date" id="date_entree" name="date_entree" required>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Section 2: Scolarité de l'année d'inscription -->
+        <div class="form-step" id="step-2" style="display: none;">
+            <div class="fr-card">
+                <div class="fr-card__body">
+                    <h2 class="fr-h2 fr-mb-3v">Scolarité de l'année d'inscription</h2>
+
+                    <div class="fr-grid-row fr-grid-row--gutters">
+                        <div class="fr-col-12 fr-col-md-6">
+                            <div class="fr-select-group">
+                                <label class="fr-label" for="redoublement">Redoublement BTS <span class="fr-text--red">*</span></label>
+                                <select class="fr-select" id="redoublement" name="redoublement" required>
+                                    <option value="" selected disabled>Sélectionner</option>
+                                    <option value="0">Non</option>
+                                    <option value="1">Oui</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="fr-col-12 fr-col-md-6">
+                            <div class="fr-select-group">
+                                <label class="fr-label" for="niveau_classe">Classe <span class="fr-text--red">*</span></label>
+                                <select class="fr-select" id="niveau_classe" name="niveau_classe" required>
+                                    <option value="" selected disabled>Sélectionner</option>
+                                    <option value="BTS 1ère année">BTS 1ère année</option>
+                                    <option value="BTS 2ème année">BTS 2ème année</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="fr-select-group">
+                        <label class="fr-label" for="regime_scolaire">Régime scolaire <span class="fr-text--red">*</span></label>
+                        <select class="fr-select" id="regime_scolaire" name="regime_scolaire" required>
+                            <option value="" selected disabled>Sélectionner</option>
+                            <option value="Externe">Externe</option>
+                            <option value="Demi-pensionnaire à l'unité">Demi-pensionnaire à l'unité</option>
+                            <option value="Demi-pensionnaire au forfait 4 jours">Demi-pensionnaire au forfait 4 jours</option>
+                            <option value="Demi-pensionnaire au forfait 5 jours">Demi-pensionnaire au forfait 5 jours</option>
+                        </select>
+                    </div>
+
+                    <div class="fr-grid-row fr-grid-row--gutters">
+                        <div class="fr-col-12 fr-col-md-4">
+                            <div class="fr-select-group">
+                                <label class="fr-label" for="transport">Transport <span class="fr-text--red">*</span></label>
+                                <select class="fr-select" id="transport" name="transport" required>
+                                    <option value="" selected disabled>Sélectionner</option>
+                                    <option value="0">Non</option>
+                                    <option value="1">Oui</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="fr-col-12 fr-col-md-4">
+                            <div class="fr-select-group">
+                                <label class="fr-label" for="type_transport">Type de transport</label>
+                                <select class="fr-select" id="type_transport" name="type_transport">
+                                    <option value="">Aucun</option>
+                                    <option value="Train">Train</option>
+                                    <option value="Bus">Bus</option>
+                                    <option value="Autres">Autres</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="fr-col-12 fr-col-md-4">
+                            <div class="fr-input-group">
+                                <label class="fr-label" for="immatriculation">Immatriculation véhicule</label>
+                                <input class="fr-input" type="text" id="immatriculation" name="immatriculation" placeholder="Si parking">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="fr-grid-row fr-grid-row--gutters">
+                        <div class="fr-col-12 fr-col-md-6">
+                            <div class="fr-input-group">
+                                <label class="fr-label" for="lv1">Langue LV1 <span class="fr-text--red">*</span></label>
+                                <input class="fr-input" type="text" id="lv1" name="lv1" placeholder="Ex: Anglais" required>
+                            </div>
+                        </div>
+                        <div class="fr-col-12 fr-col-md-6">
+                            <div class="fr-input-group">
+                                <label class="fr-label" for="lv2">Langue LV2 (facultatif)</label>
+                                <input class="fr-input" type="text" id="lv2" name="lv2" placeholder="Ex: Espagnol">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Section 3: Scolarité des 2 années antérieures -->
+        <div class="form-step" id="step-3" style="display: none;">
+            <div class="fr-card">
+                <div class="fr-card__body">
+                    <h2 class="fr-h2 fr-mb-3v">Scolarité des 2 années antérieures</h2>
+
+                    <h3 class="fr-h3 fr-mb-2v">Année N-1</h3>
+                    <div class="fr-grid-row fr-grid-row--gutters">
+                        <div class="fr-col-12 fr-col-md-6">
+                            <div class="fr-input-group">
+                                <label class="fr-label" for="annee_n1">Année scolaire <span class="fr-text--red">*</span></label>
+                                <input class="fr-input" type="text" id="annee_n1" name="annee_n1" placeholder="Ex: 2023-2024" required>
+                            </div>
+                        </div>
+                        <div class="fr-col-12 fr-col-md-6">
+                            <div class="fr-input-group">
+                                <label class="fr-label" for="classe_n1">Classe <span class="fr-text--red">*</span></label>
+                                <input class="fr-input" type="text" id="classe_n1" name="classe_n1" placeholder="Ex: Terminale" required>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="fr-grid-row fr-grid-row--gutters">
+                        <div class="fr-col-12 fr-col-md-6">
+                            <div class="fr-input-group">
+                                <label class="fr-label" for="lv1_n1">LV1 <span class="fr-text--red">*</span></label>
+                                <input class="fr-input" type="text" id="lv1_n1" name="lv1_n1" required>
+                            </div>
+                        </div>
+                        <div class="fr-col-12 fr-col-md-6">
+                            <div class="fr-input-group">
+                                <label class="fr-label" for="lv2_n1">LV2</label>
+                                <input class="fr-input" type="text" id="lv2_n1" name="lv2_n1">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="fr-input-group">
+                        <label class="fr-label" for="etablissement_n1">Établissement <span class="fr-text--red">*</span></label>
+                        <input class="fr-input" type="text" id="etablissement_n1" name="etablissement_n1" required>
+                    </div>
+
+                    <hr class="fr-hr fr-my-4v">
+
+                    <h3 class="fr-h3 fr-mb-2v">Année N-2</h3>
+                    <div class="fr-grid-row fr-grid-row--gutters">
+                        <div class="fr-col-12 fr-col-md-6">
+                            <div class="fr-input-group">
+                                <label class="fr-label" for="annee_n2">Année scolaire <span class="fr-text--red">*</span></label>
+                                <input class="fr-input" type="text" id="annee_n2" name="annee_n2" placeholder="Ex: 2022-2023" required>
+                            </div>
+                        </div>
+                        <div class="fr-col-12 fr-col-md-6">
+                            <div class="fr-input-group">
+                                <label class="fr-label" for="classe_n2">Classe <span class="fr-text--red">*</span></label>
+                                <input class="fr-input" type="text" id="classe_n2" name="classe_n2" placeholder="Ex: Première" required>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="fr-grid-row fr-grid-row--gutters">
+                        <div class="fr-col-12 fr-col-md-6">
+                            <div class="fr-input-group">
+                                <label class="fr-label" for="lv1_n2">LV1 <span class="fr-text--red">*</span></label>
+                                <input class="fr-input" type="text" id="lv1_n2" name="lv1_n2" required>
+                            </div>
+                        </div>
+                        <div class="fr-col-12 fr-col-md-6">
+                            <div class="fr-input-group">
+                                <label class="fr-label" for="lv2_n2">LV2</label>
+                                <input class="fr-input" type="text" id="lv2_n2" name="lv2_n2">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="fr-input-group">
+                        <label class="fr-label" for="etablissement_n2">Établissement <span class="fr-text--red">*</span></label>
+                        <input class="fr-input" type="text" id="etablissement_n2" name="etablissement_n2" required>
+                    </div>
+
+                    <hr class="fr-hr fr-my-4v">
+
+                    <div class="fr-input-group">
+                        <label class="fr-label" for="dernier_diplome">Dernier diplôme obtenu <span class="fr-text--red">*</span></label>
+                        <input class="fr-input" type="text" id="dernier_diplome" name="dernier_diplome" placeholder="Ex: Baccalauréat Général" required>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Section 4: Responsables légaux -->
+        <div class="form-step" id="step-4" style="display: none;">
+            <div class="fr-card">
+                <div class="fr-card__body">
+                    <h2 class="fr-h2 fr-mb-3v">Identité des responsables légaux</h2>
+
+                    <h3 class="fr-h3 fr-mb-2v">Responsable légal 1</h3>
+                    <div class="fr-select-group">
+                        <label class="fr-label" for="lien_resp1">Lien avec l'élève <span class="fr-text--red">*</span></label>
+                        <select class="fr-select" id="lien_resp1" name="lien_resp1" required>
+                            <option value="" selected disabled>Sélectionner</option>
+                            <option value="Père">Père</option>
+                            <option value="Mère">Mère</option>
+                            <option value="Autre">Autre</option>
+                        </select>
+                    </div>
+
+                    <div class="fr-grid-row fr-grid-row--gutters">
+                        <div class="fr-col-12 fr-col-md-6">
+                            <div class="fr-input-group">
+                                <label class="fr-label" for="nom_resp1">Nom <span class="fr-text--red">*</span></label>
+                                <input class="fr-input" type="text" id="nom_resp1" name="nom_resp1" required>
+                            </div>
+                        </div>
+                        <div class="fr-col-12 fr-col-md-6">
+                            <div class="fr-input-group">
+                                <label class="fr-label" for="prenom_resp1">Prénom <span class="fr-text--red">*</span></label>
+                                <input class="fr-input" type="text" id="prenom_resp1" name="prenom_resp1" required>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="fr-input-group">
+                        <label class="fr-label" for="adresse_resp1">Adresse <span class="fr-text--red">*</span></label>
+                        <input class="fr-input" type="text" id="adresse_resp1" name="adresse_resp1" required>
+                    </div>
+
+                    <div class="fr-input-group">
+                        <label class="fr-label" for="commune_resp1">Commune <span class="fr-text--red">*</span></label>
+                        <input class="fr-input" type="text" id="commune_resp1" name="commune_resp1" required>
+                    </div>
+
+                    <div class="fr-grid-row fr-grid-row--gutters">
+                        <div class="fr-col-12 fr-col-md-6">
+                            <div class="fr-input-group">
+                                <label class="fr-label" for="tel_mobile_resp1">Téléphone mobile <span class="fr-text--red">*</span></label>
+                                <input class="fr-input" type="tel" id="tel_mobile_resp1" name="tel_mobile_resp1" required>
+                            </div>
+                        </div>
+                        <div class="fr-col-12 fr-col-md-6">
+                            <div class="fr-input-group">
+                                <label class="fr-label" for="email_resp1">Courriel <span class="fr-text--red">*</span></label>
+                                <input class="fr-input" type="email" id="email_resp1" name="email_resp1" required>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="fr-input-group">
+                        <label class="fr-label" for="profession_resp1">Profession <span class="fr-text--red">*</span></label>
+                        <input class="fr-input" type="text" id="profession_resp1" name="profession_resp1" required>
+                    </div>
+
+                    <div class="fr-grid-row fr-grid-row--gutters">
+                        <div class="fr-col-12 fr-col-md-6">
+                            <div class="fr-select-group">
+                                <label class="fr-label" for="sms_resp1">Acceptation SMS <span class="fr-text--red">*</span></label>
+                                <select class="fr-select" id="sms_resp1" name="sms_resp1" required>
+                                    <option value="" selected disabled>Sélectionner</option>
+                                    <option value="1">Oui</option>
+                                    <option value="0">Non</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="fr-col-12 fr-col-md-6">
+                            <div class="fr-select-group">
+                                <label class="fr-label" for="comm_asso_resp1">Autorisation communication associations parents <span class="fr-text--red">*</span></label>
+                                <select class="fr-select" id="comm_asso_resp1" name="comm_asso_resp1" required>
+                                    <option value="" selected disabled>Sélectionner</option>
+                                    <option value="1">Oui</option>
+                                    <option value="0">Non</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Section 5: Signature et validation -->
+        <div class="form-step" id="step-5" style="display: none;">
+            <div class="fr-card">
+                <div class="fr-card__body">
+                    <h2 class="fr-h2 fr-mb-3v">Validation du dossier</h2>
+
+                    <div class="fr-checkbox-group">
+                        <input type="checkbox" id="certif_exact" name="certif_exact" required>
+                        <label class="fr-label" for="certif_exact">
+                            Je certifie que les informations fournies sont exactes <span class="fr-text--red">*</span>
+                        </label>
+                    </div>
+
+                    <div class="fr-checkbox-group">
+                        <input type="checkbox" id="signature_resp" name="signature_resp" required>
+                        <label class="fr-label" for="signature_resp">
+                            En validant ce formulaire, je confirme avoir l'autorisation du responsable légal <span class="fr-text--red">*</span>
+                        </label>
+                    </div>
+
+                    <div class="fr-alert fr-alert--info fr-mt-3v">
+                        <p class="fr-text--sm">
+                            <strong>Note :</strong> Une fois votre dossier soumis, vous recevrez un email de confirmation.
+                            Votre dossier sera examiné par nos services et vous serez informé de la suite.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Boutons de navigation -->
+        <div class="fr-btns-group fr-btns-group--inline-md fr-mt-4v">
+            <button class="fr-btn fr-btn--secondary" type="button" id="btn-previous" style="display: none;">
+                Étape précédente
+            </button>
+            <button class="fr-btn fr-btn--secondary" type="button" id="btn-save">
+                <span class="fr-icon-save-line fr-icon--sm" aria-hidden="true"></span>
+                Sauvegarder et continuer plus tard
+            </button>
+            <button class="fr-btn" type="button" id="btn-next">
+                Étape suivante
+            </button>
+            <button class="fr-btn" type="submit" id="btn-submit" style="display: none;">
+                Soumettre mon dossier d'inscription
+            </button>
+        </div>
+    </form>
+</section>
+
+<input type="hidden" id="specialisation-id" value="{{ specialisation.id }}">
+<input type="hidden" id="user-id" value="{{ app.user.id }}">
+<input type="hidden" id="saved-data" value="{{ savedData|default('{}') }}">
+<script src="/js/formulaire-inscription.js"></script>
+{% endblock %}

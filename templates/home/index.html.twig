@@ -3,6 +3,7 @@
 {% block title %}Accueil - Inscription BTS{% endblock %}
 
 {% block body %}
+{% if not app.user %}
 <!-- Hero Section -->
 <section class="fr-container fr-py-8v">
     <div class="fr-grid-row fr-grid-row--center">
@@ -23,14 +24,7 @@
         </div>
     </div>
 </section>
-
-<!-- Alerte information -->
-<div class="fr-container fr-mb-6v">
-    <div class="fr-alert fr-alert--info">
-        <h3 class="fr-alert__title">Campagne d'inscription ouverte</h3>
-        <p>Les inscriptions pour la rentrée 2025 sont ouvertes du 15 janvier au 31 mars 2025. N'attendez pas pour déposer votre candidature !</p>
-    </div>
-</div>
+{% endif %}
 
 <!-- Section étapes -->
 <section class="fr-container fr-py-6v" id="informations">
@@ -187,32 +181,4 @@
     </div>
 </section>
 
-<!-- Section statistiques -->
-<section class="fr-container fr-py-6v">
-    <div class="fr-notice fr-notice--info">
-        <div class="fr-container">
-            <div class="fr-notice__body">
-                <p class="fr-notice__title">Chiffres clés de la plateforme</p>
-                <div class="fr-grid-row fr-grid-row--gutters fr-mt-3v">
-                    <div class="fr-col-6 fr-col-md-3">
-                        <p class="fr-text--bold fr-text--lg fr-mb-1v">15 000+</p>
-                        <p class="fr-text--sm">Étudiants inscrits</p>
-                    </div>
-                    <div class="fr-col-6 fr-col-md-3">
-                        <p class="fr-text--bold fr-text--lg fr-mb-1v">50+</p>
-                        <p class="fr-text--sm">Spécialisations</p>
-                    </div>
-                    <div class="fr-col-6 fr-col-md-3">
-                        <p class="fr-text--bold fr-text--lg fr-mb-1v">300+</p>
-                        <p class="fr-text--sm">Établissements</p>
-                    </div>
-                    <div class="fr-col-6 fr-col-md-3">
-                        <p class="fr-text--bold fr-text--lg fr-mb-1v">85%</p>
-                        <p class="fr-text--sm">Taux de réussite</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</section>
 {% endblock %}

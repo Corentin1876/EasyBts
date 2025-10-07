@@ -1,0 +1,83 @@
+{# Section 2: Scolarité année inscription #}
+<div class="form-step" id="step-2" style="display: none;">
+    <div class="fr-card">
+        <div class="fr-card__body">
+            <h2 class="fr-h2 fr-mb-3v">Scolarité de l'année d'inscription</h2>
+            <div class="fr-grid-row fr-grid-row--gutters">
+                <div class="fr-col-12 fr-col-md-6">
+                    <div class="fr-select-group">
+                        <label class="fr-label" for="redoublement">Redoublement BTS <span class="fr-text--red">*</span></label>
+                        <select class="fr-select" id="redoublement" name="redoublement" required>
+                            <option value="" selected disabled>Sélectionner</option>
+                            <option value="0">Non</option>
+                            <option value="1">Oui</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="fr-col-12 fr-col-md-6">
+                    <div class="fr-select-group">
+                        <label class="fr-label" for="niveau_classe">Classe <span class="fr-text--red">*</span></label>
+                        <select class="fr-select" id="niveau_classe" name="niveau_classe" required>
+                            <option value="" selected disabled>Sélectionner</option>
+                            <option value="BTS 1ère année">BTS 1ère année</option>
+                            <option value="BTS 2ème année">BTS 2ème année</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="fr-select-group">
+                <label class="fr-label" for="regime_scolaire">Régime scolaire <span class="fr-text--red">*</span></label>
+                <select class="fr-select" id="regime_scolaire" name="regime_scolaire" required>
+                    <option value="" selected disabled>Sélectionner</option>
+                    <option value="Externe">Externe</option>
+                    <option value="Demi-pensionnaire à l'unité">Demi-pensionnaire à l'unité</option>
+                    <option value="Demi-pensionnaire au forfait 4 jours">Demi-pensionnaire au forfait 4 jours</option>
+                    <option value="Demi-pensionnaire au forfait 5 jours">Demi-pensionnaire au forfait 5 jours</option>
+                </select>
+            </div>
+            <div class="fr-grid-row fr-grid-row--gutters">
+                <div class="fr-col-12 fr-col-md-4">
+                    <div class="fr-select-group">
+                        <label class="fr-label" for="transport">Transport <span class="fr-text--red">*</span></label>
+                        <select class="fr-select" id="transport" name="transport" required>
+                            <option value="" selected disabled>Sélectionner</option>
+                            <option value="0">Non</option>
+                            <option value="1">Oui</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="fr-col-12 fr-col-md-4">
+                    <div class="fr-select-group">
+                        <label class="fr-label" for="type_transport">Type de transport</label>
+                        <select class="fr-select" id="type_transport" name="type_transport">
+                            <option value="">Aucun</option>
+                            <option value="Train">Train</option>
+                            <option value="Bus">Bus</option>
+                            <option value="Autres">Autres</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="fr-col-12 fr-col-md-4">
+                    <div class="fr-input-group">
+                        <label class="fr-label" for="immatriculation">Immatriculation véhicule</label>
+                        <input class="fr-input" type="text" id="immatriculation" name="immatriculation">
+                    </div>
+                </div>
+            </div>
+            <div class="fr-grid-row fr-grid-row--gutters">
+                <div class="fr-col-12 fr-col-md-6">
+                    <div class="fr-input-group">
+                        <label class="fr-label" for="lv1">Langue LV1 <span class="fr-text--red">*</span></label>
+                        <input class="fr-input" type="text" id="lv1" name="lv1" placeholder="Ex: Anglais" required>
+                    </div>
+                </div>
+                <div class="fr-col-12 fr-col-md-6">
+                    <div class="fr-input-group">
+                        <label class="fr-label" for="lv2">Langue LV2 (facultatif)</label>
+                        <input class="fr-input" type="text" id="lv2" name="lv2" placeholder="Ex: Espagnol">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
