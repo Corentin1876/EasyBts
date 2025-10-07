@@ -1,0 +1,63 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}FAQ - Questions fréquentes{% endblock %}
+
+{% block body %}
+<section class="fr-container fr-py-6v">
+    <div class="fr-grid-row">
+        <div class="fr-col-12">
+            <h1 class="fr-h1">Foire aux questions</h1>
+            <p class="fr-text--lead">Retrouvez ici les réponses aux questions les plus courantes concernant l'inscription BTS.</p>
+        </div>
+    </div>
+
+    <div class="fr-accordions-group fr-mt-4v" data-controller="accordion" data-module="dsfr-accordions-group">
+        <section class="fr-accordion">
+            <h3 class="fr-accordion__title">
+                <button class="fr-accordion__btn" aria-expanded="false" aria-controls="faq-1" data-action="click->accordion#toggle">Qui peut s'inscrire ?</button>
+            </h3>
+            <div class="fr-collapse" id="faq-1" hidden>
+                <p>Tout candidat remplissant les conditions académiques et administratives précisées dans la rubrique Inscription.</p>
+            </div>
+        </section>
+        <section class="fr-accordion">
+            <h3 class="fr-accordion__title">
+                <button class="fr-accordion__btn" aria-expanded="false" aria-controls="faq-2" data-action="click->accordion#toggle">Quels documents sont nécessaires ?</button>
+            </h3>
+            <div class="fr-collapse" id="faq-2" hidden>
+                <p>Pièce d'identité, justificatif de domicile, relevés de notes, et tout document spécifique mentionné lors du parcours d'inscription.</p>
+            </div>
+        </section>
+        <section class="fr-accordion">
+            <h3 class="fr-accordion__title">
+                <button class="fr-accordion__btn" aria-expanded="false" aria-controls="faq-3" data-action="click->accordion#toggle">Comment suivre l'état de mon dossier ?</button>
+            </h3>
+            <div class="fr-collapse" id="faq-3" hidden>
+                <p>Après connexion, un tableau de bord vous indiquera l'avancement (complet / en attente / à corriger).</p>
+            </div>
+        </section>
+        <section class="fr-accordion">
+            <h3 class="fr-accordion__title">
+                <button class="fr-accordion__btn" aria-expanded="false" aria-controls="faq-4" data-action="click->accordion#toggle">Puis-je modifier mon dossier après soumission ?</button>
+            </h3>
+            <div class="fr-collapse" id="faq-4" hidden>
+                <p>Certaines sections restent modifiables tant que le dossier n'est pas verrouillé administrativement.</p>
+            </div>
+        </section>
+        <section class="fr-accordion">
+            <h3 class="fr-accordion__title">
+                <button class="fr-accordion__btn" aria-expanded="false" aria-controls="faq-5" data-action="click->accordion#toggle">Qui contacter en cas de problème technique ?</button>
+            </h3>
+            <div class="fr-collapse" id="faq-5" hidden>
+                <p>Utilisez le <a href="{{ path('app_contact') }}">formulaire de contact</a> ou appelez le support (voir coordonnées sur la page Contact).</p>
+            </div>
+        </section>
+    </div>
+
+    <div class="fr-mt-6v fr-callout">
+        <h3 class="fr-callout__title">Question absente ?</h3>
+        <p class="fr-callout__text">Si votre question n'apparaît pas ici, contactez-nous directement via le formulaire ou consultez prochainement les mises à jour.</p>
+        <a class="fr-btn fr-btn--secondary" href="{{ path('app_contact') }}">Nous contacter</a>
+    </div>
+</section>
+{% endblock %}

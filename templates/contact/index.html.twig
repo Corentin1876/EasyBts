@@ -51,6 +51,17 @@
                 </div>
             {% endfor %}
 
+            {# Erreurs globales du formulaire (ex: contraintes sur DTO) #}
+            {% if form.vars.errors is not empty %}
+                <div class="fr-alert fr-alert--error fr-mb-4w">
+                    <ul class="fr-pl-0" style="list-style: none;">
+                        {% for error in form.vars.errors %}
+                            <li>{{ error.message }}</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            {% endif %}
+
             {{ form_start(form, {'attr': {'class': 'fr-form'}}) }}
                 <fieldset class="fr-fieldset">
                     <legend class="fr-fieldset__legend fr-text--regular" id="contact-legend">
@@ -175,7 +186,7 @@
                     <div class="fr-notice__body">
                         <p class="fr-notice__title">FAQ disponible</p>
                         <p>
-                            Consultez notre <a href="#" class="fr-link">foire aux questions</a> 
+                            Consultez notre <a href="{{ path('app_faq') }}" class="fr-link">foire aux questions</a> 
                             pour trouver des réponses immédiates aux questions les plus fréquentes.
                         </p>
                     </div>
