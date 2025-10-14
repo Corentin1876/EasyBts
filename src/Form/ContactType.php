@@ -2,8 +2,8 @@
 
 namespace App\Form;
 
-use App\Entity\Contact;
 use Symfony\Component\Form\AbstractType;
+use App\Dto\ContactFormData;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\EmailType;
@@ -20,8 +20,8 @@ class ContactType extends AbstractType
         $builder
             ->add('civilite', ChoiceType::class, [
                 'label' => 'Civilité',
+                'placeholder' => 'Sélectionnez votre civilité',
                 'choices' => [
-                    'Sélectionner' => '',
                     'Monsieur' => 'mr',
                     'Madame' => 'mme',
                 ],
@@ -65,8 +65,8 @@ class ContactType extends AbstractType
             ])
             ->add('sujet', ChoiceType::class, [
                 'label' => 'Sujet de votre demande',
+                'placeholder' => 'Sélectionnez un sujet',
                 'choices' => [
-                    'Sélectionner un sujet' => '',
                     'Question sur l\'inscription' => 'inscription',
                     'Documents requis' => 'documents',
                     'Spécialisations disponibles' => 'specialisations',
@@ -104,7 +104,9 @@ class ContactType extends AbstractType
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
-            'data_class' => Contact::class,
+            'data_class' => ContactFormData::class,
+            'csrf_protection' => true,
+            'csrf_token_id' => 'contact_form',
         ]);
     }
 }

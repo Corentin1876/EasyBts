@@ -25,7 +25,4 @@ return [
     '@hotwired/turbo' => [
         'version' => '7.3.0',
     ],
-    '@gouvfr/dsfr' => [
-        'path' => './node_modules/@gouvfr/dsfr/dist/dsfr.module.js',
-    ],
 ];

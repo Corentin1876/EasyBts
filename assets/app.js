@@ -6,6 +6,6 @@ import './bootstrap.js';
  * which should already be in your base.html.twig.
  */
 import './styles/app.css';
-import '@gouvfr/dsfr';
+// DSFR chargé via CDN dans le layout (base.html.twig) ; pas d'import module ici.
 
 console.log('This log comes from assets/app.js - welcome to AssetMapper! 🎉');

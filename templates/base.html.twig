@@ -139,6 +139,9 @@
             </li>
             {% endif %}
             <li class="fr-nav__item">
+                <a class="fr-nav__link" href="{{ path('app_faq') }}" {% if app.request.get('_route') == 'app_faq' %}aria-current="page"{% endif %}>FAQ</a>
+            </li>
+            <li class="fr-nav__item">
                 <a class="fr-nav__link" href="{{ path('app_contact') }}" {% if app.request.get('_route') == 'app_contact' %}aria-current="page"{% endif %}>
                     Contact
                 </a>
@@ -214,6 +217,14 @@
 
     <!-- DSFR JavaScript avec CDN jsDelivr -->
     <script src="https://cdn.jsdelivr.net/npm/@gouvfr/dsfr@1.11.2/dist/dsfr.min.js"></script>
-    {% block javascripts %}{% endblock %}
+    {% block javascripts %}
+        {{ importmap('app') }}
+        <script>
+            // Fallback console trace
+            if (!window.Stimulus) {
+                console.warn('Stimulus non initialisé: vérifier importmap et app.js');
+            }
+        </script>
+    {% endblock %}
 </body>
 </html>
