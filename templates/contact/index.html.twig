@@ -1,0 +1,245 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Contact - Inscription BTS{% endblock %}
+
+{% block body %}
+<!-- Fil d'ariane -->
+<nav class="fr-breadcrumb" aria-label="vous êtes ici :">
+    <button class="fr-breadcrumb__button" aria-expanded="false" aria-controls="breadcrumb-1">Voir le fil d'Ariane</button>
+    <div class="fr-collapse" id="breadcrumb-1">
+        <ol class="fr-breadcrumb__list">
+            <li>
+                <a class="fr-breadcrumb__link" href="{{ path('app_home') }}">Accueil</a>
+            </li>
+            <li>
+                <a class="fr-breadcrumb__link" aria-current="page">Contact</a>
+            </li>
+        </ol>
+    </div>
+</nav>
+
+<!-- En-tête de page -->
+<section class="fr-container fr-py-6v">
+    <div class="fr-grid-row">
+        <div class="fr-col-12">
+            <h1 class="fr-h1">Nous contacter</h1>
+            <p class="fr-text--lead fr-mb-5v">
+                Notre équipe est à votre disposition pour vous accompagner dans votre processus d'inscription.
+                N'hésitez pas à nous contacter pour toute question ou demande d'information.
+            </p>
+        </div>
+    </div>
+</section>
+
+<!-- Formulaire de contact -->
+<section class="fr-container fr-pb-6v">
+    <div class="fr-grid-row fr-grid-row--gutters">
+        <div class="fr-col-12 fr-col-lg-8">
+            {% for message in app.flashes('success') %}
+                <div class="fr-alert fr-alert--success fr-mb-4w">
+                    <p>{{ message }}</p>
+                </div>
+            {% endfor %}
+            {% for message in app.flashes('warning') %}
+                <div class="fr-alert fr-alert--warning fr-mb-4w">
+                    <p>{{ message }}</p>
+                </div>
+            {% endfor %}
+            {% for message in app.flashes('error') %}
+                <div class="fr-alert fr-alert--error fr-mb-4w">
+                    <p>{{ message }}</p>
+                </div>
+            {% endfor %}
+
+            {# Erreurs globales du formulaire (ex: contraintes sur DTO) #}
+            {% if form.vars.errors is not empty %}
+                <div class="fr-alert fr-alert--error fr-mb-4w">
+                    <ul class="fr-pl-0" style="list-style: none;">
+                        {% for error in form.vars.errors %}
+                            <li>{{ error.message }}</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            {% endif %}
+
+            {{ form_start(form, {'attr': {'class': 'fr-form'}}) }}
+                <fieldset class="fr-fieldset">
+                    <legend class="fr-fieldset__legend fr-text--regular" id="contact-legend">
+                        <h2 class="fr-h3">Formulaire de contact</h2>
+                    </legend>
+                    
+                    <div class="fr-fieldset__content">
+                        <!-- Civilité -->
+                        <div class="fr-select-group">
+                            {{ form_label(form.civilite) }}
+                            {{ form_widget(form.civilite) }}
+                            {{ form_help(form.civilite) }}
+                            {{ form_errors(form.civilite) }}
+                        </div>
+
+                        <!-- Nom et Prénom -->
+                        <div class="fr-grid-row fr-grid-row--gutters">
+                            <div class="fr-col-12 fr-col-md-6">
+                                <div class="fr-input-group">
+                                    {{ form_label(form.nom) }}
+                                    {{ form_widget(form.nom) }}
+                                    {{ form_help(form.nom) }}
+                                    {{ form_errors(form.nom) }}
+                                </div>
+                            </div>
+                            <div class="fr-col-12 fr-col-md-6">
+                                <div class="fr-input-group">
+                                    {{ form_label(form.prenom) }}
+                                    {{ form_widget(form.prenom) }}
+                                    {{ form_help(form.prenom) }}
+                                    {{ form_errors(form.prenom) }}
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Email -->
+                        <div class="fr-input-group">
+                            {{ form_label(form.email) }}
+                            {{ form_widget(form.email) }}
+                            {{ form_help(form.email) }}
+                            {{ form_errors(form.email) }}
+                        </div>
+
+                        <!-- Téléphone -->
+                        <div class="fr-input-group">
+                            {{ form_label(form.telephone) }}
+                            {{ form_widget(form.telephone) }}
+                            {{ form_help(form.telephone) }}
+                            {{ form_errors(form.telephone) }}
+                        </div>
+
+                        <!-- Sujet -->
+                        <div class="fr-select-group">
+                            {{ form_label(form.sujet) }}
+                            {{ form_widget(form.sujet) }}
+                            {{ form_help(form.sujet) }}
+                            {{ form_errors(form.sujet) }}
+                        </div>
+
+                        <!-- Message -->
+                        <div class="fr-input-group">
+                            {{ form_label(form.message) }}
+                            {{ form_widget(form.message) }}
+                            {{ form_help(form.message) }}
+                            {{ form_errors(form.message) }}
+                        </div>
+
+                        <!-- Checkbox -->
+                        <div class="fr-checkbox-group">
+                            {{ form_widget(form.consent) }}
+                            {{ form_label(form.consent) }}
+                            {{ form_help(form.consent) }}
+                            {{ form_errors(form.consent) }}
+                        </div>
+                    </div>
+                </fieldset>
+
+                <!-- Boutons -->
+                <div class="fr-btns-group fr-btns-group--inline-reverse fr-btns-group--inline-lg fr-btns-group--right">
+                    <button class="fr-btn" type="submit">
+                        Envoyer le message
+                    </button>
+                    <button class="fr-btn fr-btn--secondary" type="reset">
+                        Effacer
+                    </button>
+                </div>
+            {{ form_end(form) }}
+        </div>
+
+        <!-- Informations de contact -->
+        <div class="fr-col-12 fr-col-lg-4">
+            <div class="fr-callout">
+                <h3 class="fr-callout__title">Informations pratiques</h3>
+                <div class="fr-callout__text">
+                    <h4>Service d'information</h4>
+                    <p class="fr-mb-2v">
+                        <strong>Téléphone :</strong><br>
+                        0 800 12 34 56 (gratuit)
+                    </p>
+                    <p class="fr-mb-2v">
+                        <strong>Horaires :</strong><br>
+                        Du lundi au vendredi<br>
+                        de 9h à 17h
+                    </p>
+                    <p class="fr-mb-2v">
+                        <strong>Email :</strong><br>
+                        <a href="mailto:contact@inscription-bts.gouv.fr">contact@inscription-bts.gouv.fr</a>
+                    </p>
+                </div>
+            </div>
+
+            <div class="fr-alert fr-alert--info fr-mt-3v">
+                <h3 class="fr-alert__title">Temps de réponse</h3>
+                <p>
+                    Nous nous engageons à vous répondre dans un délai maximum de 48h ouvrées.
+                    Pour les demandes urgentes, privilégiez l'appel téléphonique.
+                </p>
+            </div>
+
+            <div class="fr-notice fr-notice--info fr-mt-3v">
+                <div class="fr-container">
+                    <div class="fr-notice__body">
+                        <p class="fr-notice__title">FAQ disponible</p>
+                        <p>
+                            Consultez notre <a href="{{ path('app_faq') }}" class="fr-link">foire aux questions</a> 
+                            pour trouver des réponses immédiates aux questions les plus fréquentes.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Section adresses -->
+<section class="fr-container fr-py-6v">
+    <div class="fr-grid-row">
+        <div class="fr-col-12">
+            <h2 class="fr-h2 fr-mb-4v">Adresses utiles</h2>
+        </div>
+    </div>
+    
+    <div class="fr-grid-row fr-grid-row--gutters">
+        <div class="fr-col-12 fr-col-md-6">
+            <div class="fr-card">
+                <div class="fr-card__body">
+                    <div class="fr-card__content">
+                        <h3 class="fr-card__title">Siège social</h3>
+                        <div class="fr-card__desc">
+                            <p class="fr-mb-1v">
+                                <strong>Ministère de l'Éducation Nationale</strong><br>
+                                Direction des Services Départementaux<br>
+                                110 rue de Grenelle<br>
+                                75007 Paris
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="fr-col-12 fr-col-md-6">
+            <div class="fr-card">
+                <div class="fr-card__body">
+                    <div class="fr-card__content">
+                        <h3 class="fr-card__title">Centre technique</h3>
+                        <div class="fr-card__desc">
+                            <p class="fr-mb-1v">
+                                <strong>Support technique</strong><br>
+                                Service Informatique<br>
+                                25 avenue des Champs-Élysées<br>
+                                75008 Paris
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

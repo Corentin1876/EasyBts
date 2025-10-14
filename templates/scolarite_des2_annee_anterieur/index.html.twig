@@ -1,0 +1,43 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}ScolariteDes2AnneeAnterieur index{% endblock %}
+
+{% block body %}
+    <h1>ScolariteDes2AnneeAnterieur index</h1>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Classe</th>
+                <th>LangueLV1</th>
+                <th>LangueLV2</th>
+                <th>Option_Matiere</th>
+                <th>Etablisement</th>
+                <th>actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for scolarite_des2_annee_anterieur in scolarite_des2_annee_anterieurs %}
+            <tr>
+                <td>{{ scolarite_des2_annee_anterieur.id }}</td>
+                <td>{{ scolarite_des2_annee_anterieur.Classe }}</td>
+                <td>{{ scolarite_des2_annee_anterieur.LangueLV1 }}</td>
+                <td>{{ scolarite_des2_annee_anterieur.LangueLV2 }}</td>
+                <td>{{ scolarite_des2_annee_anterieur.OptionMatiere }}</td>
+                <td>{{ scolarite_des2_annee_anterieur.Etablisement }}</td>
+                <td>
+                    <a href="{{ path('app_scolarite_des2_annee_anterieur_show', {'id': scolarite_des2_annee_anterieur.id}) }}">show</a>
+                    <a href="{{ path('app_scolarite_des2_annee_anterieur_edit', {'id': scolarite_des2_annee_anterieur.id}) }}">edit</a>
+                </td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="7">no records found</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    <a href="{{ path('app_scolarite_des2_annee_anterieur_new') }}">Create new</a>
+{% endblock %}

@@ -1,0 +1,76 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Déclaration d'accessibilité - Inscription BTS{% endblock %}
+
+{% block body %}
+<div class="fr-container fr-py-6w">
+    <div class="fr-grid-row">
+        <div class="fr-col-12 fr-col-lg-8">
+            <nav class="fr-breadcrumb" aria-label="vous êtes ici :">
+                <button class="fr-breadcrumb__button" aria-expanded="false" aria-controls="breadcrumb-2">Voir le fil d'Ariane</button>
+                <div class="fr-collapse" id="breadcrumb-2">
+                    <ol class="fr-breadcrumb__list">
+                        <li><a class="fr-breadcrumb__link" href="{{ path('app_home') }}">Accueil</a></li>
+                        <li><a class="fr-breadcrumb__link" aria-current="page">Accessibilité</a></li>
+                    </ol>
+                </div>
+            </nav>
+            
+            <h1 class="fr-h1">Déclaration d'accessibilité</h1>
+            
+            <p>Le Ministère de l'Éducation Nationale s'engage à rendre son service accessible, conformément à l'article 47 de la loi n° 2005-102 du 11 février 2005.</p>
+            
+            <h2 class="fr-h2">État de conformité</h2>
+            <p>Le site "Inscription BTS" (<code>{{ app.request.getSchemeAndHttpHost() }}</code>) est <strong>non conforme</strong> avec le référentiel général d'amélioration de l'accessibilité (RGAA). Les non-conformités et les dérogations sont énumérées ci-dessous.</p>
+            
+            <div class="fr-alert fr-alert--warning fr-my-4w">
+                <h3 class="fr-alert__title">Conformité en cours</h3>
+                <p>Ce site est actuellement en cours de mise en conformité avec les standards d'accessibilité. Un audit complet sera réalisé avant la mise en production.</p>
+            </div>
+            
+            <h2 class="fr-h2">Résultats des tests</h2>
+            <p>L'audit de conformité RGAA n'a pas encore été réalisé.</p>
+            
+            <h2 class="fr-h2">Contenus non accessibles</h2>
+            <h3 class="fr-h3">Non-conformités</h3>
+            <p>Les contenus listés ci-dessous ne sont pas encore accessibles pour les raisons suivantes :</p>
+            <ul class="fr-list">
+                <li>Certaines images peuvent manquer d'alternatives textuelles pertinentes</li>
+                <li>La navigation au clavier peut présenter des difficultés sur certaines pages</li>
+                <li>Les contrastes de couleurs peuvent ne pas être suffisants dans certaines sections</li>
+                <li>Certains formulaires peuvent manquer d'étiquettes explicites</li>
+            </ul>
+            
+            <h2 class="fr-h2">Amélioration et contact</h2>
+            <p>Si vous n'arrivez pas à accéder à un contenu ou à un service, vous pouvez contacter le responsable du site pour être orienté vers une alternative accessible ou obtenir le contenu sous une autre forme.</p>
+            
+            <ul class="fr-list">
+                <li>Envoyer un message : <a href="{{ path('app_contact') }}">Formulaire de contact</a></li>
+                <li>Envoyer un courriel : <a href="mailto:accessibilite@education.gouv.fr">accessibilite@education.gouv.fr</a></li>
+            </ul>
+            
+            <h2 class="fr-h2">Voie de recours</h2>
+            <p>Cette procédure est à utiliser dans le cas suivant : vous avez signalé au responsable du site internet un défaut d'accessibilité qui vous empêche d'accéder à un contenu ou à un des services du portail et vous n'avez pas obtenu de réponse satisfaisante.</p>
+            
+            <p>Vous pouvez :</p>
+            <ul class="fr-list">
+                <li>Écrire un message au <a href="https://formulaire.defenseurdesdroits.fr/" target="_blank" rel="noopener">Défenseur des droits</a></li>
+                <li>Contacter <a href="https://www.defenseurdesdroits.fr/saisir/delegues" target="_blank" rel="noopener">le délégué du Défenseur des droits dans votre région</a></li>
+                <li>Envoyer un courrier par la poste (gratuit, ne pas mettre de timbre) :<br>
+                Défenseur des droits<br>
+                Libre réponse 71120<br>
+                75342 Paris CEDEX 07</li>
+            </ul>
+            
+            <div class="fr-notice fr-notice--info fr-mt-4w">
+                <div class="fr-container">
+                    <div class="fr-notice__body">
+                        <p class="fr-notice__title">Date de la déclaration</p>
+                        <p>Cette déclaration a été établie le {{ "now"|date("d/m/Y") }}.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

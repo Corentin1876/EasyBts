@@ -1,0 +1,68 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"label": "doctrine migrate",
+			"type": "shell",
+			"command": "php bin/console doctrine:migrations:migrate --no-interaction",
+			"problemMatcher": [
+				"$php"
+			],
+			"group": "build"
+		},
+		{
+			"label": "messenger setup transports",
+			"type": "shell",
+			"command": "php bin/console messenger:setup-transports --no-interaction",
+			"problemMatcher": [
+				"$php"
+			],
+			"group": "build"
+		},
+		{
+			"label": "consume messenger once",
+			"type": "shell",
+			"command": "php bin/console messenger:consume async --limit=1 --time-limit=10 -vv",
+			"problemMatcher": [
+				"$php"
+			],
+			"group": "build"
+		},
+		{
+			"label": "doctrine list tables",
+			"type": "shell",
+			"command": "php -r \"$c=require 'vendor/autoload.php';$k=new Symfony\\Component\\Dotenv\\Dotenv();if(file_exists('.env')){$k->usePutenv()->load('.env');}$params=Doctrine\\DBAL\\DriverManager::getConnection(['url'=>getenv('DATABASE_URL')])->createSchemaManager()->listTableNames();echo implode('\\n',$params);\"",
+			"problemMatcher": [
+				"$php"
+			],
+			"group": "build"
+		},
+		{
+			"label": "test email command",
+			"type": "shell",
+			"command": "php bin/console app:test-email",
+			"problemMatcher": [
+				"$php"
+			],
+			"group": "build"
+		},
+		{
+			"label": "debug messenger",
+			"type": "shell",
+			"command": "php bin/console debug:messenger",
+			"problemMatcher": [
+				"$php"
+			],
+			"group": "build"
+		},
+		{
+			"label": "inspect queue",
+			"type": "shell",
+			"command": "php bin/console app:contact-queue:inspect",
+			"problemMatcher": [
+				"$php"
+			],
+			"group": "build"
+		}
+	]
+}

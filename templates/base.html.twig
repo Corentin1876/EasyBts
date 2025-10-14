@@ -1,17 +1,230 @@
 <!DOCTYPE html>
-<html>
-    <head>
-        <meta charset="UTF-8">
-        <title>{% block title %}Welcome!{% endblock %}</title>
-        <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 128 128%22><text y=%221.2em%22 font-size=%2296%22>⚫️</text><text y=%221.3em%22 x=%220.2em%22 font-size=%2276%22 fill=%22%23fff%22>sf</text></svg>">
-        {% block stylesheets %}
-        {% endblock %}
+<html lang="fr" data-fr-scheme="light">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{% block title %}Inscription BTS - République Française{% endblock %}</title>
+    
+    <!-- DSFR CSS avec CDN jsDelivr (plus fiable) -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@gouvfr/dsfr@1.11.2/dist/dsfr.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@gouvfr/dsfr@1.11.2/dist/utility/icons/icons.min.css">
+    
+    <!-- Favicon -->
+    <link rel="apple-touch-icon" href="https://www.systeme-de-design.gouv.fr/dist/favicon/apple-touch-icon.png">
+    <link rel="icon" href="https://www.systeme-de-design.gouv.fr/dist/favicon/favicon.svg" type="image/svg+xml">
+    <link rel="shortcut icon" href="https://www.systeme-de-design.gouv.fr/dist/favicon/favicon.ico" type="image/x-icon">
+    
+    {% block stylesheets %}{% endblock %}
+</head>
+<body>
+    <!-- Header -->
+    <header class="fr-header" role="banner">
+        <div class="fr-header__body">
+            <div class="fr-container">
+                <div class="fr-header__body-row">
+                    <div class="fr-header__brand fr-enlarge-link">
+                        <div class="fr-header__brand-top">
+                            <div class="fr-header__logo">
+                                <p class="fr-logo">
+                                    République
+                                    <br>Française
+                                </p>
+                            </div>
 
-        {% block javascripts %}
-            {% block importmap %}{{ importmap('app') }}{% endblock %}
-        {% endblock %}
-    </head>
-    <body>
+                            <style>
+                            .fr-header__operator img {
+                                max-height: 60px; /* Ajustez selon la taille du logo République Française */
+                                width: auto;
+                                object-fit: contain;
+                            }
+                            </style>
+
+                            <div class="fr-header__operator">
+                                <img class="fr-responsive-img" src="images/Ministère-Éducation-Nationale-Jeunesse.png" alt="Ministère de l'Éducation Nationale">
+                            </div>
+                            <div class="fr-header__navbar">
+                                <button class="fr-btn--menu fr-btn" data-fr-opened="false" aria-controls="modal-833" aria-haspopup="menu" id="fr-btn-menu-mobile" title="Menu">
+                                    Menu
+                                </button>
+                            </div>
+                        </div>
+                        <div class="fr-header__service">
+                            <a href="{{ path('app_home') }}" title="Accueil - Inscription BTS">
+                                <p class="fr-header__service-title">Inscription BTS</p>
+                            </a>
+                            <p class="fr-header__service-tagline">Plateforme nationale d'inscription</p>
+                        </div>
+                    </div>
+                    <div class="fr-header__tools">
+                        <div class="fr-header__tools-links">
+                            <ul class="fr-btns-group">
+                                {% if app.user %}
+                                <li>
+                                    <a class="fr-btn fr-btn--tertiary-no-outline" href="{{ path('app_logout') }}">
+                                        Déconnexion
+                                    </a>
+                                </li>
+                                <li>
+                                    <span class="fr-btn fr-btn--secondary">
+                                        👤 {{ app.user.prenom }} {{ app.user.nom }}
+                                    </span>
+                                </li>
+                                {% else %}
+                                <li>
+                                    <a class="fr-btn" href="{{ path('app_inscription') }}">
+                                        👤 Se connecter
+                                    </a>
+                                </li>
+                                {% endif %}
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="fr-header__menu fr-modal" id="modal-833" aria-labelledby="fr-btn-menu-mobile">
+            <div class="fr-container">
+                <button class="fr-btn--close fr-btn" aria-controls="modal-833" title="Fermer">
+                    Fermer
+                </button>
+                <div class="fr-header__menu-links">
+                    <nav class="fr-nav" id="navigation-833" role="navigation" aria-label="Menu principal">
+                        <ul class="fr-nav__list">
+                            <li class="fr-nav__item">
+                                <a class="fr-nav__link" href="{{ path('app_home') }}">Accueil</a>
+                            </li>
+                            {% if not app.user %}
+                            <li class="fr-nav__item">
+                                <a class="fr-nav__link" href="{{ path('app_inscription') }}">Inscription</a>
+                            </li>
+                            {% else %}
+                            <li class="fr-nav__item">
+                                <a class="fr-nav__link" href="{{ path('app_bts_liste') }}">Inscription BTS</a>
+                            </li>
+                            {% endif %}
+                            <li class="fr-nav__item">
+                                <a class="fr-nav__link" href="{{ path('app_contact') }}">Contact</a>
+                            </li>
+                            {% if app.user %}
+                            <li class="fr-nav__item">
+                                <a class="fr-nav__link" href="{{ path('app_logout') }}">Déconnexion</a>
+                            </li>
+                            {% endif %}
+                        </ul>
+                    </nav>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Navigation principale -->
+    <nav class="fr-nav" id="navigation" role="navigation" aria-label="Menu principal">
+        <ul class="fr-nav__list">
+            <li class="fr-nav__item">
+                <a class="fr-nav__link" href="{{ path('app_home') }}" {% if app.request.get('_route') == 'app_home' %}aria-current="page"{% endif %}>
+                    Accueil
+                </a>
+            </li>
+            {% if not app.user %}
+            <li class="fr-nav__item">
+                <a class="fr-nav__link" href="{{ path('app_inscription') }}" {% if app.request.get('_route') == 'app_inscription' %}aria-current="page"{% endif %}>
+                    Inscription
+                </a>
+            </li>
+            {% else %}
+            <li class="fr-nav__item">
+                <a class="fr-nav__link" href="{{ path('app_bts_liste') }}" {% if app.request.get('_route') starts with 'app_bts' %}aria-current="page"{% endif %}>
+                    Inscription BTS
+                </a>
+            </li>
+            {% endif %}
+            <li class="fr-nav__item">
+                <a class="fr-nav__link" href="{{ path('app_faq') }}" {% if app.request.get('_route') == 'app_faq' %}aria-current="page"{% endif %}>FAQ</a>
+            </li>
+            <li class="fr-nav__item">
+                <a class="fr-nav__link" href="{{ path('app_contact') }}" {% if app.request.get('_route') == 'app_contact' %}aria-current="page"{% endif %}>
+                    Contact
+                </a>
+            </li>
+        </ul>
+    </nav>
+
+    <!-- Contenu principal -->
+    <main role="main">
         {% block body %}{% endblock %}
-    </body>
+    </main>
+
+    <!-- Footer -->
+    <footer class="fr-footer" role="contentinfo" id="footer">
+        <div class="fr-container">
+            <div class="fr-footer__body">
+                <div class="fr-footer__brand fr-enlarge-link">
+                    <a href="/" title="Retour à l'accueil du site - République française">
+                        <p class="fr-logo">
+                            République
+                            <br>Française
+                        </p>
+                    </a>
+                </div>
+                <div class="fr-footer__content">
+                    <p class="fr-footer__content-desc">
+                        Plateforme officielle d'inscription aux formations BTS.
+                        Service public numérique du Ministère de l'Éducation Nationale.
+                    </p>
+                    <ul class="fr-footer__content-list">
+                        <li class="fr-footer__content-item">
+                            <a class="fr-footer__content-link" target="_blank" href="https://legifrance.gouv.fr">legifrance.gouv.fr</a>
+                        </li>
+                        <li class="fr-footer__content-item">
+                            <a class="fr-footer__content-link" target="_blank" href="https://gouvernement.fr">gouvernement.fr</a>
+                        </li>
+                        <li class="fr-footer__content-item">
+                            <a class="fr-footer__content-link" target="_blank" href="https://service-public.fr">service-public.fr</a>
+                        </li>
+                        <li class="fr-footer__content-item">
+                            <a class="fr-footer__content-link" target="_blank" href="https://data.gouv.fr">data.gouv.fr</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            <div class="fr-footer__bottom">
+                <ul class="fr-footer__bottom-list">
+                    <li class="fr-footer__bottom-item">
+                        <a class="fr-footer__bottom-link" href="/plan-du-site">Plan du site</a>
+                    </li>
+                    <li class="fr-footer__bottom-item">
+                        <a class="fr-footer__bottom-link" href="/accessibilite">Accessibilité: non conforme</a>
+                    </li>
+                    <li class="fr-footer__bottom-item">
+                        <a class="fr-footer__bottom-link" href="/mentions-legales">Mentions légales</a>
+                    </li>
+                    <li class="fr-footer__bottom-item">
+                        <a class="fr-footer__bottom-link" href="/donnees-personnelles">Données personnelles</a>
+                    </li>
+                    <li class="fr-footer__bottom-item">
+                        <a class="fr-footer__bottom-link" href="/gestion-des-cookies">Gestion des cookies</a>
+                    </li>
+                </ul>
+                <div class="fr-footer__bottom-copy">
+                    <p>
+                        Sauf mention explicite de propriété intellectuelle détenue par des tiers, les contenus de ce site sont proposés sous
+                        <a href="https://github.com/etalab/licence-ouverte/blob/master/LO.md" target="_blank">licence etalab-2.0</a>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- DSFR JavaScript avec CDN jsDelivr -->
+    <script src="https://cdn.jsdelivr.net/npm/@gouvfr/dsfr@1.11.2/dist/dsfr.min.js"></script>
+    {% block javascripts %}
+        {{ importmap('app') }}
+        <script>
+            // Fallback console trace
+            if (!window.Stimulus) {
+                console.warn('Stimulus non initialisé: vérifier importmap et app.js');
+            }
+        </script>
+    {% endblock %}
+</body>
 </html>

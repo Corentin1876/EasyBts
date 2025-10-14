@@ -1,0 +1,11 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}New AdhesionMDL{% endblock %}
+
+{% block body %}
+    <h1>Create new AdhesionMDL</h1>
+
+    {{ include('adhesion_mdl/_form.html.twig') }}
+
+    <a href="{{ path('app_adhesion_m_d_l_index') }}">back to list</a>
+{% endblock %}

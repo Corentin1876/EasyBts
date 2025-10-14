@@ -1,0 +1,75 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}InformationEleve index{% endblock %}
+
+{% block body %}
+    <h1>InformationEleve index</h1>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>NiveauClasse</th>
+                <th>Sexe</th>
+                <th>NumeroSecuriterSocial</th>
+                <th>Date_Entree</th>
+                <th>Nationalite</th>
+                <th>Naissance_Departement</th>
+                <th>Naissance_Commune</th>
+                <th>Redoublement</th>
+                <th>Transport</th>
+                <th>TypeTransport</th>
+                <th>NumeroImmatriculationVehicule</th>
+                <th>Specialiter</th>
+                <th>Langues</th>
+                <th>Dernier_Diplome</th>
+                <th>RegimeChoisi</th>
+                <th>DateChoixRegime</th>
+                <th>Autorisation_Droit_Image</th>
+                <th>PosibiliteDeChangementFinTrimestre</th>
+                <th>Acceptation_SMS</th>
+                <th>AutorisationCommunication</th>
+                <th>Est_majeur</th>
+                <th>actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for information_eleve in information_eleves %}
+            <tr>
+                <td>{{ information_eleve.id }}</td>
+                <td>{{ information_eleve.NiveauClasse }}</td>
+                <td>{{ information_eleve.Sexe }}</td>
+                <td>{{ information_eleve.NumeroSecuriterSocial }}</td>
+                <td>{{ information_eleve.DateEntree ? information_eleve.DateEntree|date('Y-m-d') : '' }}</td>
+                <td>{{ information_eleve.Nationalite }}</td>
+                <td>{{ information_eleve.NaissanceDepartement }}</td>
+                <td>{{ information_eleve.NaissanceCommune }}</td>
+                <td>{{ information_eleve.Redoublement ? 'Yes' : 'No' }}</td>
+                <td>{{ information_eleve.Transport ? 'Yes' : 'No' }}</td>
+                <td>{{ information_eleve.TypeTransport }}</td>
+                <td>{{ information_eleve.NumeroImmatriculationVehicule }}</td>
+                <td>{{ information_eleve.Specialiter }}</td>
+                <td>{{ information_eleve.Langues }}</td>
+                <td>{{ information_eleve.DernierDiplome }}</td>
+                <td>{{ information_eleve.RegimeChoisi }}</td>
+                <td>{{ information_eleve.DateChoixRegime ? information_eleve.DateChoixRegime|date('Y-m-d') : '' }}</td>
+                <td>{{ information_eleve.AutorisationDroitImage ? 'Yes' : 'No' }}</td>
+                <td>{{ information_eleve.PosibiliteDeChangementFinTrimestre ? 'Yes' : 'No' }}</td>
+                <td>{{ information_eleve.AcceptationSMS ? 'Yes' : 'No' }}</td>
+                <td>{{ information_eleve.AutorisationCommunication ? 'Yes' : 'No' }}</td>
+                <td>{{ information_eleve.estMajeur ? 'Yes' : 'No' }}</td>
+                <td>
+                    <a href="{{ path('app_information_eleve_show', {'id': information_eleve.id}) }}">show</a>
+                    <a href="{{ path('app_information_eleve_edit', {'id': information_eleve.id}) }}">edit</a>
+                </td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="23">no records found</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    <a href="{{ path('app_information_eleve_new') }}">Create new</a>
+{% endblock %}

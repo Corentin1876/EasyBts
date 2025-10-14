@@ -1,0 +1,38 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}FormulaireInscription{% endblock %}
+
+{% block body %}
+    <h1>FormulaireInscription</h1>
+
+    <table class="table">
+        <tbody>
+            <tr>
+                <th>Id</th>
+                <td>{{ formulaire_inscription.id }}</td>
+            </tr>
+            <tr>
+                <th>Type_formulaire</th>
+                <td>{{ formulaire_inscription.typeFormulaire }}</td>
+            </tr>
+            <tr>
+                <th>Est_signe</th>
+                <td>{{ formulaire_inscription.estSigne ? 'Yes' : 'No' }}</td>
+            </tr>
+            <tr>
+                <th>Date_soumission</th>
+                <td>{{ formulaire_inscription.dateSoumission ? formulaire_inscription.dateSoumission|date('Y-m-d') : '' }}</td>
+            </tr>
+            <tr>
+                <th>Statut</th>
+                <td>{{ formulaire_inscription.statut }}</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <a href="{{ path('app_formulaire_inscription_index') }}">back to list</a>
+
+    <a href="{{ path('app_formulaire_inscription_edit', {'id': formulaire_inscription.id}) }}">edit</a>
+
+    {{ include('formulaire_inscription/_delete_form.html.twig') }}
+{% endblock %}

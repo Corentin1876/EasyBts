@@ -1,0 +1,35 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}TypeResponsable index{% endblock %}
+
+{% block body %}
+    <h1>TypeResponsable index</h1>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Nom</th>
+                <th>actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for type_responsable in type_responsables %}
+            <tr>
+                <td>{{ type_responsable.id }}</td>
+                <td>{{ type_responsable.nom }}</td>
+                <td>
+                    <a href="{{ path('app_type_responsable_show', {'id': type_responsable.id}) }}">show</a>
+                    <a href="{{ path('app_type_responsable_edit', {'id': type_responsable.id}) }}">edit</a>
+                </td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="3">no records found</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    <a href="{{ path('app_type_responsable_new') }}">Create new</a>
+{% endblock %}

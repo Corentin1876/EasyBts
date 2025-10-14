@@ -1,0 +1,11 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}New FormulaireInscription{% endblock %}
+
+{% block body %}
+    <h1>Create new FormulaireInscription</h1>
+
+    {{ include('formulaire_inscription/_form.html.twig') }}
+
+    <a href="{{ path('app_formulaire_inscription_index') }}">back to list</a>
+{% endblock %}

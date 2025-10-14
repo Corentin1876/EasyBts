@@ -1,0 +1,37 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}AdhesionMDL index{% endblock %}
+
+{% block body %}
+    <h1>AdhesionMDL index</h1>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Montant_Adhesion</th>
+                <th>Mode_Reglement</th>
+                <th>actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for adhesion_m_d_l in adhesion_m_d_ls %}
+            <tr>
+                <td>{{ adhesion_m_d_l.id }}</td>
+                <td>{{ adhesion_m_d_l.MontantAdhesion }}</td>
+                <td>{{ adhesion_m_d_l.ModeReglement }}</td>
+                <td>
+                    <a href="{{ path('app_adhesion_m_d_l_show', {'id': adhesion_m_d_l.id}) }}">show</a>
+                    <a href="{{ path('app_adhesion_m_d_l_edit', {'id': adhesion_m_d_l.id}) }}">edit</a>
+                </td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="4">no records found</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    <a href="{{ path('app_adhesion_m_d_l_new') }}">Create new</a>
+{% endblock %}

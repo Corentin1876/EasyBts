@@ -21,9 +21,11 @@ framework:
             messenger.bus.default: []
 
         routing:
-            Symfony\Component\Mailer\Messenger\SendEmailMessage: async
+            # Les notifications (chat / sms) restent asynchrones
             Symfony\Component\Notifier\Message\ChatMessage: async
             Symfony\Component\Notifier\Message\SmsMessage: async
 
-            # Route your messages to the transports
-            # 'App\Message\YourMessage': async
+            # En retirant le routing pour App\Message\ContactMessage, il sera traité immédiatement (synchrone)
+
+            # IMPORTANT: On ne route plus SendEmailMessage vers async pour que l'envoi email
+            # se fasse directement dans le handler (pas de double file d'attente).

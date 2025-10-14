@@ -1,0 +1,184 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Accueil - Inscription BTS{% endblock %}
+
+{% block body %}
+{% if not app.user %}
+<!-- Hero Section -->
+<section class="fr-container fr-py-8v">
+    <div class="fr-grid-row fr-grid-row--center">
+        <div class="fr-col-12 fr-col-md-8">
+            <h1 class="fr-h1 fr-mb-3v">Inscription aux formations BTS</h1>
+            <p class="fr-text--lead fr-mb-5v">
+                Plateforme officielle d'inscription aux Brevets de Technicien Supérieur.
+                Déposez votre candidature en ligne en quelques étapes simples.
+            </p>
+            <div class="fr-btns-group">
+                <a class="fr-btn fr-btn--lg" href="{{ path('app_inscription') }}">
+                    Commencer mon inscription
+                </a>
+                <a class="fr-btn fr-btn--secondary fr-btn--lg" href="#informations">
+                    En savoir plus
+                </a>
+            </div>
+        </div>
+    </div>
+</section>
+{% endif %}
+
+<!-- Section étapes -->
+<section class="fr-container fr-py-6v" id="informations">
+    <div class="fr-grid-row">
+        <div class="fr-col-12">
+            <h2 class="fr-h2 fr-mb-5v">Comment s'inscrire ?</h2>
+        </div>
+    </div>
+    <div class="fr-grid-row fr-grid-row--gutters">
+        <div class="fr-col-12 fr-col-md-4">
+            <div class="fr-card fr-card--no-border fr-card--no-background">
+                <div class="fr-card__body">
+                    <div class="fr-card__content">
+                        <h3 class="fr-card__title">
+                            <span class="fr-icon-user-line fr-icon--lg fr-mr-2v" aria-hidden="true"></span>
+                            1. Créez votre compte
+                        </h3>
+                        <p class="fr-card__desc">
+                            Inscrivez-vous sur la plateforme en renseignant vos informations personnelles.
+                            Vous recevrez un email de confirmation.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="fr-col-12 fr-col-md-4">
+            <div class="fr-card fr-card--no-border fr-card--no-background">
+                <div class="fr-card__body">
+                    <div class="fr-card__content">
+                        <h3 class="fr-card__title">
+                            <span class="fr-icon-file-text-line fr-icon--lg fr-mr-2v" aria-hidden="true"></span>
+                            2. Remplissez votre dossier
+                        </h3>
+                        <p class="fr-card__desc">
+                            Complétez les formulaires d'inscription avec vos informations scolaires,
+                            vos diplômes et votre projet professionnel.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="fr-col-12 fr-col-md-4">
+            <div class="fr-card fr-card--no-border fr-card--no-background">
+                <div class="fr-card__body">
+                    <div class="fr-card__content">
+                        <h3 class="fr-card__title">
+                            <span class="fr-icon-send-plane-line fr-icon--lg fr-mr-2v" aria-hidden="true"></span>
+                            3. Soumettez votre candidature
+                        </h3>
+                        <p class="fr-card__desc">
+                            Vérifiez et validez votre dossier. Vous pourrez suivre l'évolution
+                            de votre candidature depuis votre espace personnel.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Section documents requis -->
+<section class="fr-container fr-py-6v">
+    <div class="fr-grid-row">
+        <div class="fr-col-12 fr-col-lg-8">
+            <h2 class="fr-h2 fr-mb-3v">Documents requis</h2>
+            <p class="fr-mb-3v">Préparez les documents suivants avant de commencer votre inscription :</p>
+            <ul class="fr-list">
+                <li>Pièce d'identité en cours de validité</li>
+                <li>Diplômes et relevés de notes (Baccalauréat ou équivalent)</li>
+                <li>CV récent</li>
+                <li>Lettre de motivation</li>
+                <li>Certificat de langue (si applicable)</li>
+                <li>Justificatif de domicile</li>
+            </ul>
+        </div>
+        <div class="fr-col-12 fr-col-lg-4">
+            <div class="fr-callout">
+                <h3 class="fr-callout__title">Besoin d'aide ?</h3>
+                <p class="fr-callout__text">
+                    Notre équipe support est disponible pour vous accompagner dans votre inscription.
+                </p>
+                <a class="fr-btn fr-btn--secondary" href="{{ path('app_contact') }}">
+                    Nous contacter
+                </a>
+            </div>
+        </div>
+    </div> 
+</section>
+
+<!-- Section spécialisations -->
+<section class="fr-container fr-py-6v">
+    <div class="fr-grid-row">
+        <div class="fr-col-12">
+            <h2 class="fr-h2 fr-mb-5v">Spécialisations disponibles</h2>
+        </div>
+    </div>
+    <div class="fr-grid-row fr-grid-row--gutters">
+        <div class="fr-col-12 fr-col-md-6 fr-col-lg-3">
+            <div class="fr-card fr-enlarge-link">
+                <div class="fr-card__body">
+                    <div class="fr-card__content">
+                        <h3 class="fr-card__title">
+                            <a href="#" class="fr-card__link">BTS Informatique</a>
+                        </h3>
+                        <p class="fr-card__desc fr-text--sm">
+                            Services informatiques aux organisations, développement d'applications.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="fr-col-12 fr-col-md-6 fr-col-lg-3">
+            <div class="fr-card fr-enlarge-link">
+                <div class="fr-card__body">
+                    <div class="fr-card__content">
+                        <h3 class="fr-card__title">
+                            <a href="#" class="fr-card__link">BTS Commerce</a>
+                        </h3>
+                        <p class="fr-card__desc fr-text--sm">
+                            Management commercial opérationnel, négociation et digitalisation.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="fr-col-12 fr-col-md-6 fr-col-lg-3">
+            <div class="fr-card fr-enlarge-link">
+                <div class="fr-card__body">
+                    <div class="fr-card__content">
+                        <h3 class="fr-card__title">
+                            <a href="#" class="fr-card__link">BTS Comptabilité</a>
+                        </h3>
+                        <p class="fr-card__desc fr-text--sm">
+                            Comptabilité et gestion des organisations, finance d'entreprise.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="fr-col-12 fr-col-md-6 fr-col-lg-3">
+            <div class="fr-card fr-enlarge-link">
+                <div class="fr-card__body">
+                    <div class="fr-card__content">
+                        <h3 class="fr-card__title">
+                            <a href="#" class="fr-card__link">Autres spécialisations</a>
+                        </h3>
+                        <p class="fr-card__desc fr-text--sm">
+                            Découvrez toutes les formations BTS disponibles.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+{% endblock %}
