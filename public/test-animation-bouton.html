@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Animation Bouton Sauvegarder</title>
+    <link rel="stylesheet" href="https://unpkg.com/@gouvfr/dsfr@latest/dist/dsfr.min.css">
+    <style>
+        /* Notification Toast */
+        .notification-toast {
+            position: fixed;
+            top: 2rem;
+            right: 2rem;
+            z-index: 9999;
+            min-width: 320px;
+            max-width: 500px;
+            opacity: 0;
+            transform: translateX(400px);
+            transition: all 0.3s ease-in-out;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+        }
+
+        .notification-toast.show {
+            opacity: 1;
+            transform: translateX(0);
+        }
+
+        /* Animation du bouton de sauvegarde */
+        .fr-btn--loading {
+            position: relative;
+            pointer-events: none;
+        }
+
+        .fr-btn--success {
+            background-color: var(--success-425-625) !important;
+            border-color: var(--success-425-625) !important;
+        }
+
+        .fr-btn--error {
+            background-color: var(--error-425-625) !important;
+            border-color: var(--error-425-625) !important;
+        }
+
+        /* Animation de rotation pour l'icône de chargement */
+        .fr-icon-spin {
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            from {
+                transform: rotate(0deg);
+            }
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* Responsive pour mobile */
+        @media (max-width: 768px) {
+            .notification-toast {
+                top: 1rem;
+                right: 1rem;
+                left: 1rem;
+                max-width: calc(100% - 2rem);
+                min-width: auto;
+            }
+        }
+
+        .test-container {
+            max-width: 800px;
+            margin: 4rem auto;
+            padding: 2rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <h1 class="fr-h1">Test Animation Bouton Sauvegarder</h1>
+        <p class="fr-text--lead">Cliquez sur le bouton pour tester l'animation de sauvegarde</p>
+        
+        <div class="fr-btns-group fr-mt-4v">
+            <button class="fr-btn fr-btn--secondary" type="button" id="btn-save-test">
+                <span class="fr-icon-save-line fr-icon--sm" aria-hidden="true"></span>
+                Sauvegarder et continuer plus tard
+            </button>
+            <button class="fr-btn fr-btn--secondary" type="button" id="btn-error-test">
+                <span class="fr-icon-save-line fr-icon--sm" aria-hidden="true"></span>
+                Tester erreur
+            </button>
+        </div>
+
+        <div class="fr-alert fr-alert--info fr-mt-4v">
+            <p><strong>Test des animations :</strong></p>
+            <ul>
+                <li>Bouton 1 : Simule une sauvegarde réussie avec notification verte</li>
+                <li>Bouton 2 : Simule une erreur avec notification rouge</li>
+            </ul>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const btnSaveTest = document.getElementById('btn-save-test');
+            const btnErrorTest = document.getElementById('btn-error-test');
+
+            // Fonction pour afficher une notification de succès
+            function showSuccessNotification() {
+                const notification = document.createElement('div');
+                notification.className = 'fr-alert fr-alert--success notification-toast';
+                notification.innerHTML = `
+                    <p class="fr-alert__title">✓ Vos données ont été sauvegardées avec succès</p>
+                `;
+                document.body.appendChild(notification);
+                
+                setTimeout(() => notification.classList.add('show'), 10);
+                
+                setTimeout(() => {
+                    notification.classList.remove('show');
+                    setTimeout(() => notification.remove(), 300);
+                }, 4000);
+            }
+
+            // Fonction pour afficher une notification d'erreur
+            function showErrorNotification() {
+                const notification = document.createElement('div');
+                notification.className = 'fr-alert fr-alert--error notification-toast';
+                notification.innerHTML = `
+                    <p class="fr-alert__title">✗ Erreur lors de la sauvegarde. Veuillez réessayer.</p>
+                `;
+                document.body.appendChild(notification);
+                
+                setTimeout(() => notification.classList.add('show'), 10);
+                
+                setTimeout(() => {
+                    notification.classList.remove('show');
+                    setTimeout(() => notification.remove(), 300);
+                }, 4000);
+            }
+
+            // Test sauvegarde réussie
+            btnSaveTest.addEventListener('click', function() {
+                console.log('Test sauvegarde réussie');
+                
+                // Désactiver et afficher loading
+                btnSaveTest.disabled = true;
+                btnSaveTest.innerHTML = '<span class="fr-icon-refresh-line fr-icon--sm fr-icon-spin" aria-hidden="true"></span> Sauvegarde en cours...';
+                btnSaveTest.classList.add('fr-btn--loading');
+
+                // Simuler un délai réseau
+                setTimeout(() => {
+                    // Animation de succès
+                    btnSaveTest.classList.remove('fr-btn--loading');
+                    btnSaveTest.classList.add('fr-btn--success');
+                    btnSaveTest.innerHTML = '<span class="fr-icon-check-line fr-icon--sm" aria-hidden="true"></span> Sauvegardé avec succès !';
+                    
+                    // Afficher notification
+                    showSuccessNotification();
+                    
+                    // Réinitialiser après 3 secondes
+                    setTimeout(() => {
+                        btnSaveTest.innerHTML = '<span class="fr-icon-save-line fr-icon--sm" aria-hidden="true"></span> Sauvegarder et continuer plus tard';
+                        btnSaveTest.classList.remove('fr-btn--success');
+                        btnSaveTest.disabled = false;
+                    }, 3000);
+                }, 1500); // Simule 1.5s de requête
+            });
+
+            // Test erreur
+            btnErrorTest.addEventListener('click', function() {
+                console.log('Test erreur');
+                
+                // Désactiver et afficher loading
+                btnErrorTest.disabled = true;
+                btnErrorTest.innerHTML = '<span class="fr-icon-refresh-line fr-icon--sm fr-icon-spin" aria-hidden="true"></span> Sauvegarde en cours...';
+                btnErrorTest.classList.add('fr-btn--loading');
+
+                // Simuler un délai réseau
+                setTimeout(() => {
+                    // Animation d'erreur
+                    btnErrorTest.classList.remove('fr-btn--loading');
+                    btnErrorTest.classList.add('fr-btn--error');
+                    btnErrorTest.innerHTML = '<span class="fr-icon-error-warning-line fr-icon--sm" aria-hidden="true"></span> Erreur de sauvegarde';
+                    
+                    // Afficher notification d'erreur
+                    showErrorNotification();
+                    
+                    // Réinitialiser après 3 secondes
+                    setTimeout(() => {
+                        btnErrorTest.innerHTML = '<span class="fr-icon-save-line fr-icon--sm" aria-hidden="true"></span> Tester erreur';
+                        btnErrorTest.classList.remove('fr-btn--error');
+                        btnErrorTest.disabled = false;
+                    }, 3000);
+                }, 1500); // Simule 1.5s de requête
+            });
+        });
+    </script>
+</body>
+</html>

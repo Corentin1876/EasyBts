@@ -20,51 +20,82 @@ class BtsInscriptionController extends AbstractController
     #[Route('/bts', name: 'app_bts_liste')]
     #[IsGranted('ROLE_USER')]
     public function liste(
-        SpecialisationRepository $specialisationRepository,
-        Request $request
+        EntityManagerInterface $entityManager,
+        SpecialisationRepository $specialisationRepository
     ): Response {
-        $session = $request->getSession();
-        $btsEnCours = null;
-        $btsEnCoursId = null;
-
-        // Chercher s'il y a un BTS en cours d'inscription dans la session
-        $allSpecialisations = $specialisationRepository->findAll();
-        foreach ($allSpecialisations as $spec) {
-            $sessionKey = 'bts_inscription_' . $spec->getId();
-            if ($session->has($sessionKey)) {
-                $btsEnCours = $spec;
-                $btsEnCoursId = $spec->getId();
-                break;
+        $user = $this->getUser();
+        $brouillon = null;
+        $specialisation = null;
+        
+        // Chercher un brouillon existant pour cet utilisateur
+        if ($user) {
+            $repo = $entityManager->getRepository(FormulaireInscription::class);
+            $brouillon = $repo->findOneBy([
+                'remplit_formulaire' => $user,
+                'statut' => 'brouillon',
+            ]);
+            
+            // Extraire la spécialisation du type_formulaire
+            if ($brouillon && $brouillon->getTypeFormulaire()) {
+                $typeFormulaire = $brouillon->getTypeFormulaire();
+                // Format: "BTS - Nom de la spécialisation"
+                $nomSpecialisation = str_replace('BTS - ', '', $typeFormulaire);
+                $specialisation = $specialisationRepository->findOneBy(['nom' => $nomSpecialisation]);
             }
         }
 
-        // Si un BTS est en cours, afficher uniquement celui-là
-        if ($btsEnCours) {
-            $specialisations = [$btsEnCours];
-        } else {
-            // Sinon, afficher tous les BTS disponibles
-            $specialisations = $allSpecialisations;
-        }
-
-        return $this->render('bts/liste.html.twig', [
-            'specialisations' => $specialisations,
-            'btsEnCours' => $btsEnCours,
+        return $this->render('bts/accueil.html.twig', [
+            'brouillon' => $brouillon,
+            'specialisation' => $specialisation,
         ]);
     }
 
-    #[Route('/bts/inscription/{id}/reset', name: 'app_bts_inscription_reset')]
+    #[Route('/bts/choix', name: 'app_bts_choix')]
+    #[IsGranted('ROLE_USER')]
+    public function choix(
+        SpecialisationRepository $specialisationRepository,
+        EntityManagerInterface $entityManager
+    ): Response {
+        $user = $this->getUser();
+        $brouillon = null;
+        
+        // Vérifier s'il y a déjà un brouillon
+        if ($user) {
+            $repo = $entityManager->getRepository(FormulaireInscription::class);
+            $brouillon = $repo->findOneBy([
+                'remplit_formulaire' => $user,
+                'statut' => 'brouillon',
+            ]);
+        }
+
+        $specialisations = $specialisationRepository->findAll();
+
+        return $this->render('bts/choix.html.twig', [
+            'specialisations' => $specialisations,
+            'brouillon' => $brouillon,
+        ]);
+    }
+
+    #[Route('/bts/inscription/reset', name: 'app_bts_inscription_reset')]
     #[IsGranted('ROLE_USER')]
     public function reset(
-        Specialisation $specialisation,
-        Request $request
+        EntityManagerInterface $entityManager
     ): Response {
-        $session = $request->getSession();
-        $sessionKey = 'bts_inscription_' . $specialisation->getId();
-        if ($session->has($sessionKey)) {
-            $session->remove($sessionKey);
-            $this->addFlash('success', 'Le dossier d\'inscription pour « ' . $specialisation->getNom() . ' » a été supprimé. Vous pouvez choisir une autre spécialisation.');
-        } else {
-            $this->addFlash('info', 'Aucun dossier en cours pour cette spécialisation.');
+        $user = $this->getUser();
+        if ($user) {
+            $repo = $entityManager->getRepository(FormulaireInscription::class);
+            $brouillon = $repo->findOneBy([
+                'remplit_formulaire' => $user,
+                'statut' => 'brouillon',
+            ]);
+            
+            if ($brouillon) {
+                $entityManager->remove($brouillon);
+                $entityManager->flush();
+                $this->addFlash('success', 'Votre dossier d\'inscription a été supprimé.');
+            } else {
+                $this->addFlash('info', 'Aucun dossier en cours.');
+            }
         }
         return $this->redirectToRoute('app_bts_liste');
     }
@@ -73,31 +104,121 @@ class BtsInscriptionController extends AbstractController
     #[IsGranted('ROLE_USER')]
     public function inscription(
         Specialisation $specialisation,
-        Request $request
+        EntityManagerInterface $entityManager
     ): Response {
-        // Charger la progression depuis la session
-        $session = $request->getSession();
-        $savedData = $session->get('bts_inscription_' . $specialisation->getId(), '{}');
+        $user = $this->getUser();
+        $savedData = '{}';
+        
+        if ($user instanceof \App\Entity\Utilisateur) {
+            $repo = $entityManager->getRepository(FormulaireInscription::class);
+            $brouillon = $repo->findOneBy([
+                'remplit_formulaire' => $user,
+                'type_formulaire' => 'BTS - ' . $specialisation->getNom(),
+            ]);
+            
+            // Préparer les données par défaut depuis l'utilisateur
+            $defaultData = [
+                'nom' => $user->getNom() ?? '',
+                'prenom' => $user->getPrenom() ?? '',
+                'email_eleve' => $user->getEmail() ?? '',
+                'tel_eleve' => $user->getTelephone() ?? '',
+                'date_naissance' => $user->getDateNaissance() ? $user->getDateNaissance()->format('Y-m-d') : '',
+                'adresse_resp1' => $user->getAdresse() ?? '',
+                'sexe' => $user->getUser() ?? '', // civilité
+            ];
+            
+            if ($brouillon && $brouillon->getStatut() === 'brouillon') {
+                // Fusionner les données du brouillon avec les données par défaut
+                $brouillonData = $brouillon->getDraftJson() ? json_decode($brouillon->getDraftJson(), true) : [];
+                $mergedData = array_merge($defaultData, $brouillonData);
+                
+                $savedData = json_encode([
+                    'currentStep' => $brouillon->getDraftStep(),
+                    'formData' => $mergedData
+                ]);
+            } else {
+                // Première fois : utiliser les données de l'utilisateur
+                $savedData = json_encode([
+                    'currentStep' => 1,
+                    'formData' => $defaultData
+                ]);
+            }
+        }
 
-        return $this->render('bts/formulaire_inscription.html.twig', [
+        $response = $this->render('bts/formulaire_inscription.html.twig', [
             'specialisation' => $specialisation,
-            'savedData' => is_string($savedData) ? $savedData : json_encode($savedData),
+            'savedData' => $savedData,
         ]);
+        
+        // Empêcher le cache du navigateur pour que les données soient toujours fraîches
+        $response->headers->set('Cache-Control', 'no-cache, no-store, must-revalidate');
+        $response->headers->set('Pragma', 'no-cache');
+        $response->headers->set('Expires', '0');
+        
+        return $response;
     }
 
     #[Route('/bts/inscription/{id}/save', name: 'app_bts_inscription_save', methods: ['POST'])]
     #[IsGranted('ROLE_USER')]
     public function saveProgress(
         Request $request,
-        Specialisation $specialisation
+        Specialisation $specialisation,
+        EntityManagerInterface $entityManager
     ): Response {
+        $user = $this->getUser();
+        if (!$user) {
+            return $this->json(['success' => false, 'error' => 'Non authentifié'], 401);
+        }
+        
         $data = json_decode($request->getContent(), true);
-
-        // Sauvegarder dans la session
-        $session = $request->getSession();
-        $session->set('bts_inscription_' . $specialisation->getId(), $data);
-
-        return $this->json(['success' => true]);
+        if (!$data) {
+            return $this->json(['success' => false, 'error' => 'Données invalides'], 400);
+        }
+        
+        $type = 'BTS - ' . $specialisation->getNom();
+        $repo = $entityManager->getRepository(FormulaireInscription::class);
+        
+        // Chercher un brouillon existant
+        $formulaire = $repo->findOneBy([
+            'remplit_formulaire' => $user,
+            'type_formulaire' => $type,
+        ]);
+        
+        if (!$formulaire) {
+            // Créer un nouveau brouillon
+            $formulaire = new FormulaireInscription();
+            $formulaire->setRemplitFormulaire($user);
+            $formulaire->setTypeFormulaire($type);
+            $formulaire->setStatut('brouillon');
+            $formulaire->setEstSigne(false);
+            $formulaire->setDateSoumission(new \DateTime()); // Requis par l'entité
+            $entityManager->persist($formulaire);
+        }
+        
+        // Mise à jour des données de brouillon
+        $formulaire->setDraftJson(json_encode($data['formData'] ?? []));
+        $formulaire->setDraftStep(isset($data['currentStep']) ? (int)$data['currentStep'] : 1);
+        $formulaire->setDraftUpdatedAt(new \DateTime());
+        
+        // Si le formulaire existe mais n'est pas un brouillon, le repasser en brouillon
+        if ($formulaire->getStatut() !== 'brouillon') {
+            $formulaire->setStatut('brouillon');
+        }
+        
+        try {
+            $entityManager->flush();
+            return $this->json([
+                'success' => true, 
+                'draftId' => $formulaire->getId(),
+                'step' => $formulaire->getDraftStep(),
+                'message' => 'Sauvegarde réussie en base de données'
+            ]);
+        } catch (\Exception $e) {
+            return $this->json([
+                'success' => false, 
+                'error' => 'Erreur: ' . $e->getMessage()
+            ], 500);
+        }
     }
 
     #[Route('/bts/inscription/{id}/submit', name: 'app_bts_inscription_submit', methods: ['POST'])]

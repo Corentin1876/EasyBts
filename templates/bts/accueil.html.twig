@@ -1,0 +1,153 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Inscription BTS{% endblock %}
+
+{% block body %}
+{% if app.user %}
+<!-- Fil d'ariane -->
+<nav class="fr-breadcrumb" aria-label="vous êtes ici :">
+    <button class="fr-breadcrumb__button" aria-expanded="false" aria-controls="breadcrumb-bts">Voir le fil d'Ariane</button>
+    <div class="fr-collapse" id="breadcrumb-bts">
+        <ol class="fr-breadcrumb__list">
+            <li>
+                <a class="fr-breadcrumb__link" href="{{ path('app_home') }}">Accueil</a>
+            </li>
+            <li>
+                <a class="fr-breadcrumb__link" aria-current="page">Inscription BTS</a>
+            </li>
+        </ol>
+    </div>
+</nav>
+
+<!-- En-tête de page -->
+<section class="fr-container fr-py-6v">
+    <div class="fr-grid-row fr-grid-row--center">
+        <div class="fr-col-12 fr-col-md-8">
+            <h1 class="fr-h1 fr-mb-3v">Inscription aux formations BTS</h1>
+            
+            {% if brouillon %}
+            <!-- Inscription en cours -->
+            <div class="fr-alert fr-alert--info fr-mb-4v">
+                <h3 class="fr-alert__title">Vous avez une inscription en cours</h3>
+                <p class="fr-mb-2v">Votre dossier pour <strong>{{ brouillon.typeFormulaire }}</strong> est sauvegardé.</p>
+                {% if brouillon.draftUpdatedAt %}
+                <p class="fr-text--sm fr-mb-0">Dernière sauvegarde : {{ brouillon.draftUpdatedAt|date('d/m/Y à H:i') }}</p>
+                {% endif %}
+            </div>
+            
+            <div class="fr-btns-group fr-btns-group--inline-md fr-btns-group--center">
+                {% if specialisation %}
+                <a class="fr-btn fr-btn--lg" href="{{ path('app_bts_inscription', {'id': specialisation.id}) }}" data-turbo="false">
+                    <span class="fr-icon-edit-line fr-icon--lg fr-mr-1w" aria-hidden="true"></span>
+                    Continuer mon inscription
+                </a>
+                {% else %}
+                <a class="fr-btn fr-btn--lg" href="{{ path('app_bts_choix') }}" data-turbo="false">
+                    <span class="fr-icon-edit-line fr-icon--lg fr-mr-1w" aria-hidden="true"></span>
+                    Continuer mon inscription
+                </a>
+                {% endif %}
+                <a class="fr-btn fr-btn--lg fr-btn--secondary" href="{{ path('app_bts_inscription_reset') }}" onclick="return confirm('Êtes-vous sûr de vouloir supprimer votre dossier en cours ?');" data-turbo="false">
+                    <span class="fr-icon-delete-line fr-icon--lg fr-mr-1w" aria-hidden="true"></span>
+                    Recommencer une nouvelle inscription
+                </a>
+            </div>
+            {% else %}
+            <!-- Aucune inscription en cours -->
+            <p class="fr-text--lead fr-mb-4v">
+                Bienvenue dans le processus d'inscription aux formations BTS. Vous allez pouvoir remplir votre dossier d'inscription étape par étape.
+            </p>
+            
+            <div class="fr-callout fr-mb-4v">
+                <h3 class="fr-callout__title">Avant de commencer</h3>
+                <p class="fr-callout__text">
+                    Préparez les documents suivants :
+                </p>
+                <ul>
+                    <li>Vos informations personnelles (date de naissance, lieu de naissance, etc.)</li>
+                    <li>Votre parcours scolaire des 2 dernières années</li>
+                    <li>Les coordonnées de vos responsables légaux</li>
+                    <li>Vos choix de langues vivantes</li>
+                </ul>
+                <p class="fr-text--sm fr-mb-0">
+                    <span class="fr-icon-information-line fr-icon--sm fr-mr-1v" aria-hidden="true"></span>
+                    Vous pourrez sauvegarder votre progression à tout moment et revenir plus tard.
+                </p>
+            </div>
+            
+            <div class="fr-btns-group fr-btns-group--center">
+                <a class="fr-btn fr-btn--lg" href="{{ path('app_bts_choix') }}" data-turbo="false">
+                    <span class="fr-icon-add-line fr-icon--lg fr-mr-1w" aria-hidden="true"></span>
+                    Commencer une nouvelle inscription
+                </a>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</section>
+
+<!-- Informations complémentaires -->
+<section class="fr-container fr-pb-6v">
+    <div class="fr-grid-row fr-grid-row--gutters fr-grid-row--center">
+        <div class="fr-col-12 fr-col-md-4">
+            <div class="fr-card fr-card--no-border">
+                <div class="fr-card__body">
+                    <div class="fr-card__content">
+                        <h3 class="fr-card__title">
+                            <span class="fr-icon-save-line fr-icon--lg fr-mr-1w" aria-hidden="true"></span>
+                            Sauvegarde à la demande
+                        </h3>
+                        <p class="fr-card__desc">
+                            Vous pouvez sauvegarder votre progression à tout moment et reprendre plus tard, même après déconnexion.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="fr-col-12 fr-col-md-4">
+            <div class="fr-card fr-card--no-border">
+                <div class="fr-card__body">
+                    <div class="fr-card__content">
+                        <h3 class="fr-card__title">
+                            <span class="fr-icon-lock-line fr-icon--lg fr-mr-1w" aria-hidden="true"></span>
+                            Données sécurisées
+                        </h3>
+                        <p class="fr-card__desc">
+                            Vos informations sont stockées de manière sécurisée et liées à votre compte personnel.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="fr-col-12 fr-col-md-4">
+            <div class="fr-card fr-card--no-border">
+                <div class="fr-card__body">
+                    <div class="fr-card__content">
+                        <h3 class="fr-card__title">
+                            <span class="fr-icon-arrow-go-forward-line fr-icon--lg fr-mr-1w" aria-hidden="true"></span>
+                            Formulaire guidé
+                        </h3>
+                        <p class="fr-card__desc">
+                            Le formulaire vous guide étape par étape pour remplir toutes les informations nécessaires.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% else %}
+<!-- Message pour utilisateurs non connectés -->
+<section class="fr-container fr-py-6v">
+    <div class="fr-grid-row fr-grid-row--center">
+        <div class="fr-col-12 fr-col-md-6">
+            <div class="fr-alert fr-alert--warning">
+                <h3 class="fr-alert__title">Connexion requise</h3>
+                <p>Vous devez être connecté pour accéder aux inscriptions BTS.</p>
+                <a class="fr-btn fr-mt-2v" href="{{ path('app_inscription') }}">Se connecter</a>
+            </div>
+        </div>
+    </div>
+</section>
+{% endif %}
+{% endblock %}

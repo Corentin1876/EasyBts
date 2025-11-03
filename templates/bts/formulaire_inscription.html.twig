@@ -455,5 +455,15 @@
 <input type="hidden" id="specialisation-id" value="{{ specialisation.id }}">
 <input type="hidden" id="user-id" value="{{ app.user.id }}">
 <input type="hidden" id="saved-data" value="{{ savedData|default('{}') }}">
+
+<script>
+    // Debug: afficher ce que le backend envoie
+    console.log('=== DONNÉES ENVOYÉES PAR LE BACKEND ===');
+    console.log('specialisation-id:', '{{ specialisation.id }}');
+    console.log('user-id:', '{{ app.user.id }}');
+    console.log('savedData brut:', '{{ savedData|default('{}')|raw }}');
+    console.log('savedData parsé:', JSON.parse('{{ savedData|default('{}')|raw }}'));
+</script>
+
 <script src="/js/formulaire-inscription.js"></script>
 {% endblock %}

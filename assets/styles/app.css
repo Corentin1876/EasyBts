@@ -18,3 +18,63 @@ main {
 .fr-footer {
     flex-shrink: 0;
 }
+
+/* Notification Toast */
+.notification-toast {
+    position: fixed;
+    top: 2rem;
+    right: 2rem;
+    z-index: 9999;
+    min-width: 320px;
+    max-width: 500px;
+    opacity: 0;
+    transform: translateX(400px);
+    transition: all 0.3s ease-in-out;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+}
+
+.notification-toast.show {
+    opacity: 1;
+    transform: translateX(0);
+}
+
+/* Animation du bouton de sauvegarde */
+.fr-btn--loading {
+    position: relative;
+    pointer-events: none;
+}
+
+.fr-btn--success {
+    background-color: var(--success-425-625) !important;
+    border-color: var(--success-425-625) !important;
+}
+
+.fr-btn--error {
+    background-color: var(--error-425-625) !important;
+    border-color: var(--error-425-625) !important;
+}
+
+/* Animation de rotation pour l'icône de chargement */
+.fr-icon-spin {
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* Responsive pour mobile */
+@media (max-width: 768px) {
+    .notification-toast {
+        top: 1rem;
+        right: 1rem;
+        left: 1rem;
+        max-width: calc(100% - 2rem);
+        min-width: auto;
+    }
+}

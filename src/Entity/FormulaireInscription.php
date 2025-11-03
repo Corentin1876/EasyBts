@@ -67,6 +67,16 @@ class FormulaireInscription
     #[ORM\OneToMany(targetEntity: AssuranceScolaire::class, mappedBy: 'formulaireInscription')]
     private Collection $couvert_par_assurance;
 
+    // Colonnes pour les brouillons
+    #[ORM\Column(type: Types::TEXT, nullable: true)]
+    private ?string $draft_json = null;
+
+    #[ORM\Column(type: Types::INTEGER, nullable: true)]
+    private ?int $draft_step = null;
+
+    #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
+    private ?\DateTimeInterface $draft_updated_at = null;
+
     public function __construct()
     {
         $this->a_informations_sante = new ArrayCollection();
@@ -319,6 +329,40 @@ class FormulaireInscription
             }
         }
 
+        return $this;
+    }
+
+    // Getters et Setters pour les brouillons
+    public function getDraftJson(): ?string
+    {
+        return $this->draft_json;
+    }
+
+    public function setDraftJson(?string $draft_json): static
+    {
+        $this->draft_json = $draft_json;
+        return $this;
+    }
+
+    public function getDraftStep(): ?int
+    {
+        return $this->draft_step;
+    }
+
+    public function setDraftStep(?int $draft_step): static
+    {
+        $this->draft_step = $draft_step;
+        return $this;
+    }
+
+    public function getDraftUpdatedAt(): ?\DateTimeInterface
+    {
+        return $this->draft_updated_at;
+    }
+
+    public function setDraftUpdatedAt(?\DateTimeInterface $draft_updated_at): static
+    {
+        $this->draft_updated_at = $draft_updated_at;
         return $this;
     }
 }
