@@ -6,3 +6,22 @@ Rôle : ROLE_ADMIN
 changer le style document et changer la vue pour les pdf
 
 et faire le bouton changement
+
+
+
+
+
+
+
+- Changer les type de bts du lycee fulbert
+
+- Mettre les information manquante du dossiers d'inscription
+    - enlever dans regime les choix avec le fortfait 
+     juste laisser externe et demis pensionnaire
+    - Pour type de transport mettre filibus et sncf 
+    - Faire en sorte pour les annes scolaire se soit mis par default les dates
+    - Mettre un champ specialiter dans la 2e etapes
+    - Mettre option dans la 3e partie pour les deux anner anterieur
+    - Faire en sorte qu'on doit ajouter deux responsable legaus et faire en 
+       sorte de mettre le tellephone Domicile et tellephone travail pour les deux et
+       faire en sorte que se soit pas des champ obligatoire 
