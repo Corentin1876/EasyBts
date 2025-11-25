@@ -147,6 +147,11 @@
                 <div class="fr-card__body">
                     <h2 class="fr-h2 fr-mb-3v">Scolarité de l'année d'inscription</h2>
 
+                    <div class="fr-input-group">
+                        <label class="fr-label" for="specialite">Spécialité <span class="fr-text--red">*</span></label>
+                        <input class="fr-input" type="text" id="specialite" name="specialite" required placeholder="Ex : SIO, CG, MCO, NDRC">
+                    </div>
+
                     <div class="fr-grid-row fr-grid-row--gutters">
                         <div class="fr-col-12 fr-col-md-6">
                             <div class="fr-select-group">
@@ -175,9 +180,7 @@
                         <select class="fr-select" id="regime_scolaire" name="regime_scolaire" required>
                             <option value="" selected disabled>Sélectionner</option>
                             <option value="Externe">Externe</option>
-                            <option value="Demi-pensionnaire à l'unité">Demi-pensionnaire à l'unité</option>
-                            <option value="Demi-pensionnaire au forfait 4 jours">Demi-pensionnaire au forfait 4 jours</option>
-                            <option value="Demi-pensionnaire au forfait 5 jours">Demi-pensionnaire au forfait 5 jours</option>
+                            <option value="Demi-pensionnaire à l'unité (4€55)">Demi-pensionnaire à l'unité (4€55)</option>
                         </select>
                     </div>
 
@@ -197,8 +200,8 @@
                                 <label class="fr-label" for="type_transport">Type de transport</label>
                                 <select class="fr-select" id="type_transport" name="type_transport">
                                     <option value="">Aucun</option>
-                                    <option value="Train">Train</option>
-                                    <option value="Bus">Bus</option>
+                                    <option value="Filibus">Filibus</option>
+                                    <option value="SNCF">SNCF</option>
                                     <option value="Autres">Autres</option>
                                 </select>
                             </div>
@@ -268,6 +271,10 @@
                         <label class="fr-label" for="etablissement_n1">Établissement <span class="fr-text--red">*</span></label>
                         <input class="fr-input" type="text" id="etablissement_n1" name="etablissement_n1" required>
                     </div>
+                    <div class="fr-input-group">
+                        <label class="fr-label" for="option_n1">Option <span class="fr-text--red">*</span></label>
+                        <input class="fr-input" type="text" id="option_n1" name="option_n1" required>
+                    </div>
 
                     <hr class="fr-hr fr-my-4v">
 
@@ -303,6 +310,10 @@
                     <div class="fr-input-group">
                         <label class="fr-label" for="etablissement_n2">Établissement <span class="fr-text--red">*</span></label>
                         <input class="fr-input" type="text" id="etablissement_n2" name="etablissement_n2" required>
+                    </div>
+                    <div class="fr-input-group">
+                        <label class="fr-label" for="option_n2">Option <span class="fr-text--red">*</span></label>
+                        <input class="fr-input" type="text" id="option_n2" name="option_n2" required>
                     </div>
 
                     <hr class="fr-hr fr-my-4v">
@@ -371,6 +382,20 @@
                             </div>
                         </div>
                     </div>
+                    <div class="fr-grid-row fr-grid-row--gutters">
+                        <div class="fr-col-12 fr-col-md-6">
+                            <div class="fr-input-group">
+                                <label class="fr-label" for="tel_travail_resp1">Téléphone travail</label>
+                                <input class="fr-input" type="tel" id="tel_travail_resp1" name="tel_travail_resp1">
+                            </div>
+                        </div>
+                        <div class="fr-col-12 fr-col-md-6">
+                            <div class="fr-input-group">
+                                <label class="fr-label" for="tel_domicile_resp1">Téléphone domicile</label>
+                                <input class="fr-input" type="tel" id="tel_domicile_resp1" name="tel_domicile_resp1">
+                            </div>
+                        </div>
+                    </div>
 
                     <div class="fr-input-group">
                         <label class="fr-label" for="profession_resp1">Profession <span class="fr-text--red">*</span></label>
@@ -392,6 +417,101 @@
                             <div class="fr-select-group">
                                 <label class="fr-label" for="comm_asso_resp1">Autorisation communication associations parents <span class="fr-text--red">*</span></label>
                                 <select class="fr-select" id="comm_asso_resp1" name="comm_asso_resp1" required>
+                                    <option value="" selected disabled>Sélectionner</option>
+                                    <option value="1">Oui</option>
+                                    <option value="0">Non</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <hr class="fr-hr fr-my-4v">
+
+                    <h3 class="fr-h3 fr-mb-2v">Responsable légal 2</h3>
+                    <div class="fr-select-group">
+                        <label class="fr-label" for="lien_resp2">Lien avec l'élève <span class="fr-text--red">*</span></label>
+                        <select class="fr-select" id="lien_resp2" name="lien_resp2" required>
+                            <option value="" selected disabled>Sélectionner</option>
+                            <option value="Père">Père</option>
+                            <option value="Mère">Mère</option>
+                            <option value="Autre">Autre</option>
+                        </select>
+                    </div>
+
+                    <div class="fr-grid-row fr-grid-row--gutters">
+                        <div class="fr-col-12 fr-col-md-6">
+                            <div class="fr-input-group">
+                                <label class="fr-label" for="nom_resp2">Nom <span class="fr-text--red">*</span></label>
+                                <input class="fr-input" type="text" id="nom_resp2" name="nom_resp2" required>
+                            </div>
+                        </div>
+                        <div class="fr-col-12 fr-col-md-6">
+                            <div class="fr-input-group">
+                                <label class="fr-label" for="prenom_resp2">Prénom <span class="fr-text--red">*</span></label>
+                                <input class="fr-input" type="text" id="prenom_resp2" name="prenom_resp2" required>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="fr-input-group">
+                        <label class="fr-label" for="adresse_resp2">Adresse <span class="fr-text--red">*</span></label>
+                        <input class="fr-input" type="text" id="adresse_resp2" name="adresse_resp2" required>
+                    </div>
+
+                    <div class="fr-input-group">
+                        <label class="fr-label" for="commune_resp2">Commune <span class="fr-text--red">*</span></label>
+                        <input class="fr-input" type="text" id="commune_resp2" name="commune_resp2" required>
+                    </div>
+
+                    <div class="fr-grid-row fr-grid-row--gutters">
+                        <div class="fr-col-12 fr-col-md-6">
+                            <div class="fr-input-group">
+                                <label class="fr-label" for="tel_mobile_resp2">Téléphone mobile <span class="fr-text--red">*</span></label>
+                                <input class="fr-input" type="tel" id="tel_mobile_resp2" name="tel_mobile_resp2" required>
+                            </div>
+                        </div>
+                        <div class="fr-col-12 fr-col-md-6">
+                            <div class="fr-input-group">
+                                <label class="fr-label" for="email_resp2">Courriel <span class="fr-text--red">*</span></label>
+                                <input class="fr-input" type="email" id="email_resp2" name="email_resp2" required>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="fr-grid-row fr-grid-row--gutters">
+                        <div class="fr-col-12 fr-col-md-6">
+                            <div class="fr-input-group">
+                                <label class="fr-label" for="tel_travail_resp2">Téléphone travail</label>
+                                <input class="fr-input" type="tel" id="tel_travail_resp2" name="tel_travail_resp2">
+                            </div>
+                        </div>
+                        <div class="fr-col-12 fr-col-md-6">
+                            <div class="fr-input-group">
+                                <label class="fr-label" for="tel_domicile_resp2">Téléphone domicile</label>
+                                <input class="fr-input" type="tel" id="tel_domicile_resp2" name="tel_domicile_resp2">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="fr-input-group">
+                        <label class="fr-label" for="profession_resp2">Profession <span class="fr-text--red">*</span></label>
+                        <input class="fr-input" type="text" id="profession_resp2" name="profession_resp2" required>
+                    </div>
+
+                    <div class="fr-grid-row fr-grid-row--gutters">
+                        <div class="fr-col-12 fr-col-md-6">
+                            <div class="fr-select-group">
+                                <label class="fr-label" for="sms_resp2">Acceptation SMS <span class="fr-text--red">*</span></label>
+                                <select class="fr-select" id="sms_resp2" name="sms_resp2" required>
+                                    <option value="" selected disabled>Sélectionner</option>
+                                    <option value="1">Oui</option>
+                                    <option value="0">Non</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="fr-col-12 fr-col-md-6">
+                            <div class="fr-select-group">
+                                <label class="fr-label" for="comm_asso_resp2">Autorisation communication associations parents <span class="fr-text--red">*</span></label>
+                                <select class="fr-select" id="comm_asso_resp2" name="comm_asso_resp2" required>
                                     <option value="" selected disabled>Sélectionner</option>
                                     <option value="1">Oui</option>
                                     <option value="0">Non</option>

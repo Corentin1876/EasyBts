@@ -27,3 +27,11 @@ et faire le bouton changement
        faire en sorte que se soit pas des champ obligatoire, et faire en sorte 
        d'avoir une coche pour accepter la communication de l'adreesse mail au parent
        d'eleve
+    - faire en sorte de mettre une question a choix pour s'avoir si il sont marier
+        divorser etc dans l'etape 4
+
+
+        BTS Services Informatiques aux Organisations (SIO)
+        BTS Comptabilité et Gestion (CG)
+        BTS Management Commercial Operationel (MCO)
+        BTS Négociation et Digitalisation de la Relation Client (NDRC)
