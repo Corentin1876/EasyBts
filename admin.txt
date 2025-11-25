@@ -24,4 +24,6 @@ et faire le bouton changement
     - Mettre option dans la 3e partie pour les deux anner anterieur
     - Faire en sorte qu'on doit ajouter deux responsable legaus et faire en 
        sorte de mettre le tellephone Domicile et tellephone travail pour les deux et
-       faire en sorte que se soit pas des champ obligatoire 
+       faire en sorte que se soit pas des champ obligatoire, et faire en sorte 
+       d'avoir une coche pour accepter la communication de l'adreesse mail au parent
+       d'eleve
