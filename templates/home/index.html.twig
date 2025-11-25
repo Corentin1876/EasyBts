@@ -3,7 +3,69 @@
 {% block title %}Accueil - Inscription BTS{% endblock %}
 
 {% block body %}
-{% if not app.user %}
+
+{% if is_granted('ROLE_ADMIN') %}
+<!-- Section Admin -->
+<section class="fr-container fr-py-8v">
+    <div class="fr-grid-row fr-grid-row--center">
+        <div class="fr-col-12 fr-col-md-8">
+            <h1 class="fr-h1 fr-mb-3v">Administration</h1>
+            <p class="fr-text--lead fr-mb-5v">
+                Bienvenue dans l'interface d'administration de la plateforme d'inscription BTS.
+            </p>
+            <div class="fr-btns-group">
+                <a class="fr-btn fr-btn--lg fr-btn--icon-left fr-icon-team-line" href="{{ path('app_admin_utilisateurs') }}">
+                    Gestion des utilisateurs
+                </a>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="fr-container fr-py-6v">
+    <div class="fr-grid-row fr-grid-row--gutters">
+        <div class="fr-col-12 fr-col-md-6">
+            <div class="fr-card fr-card--horizontal fr-enlarge-link">
+                <div class="fr-card__body">
+                    <div class="fr-card__content">
+                        <h3 class="fr-card__title">
+                            <a href="{{ path('app_admin_utilisateurs') }}" class="fr-card__link">Utilisateurs</a>
+                        </h3>
+                        <p class="fr-card__desc">
+                            Gérer les comptes utilisateurs, promouvoir des administrateurs, supprimer des comptes.
+                        </p>
+                    </div>
+                </div>
+                <div class="fr-card__header">
+                    <div class="fr-card__img" style="display: flex; align-items: center; justify-content: center; font-size: 5rem;">
+                        <span class="fr-icon-team-line" aria-hidden="true" style="font-size: 5rem;"></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="fr-col-12 fr-col-md-6">
+            <div class="fr-card fr-card--horizontal fr-enlarge-link">
+                <div class="fr-card__body">
+                    <div class="fr-card__content">
+                        <h3 class="fr-card__title">
+                            <a href="{{ path('app_admin_dossiers_bts') }}" class="fr-card__link">Dossiers BTS</a>
+                        </h3>
+                        <p class="fr-card__desc">
+                            Consulter, valider ou rejeter les dossiers d'inscription BTS soumis par les candidats.
+                        </p>
+                    </div>
+                </div>
+                <div class="fr-card__header">
+                    <div class="fr-card__img" style="display: flex; align-items: center; justify-content: center; font-size: 5rem;">
+                        <span class="fr-icon-file-text-line" aria-hidden="true" style="font-size: 5rem;"></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+{% elseif not app.user %}
 <!-- Hero Section -->
 <section class="fr-container fr-py-8v">
     <div class="fr-grid-row fr-grid-row--center">
@@ -26,6 +88,7 @@
 </section>
 {% endif %}
 
+{% if not is_granted('ROLE_ADMIN') %}
 <!-- Section étapes -->
 <section class="fr-container fr-py-6v" id="informations">
     <div class="fr-grid-row">
@@ -92,11 +155,8 @@
             <h2 class="fr-h2 fr-mb-3v">Documents requis</h2>
             <p class="fr-mb-3v">Préparez les documents suivants avant de commencer votre inscription :</p>
             <ul class="fr-list">
-                <li>Pièce d'identité en cours de validité</li>
-                <li>Diplômes et relevés de notes (Baccalauréat ou équivalent)</li>
-                <li>CV récent</li>
-                <li>Lettre de motivation</li>
-                <li>Certificat de langue (si applicable)</li>
+                <li>Pièce d'identité</li>
+                <li>Diplômes et relevés de notes</li>
                 <li>Justificatif de domicile</li>
             </ul>
         </div>
@@ -122,63 +182,71 @@
         </div>
     </div>
     <div class="fr-grid-row fr-grid-row--gutters">
-        <div class="fr-col-12 fr-col-md-6 fr-col-lg-3">
-            <div class="fr-card fr-enlarge-link">
-                <div class="fr-card__body">
-                    <div class="fr-card__content">
-                        <h3 class="fr-card__title">
-                            <a href="#" class="fr-card__link">BTS Informatique</a>
-                        </h3>
-                        <p class="fr-card__desc fr-text--sm">
-                            Services informatiques aux organisations, développement d'applications.
-                        </p>
+        {% if specialisations is defined and specialisations|length > 0 %}
+            {% for specialisation in specialisations %}
+                <div class="fr-col-12 fr-col-md-6 fr-col-lg-4">
+                    <div class="fr-card fr-enlarge-link">
+                        <div class="fr-card__body">
+                            <div class="fr-card__content">
+                                <h3 class="fr-card__title">
+                                    <a href="{{ path('app_specialisation_detail', {id: specialisation.id}) }}" class="fr-card__link">{{ specialisation.libelle|default(specialisation.nom) }}</a>
+                                </h3>
+                                {% if specialisation.description %}
+                                    <p class="fr-card__desc fr-text--sm">
+                                        {{ specialisation.description|length > 100 ? specialisation.description|slice(0, 100) ~ '...' : specialisation.description }}
+                                    </p>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        {% else %}
+            <div class="fr-col-12 fr-col-md-6 fr-col-lg-4">
+                <div class="fr-card fr-enlarge-link">
+                    <div class="fr-card__body">
+                        <div class="fr-card__content">
+                            <h3 class="fr-card__title">
+                                <a href="#" class="fr-card__link">BTS Informatique</a>
+                            </h3>
+                            <p class="fr-card__desc fr-text--sm">
+                                Services informatiques aux organisations, développement d'applications.
+                            </p>
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
-        <div class="fr-col-12 fr-col-md-6 fr-col-lg-3">
-            <div class="fr-card fr-enlarge-link">
-                <div class="fr-card__body">
-                    <div class="fr-card__content">
-                        <h3 class="fr-card__title">
-                            <a href="#" class="fr-card__link">BTS Commerce</a>
-                        </h3>
-                        <p class="fr-card__desc fr-text--sm">
-                            Management commercial opérationnel, négociation et digitalisation.
-                        </p>
+            <div class="fr-col-12 fr-col-md-6 fr-col-lg-4">
+                <div class="fr-card fr-enlarge-link">
+                    <div class="fr-card__body">
+                        <div class="fr-card__content">
+                            <h3 class="fr-card__title">
+                                <a href="#" class="fr-card__link">BTS Commerce</a>
+                            </h3>
+                            <p class="fr-card__desc fr-text--sm">
+                                Management commercial opérationnel, négociation et digitalisation.
+                            </p>
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
-        <div class="fr-col-12 fr-col-md-6 fr-col-lg-3">
-            <div class="fr-card fr-enlarge-link">
-                <div class="fr-card__body">
-                    <div class="fr-card__content">
-                        <h3 class="fr-card__title">
-                            <a href="#" class="fr-card__link">BTS Comptabilité</a>
-                        </h3>
-                        <p class="fr-card__desc fr-text--sm">
-                            Comptabilité et gestion des organisations, finance d'entreprise.
-                        </p>
+            <div class="fr-col-12 fr-col-md-6 fr-col-lg-4">
+                <div class="fr-card fr-enlarge-link">
+                    <div class="fr-card__body">
+                        <div class="fr-card__content">
+                            <h3 class="fr-card__title">
+                                <a href="#" class="fr-card__link">BTS Comptabilité</a>
+                            </h3>
+                            <p class="fr-card__desc fr-text--sm">
+                                Comptabilité et gestion des organisations, finance d'entreprise.
+                            </p>
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
-        <div class="fr-col-12 fr-col-md-6 fr-col-lg-3">
-            <div class="fr-card fr-enlarge-link">
-                <div class="fr-card__body">
-                    <div class="fr-card__content">
-                        <h3 class="fr-card__title">
-                            <a href="#" class="fr-card__link">Autres spécialisations</a>
-                        </h3>
-                        <p class="fr-card__desc fr-text--sm">
-                            Découvrez toutes les formations BTS disponibles.
-                        </p>
-                    </div>
-                </div>
-            </div>
-        </div>
+        {% endif %}
     </div>
 </section>
+{% endif %}
 
 {% endblock %}

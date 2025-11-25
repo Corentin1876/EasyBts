@@ -28,20 +28,9 @@
         <div class="fr-col-12">
             <h1 class="fr-h1">Choisissez votre spécialisation BTS</h1>
             
-            {% if brouillon %}
-            <div class="fr-alert fr-alert--info fr-mb-3v">
-                <h3 class="fr-alert__title">Inscription en cours</h3>
-                <p>Vous avez déjà commencé une inscription pour <strong>{{ brouillon.typeFormulaire }}</strong>.</p>
-                <p class="fr-text--sm fr-mb-2v">Vous pouvez continuer sur cette spécialisation ou en choisir une autre (votre progression actuelle sera perdue).</p>
-                <a class="fr-btn fr-btn--sm fr-btn--secondary" href="{{ path('app_bts_inscription_reset') }}" onclick="return confirm('Voulez-vous vraiment changer de spécialisation ? Votre progression actuelle sera supprimée.');">
-                    Changer de spécialisation
-                </a>
-            </div>
-            {% else %}
             <p class="fr-text--lead fr-mb-3v">
                 Sélectionnez la spécialisation BTS dans laquelle vous souhaitez vous inscrire.
             </p>
-            {% endif %}
         </div>
     </div>
 </section>
@@ -55,29 +44,23 @@
                 <div class="fr-card__body">
                     <div class="fr-card__content">
                         <h3 class="fr-card__title">
-                            <a href="{{ path('app_bts_inscription', {'id': specialisation.id}) }}" class="fr-card__link" data-turbo="false">
+                            <a href="{{ path('app_specialisation_detail', {'id': specialisation.id, 'inscription': 1}) }}" class="fr-card__link" data-turbo="false">
                                 {{ specialisation.nom }}
                             </a>
                         </h3>
                         <p class="fr-card__desc">
                             {% if specialisation.description is defined and specialisation.description %}
-                                {{ specialisation.description }}
+                                {{ specialisation.description|length > 150 ? specialisation.description|slice(0, 150) ~ '...' : specialisation.description }}
                             {% else %}
-                                Cliquez pour commencer votre dossier d'inscription pour cette spécialisation.
+                                Cliquez pour en savoir plus sur cette spécialisation.
                             {% endif %}
                         </p>
                     </div>
                 </div>
                 <div class="fr-card__footer">
-                    {% set isCurrentBts = brouillon and brouillon.typeFormulaire == 'BTS - ' ~ specialisation.nom %}
-                    <a class="fr-btn {% if isCurrentBts %}fr-btn--primary{% else %}fr-btn--secondary{% endif %}" href="{{ path('app_bts_inscription', {'id': specialisation.id}) }}" data-turbo="false">
-                        {% if isCurrentBts %}
-                            <span class="fr-icon-edit-line fr-icon--sm fr-mr-1v" aria-hidden="true"></span>
-                            Continuer cette inscription
-                        {% else %}
-                            <span class="fr-icon-arrow-right-line fr-icon--sm fr-mr-1v" aria-hidden="true"></span>
-                            Choisir cette spécialisation
-                        {% endif %}
+                    <a class="fr-btn fr-btn--secondary" href="{{ path('app_specialisation_detail', {'id': specialisation.id, 'inscription': 1}) }}" data-turbo="false">
+                        <span class="fr-icon-arrow-right-line fr-icon--sm fr-mr-1v" aria-hidden="true"></span>
+                        Voir les détails
                     </a>
                 </div>
             </div>

@@ -3,7 +3,9 @@
 namespace App\Controller;
 
 use App\Entity\Utilisateur;
+use App\Entity\PasswordResetToken;
 use App\Repository\UtilisateurRepository;
+use App\Repository\PasswordResetTokenRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -11,6 +13,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
+use Symfony\Component\Mailer\MailerInterface;
 
 class InscriptionController extends AbstractController
 {
@@ -44,12 +47,15 @@ class InscriptionController extends AbstractController
             $prenom = $request->request->get('prenom');
             $dateNaissance = $request->request->get('date_naissance');
             $civilite = $request->request->get('civilite');
+            $telephone = $request->request->get('telephone');
+            $adresse = $request->request->get('adresse');
+            $departement = $request->request->get('departement');
 
             // Log pour debug
             error_log("Tentative d'inscription - Email: $email, Nom: $nom, Prénom: $prenom");
 
             // Validation basique
-            if (empty($email) || empty($password) || empty($nom) || empty($prenom)) {
+            if (empty($email) || empty($password) || empty($nom) || empty($prenom) || empty($telephone) || empty($adresse) || empty($departement)) {
                 $this->addFlash('error', 'Tous les champs obligatoires doivent être remplis.');
                 return $this->redirectToRoute('app_inscription');
             }
@@ -72,6 +78,9 @@ class InscriptionController extends AbstractController
             $utilisateur->setNom($nom);
             $utilisateur->setPrenom($prenom);
             $utilisateur->setUser($civilite);
+            $utilisateur->setTelephone($telephone);
+            $utilisateur->setAdresse($adresse);
+            $utilisateur->setDepartement($departement);
 
             // Convertir la date de naissance
             if (!empty($dateNaissance)) {
@@ -116,5 +125,133 @@ class InscriptionController extends AbstractController
     public function logout(): void
     {
         // Ce contrôleur peut rester vide - il sera intercepté par la clé logout de votre firewall
+    }
+
+    #[Route('/forgot-password', name: 'app_forgot_password')]
+    public function forgotPassword(): Response
+    {
+        return $this->render('inscription/forgot_password.html.twig');
+    }
+
+    #[Route('/forgot-password/request', name: 'app_forgot_password_request', methods: ['POST'])]
+    public function forgotPasswordRequest(
+        Request $request,
+        EntityManagerInterface $entityManager,
+        MailerInterface $mailer
+    ): Response {
+        $email = $request->request->get('email');
+
+        if (empty($email)) {
+            $this->addFlash('error', 'Veuillez saisir votre adresse email.');
+            return $this->redirectToRoute('app_forgot_password');
+        }
+
+        $utilisateur = $entityManager->getRepository(Utilisateur::class)->findOneBy(['email' => $email]);
+
+        // Ne pas révéler si l'email existe ou non pour des raisons de sécurité
+        if ($utilisateur) {
+            // Supprimer les anciens tokens non utilisés pour cet utilisateur
+            $oldTokens = $entityManager->getRepository(PasswordResetToken::class)
+                ->createQueryBuilder('p')
+                ->andWhere('p.utilisateur = :user')
+                ->andWhere('p.used = false')
+                ->setParameter('user', $utilisateur)
+                ->getQuery()
+                ->getResult();
+
+            foreach ($oldTokens as $oldToken) {
+                $entityManager->remove($oldToken);
+            }
+
+            // Créer un nouveau token
+            $token = bin2hex(random_bytes(32));
+            $resetToken = new PasswordResetToken();
+            $resetToken->setUtilisateur($utilisateur);
+            $resetToken->setToken($token);
+            $resetToken->setExpiresAt(new \DateTime('+1 hour'));
+
+            $entityManager->persist($resetToken);
+            $entityManager->flush();
+
+            // Envoyer l'email
+            try {
+                $resetUrl = $this->generateUrl('app_reset_password', ['token' => $token], \Symfony\Component\Routing\Generator\UrlGeneratorInterface::ABSOLUTE_URL);
+                
+                $email = (new \Symfony\Component\Mime\Email())
+                    ->from('noreply@easybts.fr')
+                    ->to($utilisateur->getEmail())
+                    ->subject('Réinitialisation de votre mot de passe')
+                    ->html($this->renderView('emails/reset_password.html.twig', [
+                        'resetUrl' => $resetUrl,
+                        'utilisateur' => $utilisateur,
+                    ]));
+
+                $mailer->send($email);
+            } catch (\Exception $e) {
+                error_log("Erreur envoi email: " . $e->getMessage());
+            }
+        }
+
+        $this->addFlash('success', 'Si votre adresse email est enregistrée, vous recevrez un lien de réinitialisation dans quelques instants.');
+        return $this->redirectToRoute('app_inscription');
+    }
+
+    #[Route('/reset-password/{token}', name: 'app_reset_password')]
+    public function resetPassword(
+        string $token,
+        PasswordResetTokenRepository $tokenRepository
+    ): Response {
+        $resetToken = $tokenRepository->findValidToken($token);
+
+        if (!$resetToken) {
+            $this->addFlash('error', 'Ce lien de réinitialisation est invalide ou a expiré.');
+            return $this->redirectToRoute('app_inscription');
+        }
+
+        return $this->render('inscription/reset_password.html.twig', [
+            'token' => $token,
+        ]);
+    }
+
+    #[Route('/reset-password/update', name: 'app_reset_password_update', methods: ['POST'])]
+    public function resetPasswordUpdate(
+        Request $request,
+        EntityManagerInterface $entityManager,
+        UserPasswordHasherInterface $passwordHasher,
+        PasswordResetTokenRepository $tokenRepository
+    ): Response {
+        $token = $request->request->get('token');
+        $password = $request->request->get('password');
+        $passwordConfirm = $request->request->get('password_confirm');
+
+        if (empty($token) || empty($password) || empty($passwordConfirm)) {
+            $this->addFlash('error', 'Tous les champs sont obligatoires.');
+            return $this->redirectToRoute('app_reset_password', ['token' => $token]);
+        }
+
+        if ($password !== $passwordConfirm) {
+            $this->addFlash('error', 'Les mots de passe ne correspondent pas.');
+            return $this->redirectToRoute('app_reset_password', ['token' => $token]);
+        }
+
+        $resetToken = $tokenRepository->findValidToken($token);
+
+        if (!$resetToken) {
+            $this->addFlash('error', 'Ce lien de réinitialisation est invalide ou a expiré.');
+            return $this->redirectToRoute('app_inscription');
+        }
+
+        // Mettre à jour le mot de passe
+        $utilisateur = $resetToken->getUtilisateur();
+        $hashedPassword = $passwordHasher->hashPassword($utilisateur, $password);
+        $utilisateur->setMotDePasse($hashedPassword);
+
+        // Marquer le token comme utilisé
+        $resetToken->setUsed(true);
+
+        $entityManager->flush();
+
+        $this->addFlash('success', 'Votre mot de passe a été réinitialisé avec succès. Vous pouvez maintenant vous connecter.');
+        return $this->redirectToRoute('app_inscription');
     }
 }

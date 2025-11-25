@@ -2,9 +2,11 @@
 
 namespace App\Controller;
 
+use App\Entity\Specialisation;
 use App\Form\ContactType;
 use App\Dto\ContactFormData;
 use App\Message\ContactMessage;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -16,10 +18,25 @@ use Symfony\Component\Routing\Annotation\Route;
 class HomeController extends AbstractController
 {
     #[Route('/', name: 'app_home')]
-    public function index(): Response
+    public function index(EntityManagerInterface $entityManager): Response
     {
+        $specialisations = $entityManager->getRepository(Specialisation::class)->findAll();
+        
         return $this->render('home/index.html.twig', [
             'controller_name' => 'HomeController',
+            'specialisations' => $specialisations,
+        ]);
+    }
+
+    #[Route('/specialisation/{id}', name: 'app_specialisation_detail')]
+    public function specialisationDetail(Specialisation $specialisation, Request $request): Response
+    {
+        // Vérifier si on vient de la page d'inscription BTS
+        $showInscription = $request->query->get('inscription', false);
+        
+        return $this->render('home/specialisation_detail.html.twig', [
+            'specialisation' => $specialisation,
+            'showInscription' => $showInscription,
         ]);
     }
 

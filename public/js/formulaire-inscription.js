@@ -26,23 +26,24 @@ document.addEventListener('DOMContentLoaded', function() {
         'Scolarité de l\'année d\'inscription',
         'Scolarité des 2 années antérieures',
         'Identité des responsables légaux',
+        'Documents justificatifs',
         'Validation du dossier'
     ];
 
     let currentStep = 1;
-    const totalSteps = 5;
+    const totalSteps = 6;
 
     // Charger les données sauvegardées
     function loadSavedData() {
         let merged = {};
-        // Charger depuis la base de données (backend via saved-data)
-        const savedDataEl = document.getElementById('saved-data');
-        console.log('Element saved-data:', savedDataEl);
-        console.log('Valeur saved-data:', savedDataEl ? savedDataEl.value : 'non trouvé');
+        // Charger depuis la base de données (backend via saved-data-json)
+        const savedDataEl = document.getElementById('saved-data-json');
+        console.log('Element saved-data-json:', savedDataEl);
+        console.log('Valeur saved-data-json:', savedDataEl ? savedDataEl.textContent : 'non trouvé');
         
-        if (savedDataEl && savedDataEl.value && savedDataEl.value !== '{}') {
+        if (savedDataEl && savedDataEl.textContent && savedDataEl.textContent !== '{}') {
             try { 
-                merged = JSON.parse(savedDataEl.value);
+                merged = JSON.parse(savedDataEl.textContent);
                 console.log('Données chargées depuis la base:', merged);
             } catch (e) { 
                 console.warn('Parse session data error', e); 
@@ -96,6 +97,9 @@ document.addEventListener('DOMContentLoaded', function() {
                     console.warn('Champs non trouvés:', fieldsNotFound);
                 }
                 
+                // Charger les fichiers uploadés
+                loadUploadedFiles(merged.formData);
+                
                 // Forcer un re-render visuel
                 console.log('Forçage du re-render visuel...');
                 showStep(currentStep);
@@ -107,13 +111,13 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Recharger les données de l'étape courante
     function reloadCurrentStepData() {
-        const savedDataEl = document.getElementById('saved-data');
-        if (!savedDataEl || !savedDataEl.value || savedDataEl.value === '{}') {
+        const savedDataEl = document.getElementById('saved-data-json');
+        if (!savedDataEl || !savedDataEl.textContent || savedDataEl.textContent === '{}') {
             return;
         }
 
         try {
-            const data = JSON.parse(savedDataEl.value);
+            const data = JSON.parse(savedDataEl.textContent);
             if (data.formData) {
                 console.log(`Rechargement des données pour l'étape ${currentStep}`);
                 // Remplir uniquement les champs visibles de l'étape courante
@@ -200,7 +204,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const formData = {};
         const inputs = form.querySelectorAll('input, select, textarea');
         inputs.forEach(input => {
-            if (input.name && input.id !== 'saved-data' && input.id !== 'specialisation-id') {
+            if (input.name && input.id !== 'saved-data-json' && input.id !== 'specialisation-id') {
                 if (input.type === 'checkbox') {
                     formData[input.name] = input.checked ? '1' : '0';
                 } else {
@@ -253,15 +257,15 @@ document.addEventListener('DOMContentLoaded', function() {
                 // Afficher une notification toast
                 showNotification('✓ Vos données ont été sauvegardées avec succès', 'success');
                 
-                // Mettre à jour saved-data avec les nouvelles données
-                const savedDataEl = document.getElementById('saved-data');
+                // Mettre à jour saved-data-json avec les nouvelles données
+                const savedDataEl = document.getElementById('saved-data-json');
                 if (savedDataEl) {
                     const newData = {
                         currentStep: currentStep,
                         formData: data.formData
                     };
-                    savedDataEl.value = JSON.stringify(newData);
-                    console.log('✓ saved-data mis à jour avec:', newData);
+                    savedDataEl.textContent = JSON.stringify(newData);
+                    console.log('✓ saved-data-json mis à jour avec:', newData);
                 }
                 
                 // Réinitialiser le bouton après 3 secondes
@@ -313,7 +317,68 @@ document.addEventListener('DOMContentLoaded', function() {
         }, 4000);
     }
 
-    // Gestion des boutons
+    // Bouton Submit (soumission finale)
+    if (btnSubmit) {
+        btnSubmit.addEventListener('click', async function(e) {
+            e.preventDefault();
+            
+            if (!validateCurrentStep()) {
+                return;
+            }
+            
+            if (!confirm('Êtes-vous sûr de vouloir soumettre définitivement votre dossier d\'inscription ?')) {
+                return;
+            }
+            
+            btnSubmit.disabled = true;
+            btnSubmit.classList.add('fr-btn--loading');
+            btnSubmit.innerHTML = '<span class="spinner"></span> Soumission en cours...';
+            
+            const data = {
+                currentStep: currentStep,
+                formData: getFormData()
+            };
+            
+            try {
+                const response = await fetch(`/bts/inscription/${specialisationId}/submit`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(data)
+                });
+                
+                const result = await response.json();
+                
+                if (result.success && result.redirect) {
+                    btnSubmit.classList.remove('fr-btn--loading');
+                    btnSubmit.classList.add('fr-btn--success');
+                    btnSubmit.innerHTML = '<span class="fr-icon-check-line"></span> Dossier soumis !';
+                    showNotification('✓ Votre dossier a été soumis avec succès !', 'success');
+                    
+                    setTimeout(() => {
+                        window.location.href = result.redirect;
+                    }, 1500);
+                } else {
+                    throw new Error(result.error || 'Erreur de soumission');
+                }
+            } catch (error) {
+                console.error('Erreur:', error);
+                btnSubmit.classList.remove('fr-btn--loading');
+                btnSubmit.classList.add('fr-btn--error');
+                btnSubmit.innerHTML = '<span class="fr-icon-close-line"></span> Erreur';
+                showNotification('✗ Erreur lors de la soumission. Veuillez réessayer.', 'error');
+                
+                setTimeout(() => {
+                    btnSubmit.innerHTML = 'Soumettre mon dossier d\'inscription';
+                    btnSubmit.classList.remove('fr-btn--error');
+                    btnSubmit.disabled = false;
+                }, 3000);
+            }
+        });
+    }
+
+    // Gestion des boutons de navigation
     if (btnNext) {
         btnNext.addEventListener('click', function() {
             if (validateCurrentStep()) {
@@ -333,10 +398,10 @@ document.addEventListener('DOMContentLoaded', function() {
                 .then(result => {
                     if (result.success) {
                         console.log('✓ Sauvegarde réussie, passage à l\'étape suivante');
-                        // Mettre à jour saved-data
-                        const savedDataEl = document.getElementById('saved-data');
+                        // Mettre à jour saved-data-json
+                        const savedDataEl = document.getElementById('saved-data-json');
                         if (savedDataEl) {
-                            savedDataEl.value = JSON.stringify({
+                            savedDataEl.textContent = JSON.stringify({
                                 currentStep: currentStep + 1,
                                 formData: data.formData
                             });
@@ -370,9 +435,9 @@ document.addEventListener('DOMContentLoaded', function() {
             .then(response => response.json())
             .then(result => {
                 if (result.success) {
-                    const savedDataEl = document.getElementById('saved-data');
+                    const savedDataEl = document.getElementById('saved-data-json');
                     if (savedDataEl) {
-                        savedDataEl.value = JSON.stringify({
+                        savedDataEl.textContent = JSON.stringify({
                             currentStep: currentStep - 1,
                             formData: data.formData
                         });
@@ -407,6 +472,175 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
     }
+
+    // Fonction pour afficher les fichiers déjà uploadés
+    function loadUploadedFiles(formData) {
+        const documentTypes = [
+            'carte_identite_recto',
+            'carte_identite_verso',
+            'justificatif_domicile',
+            'releves_notes'
+        ];
+
+        documentTypes.forEach(docType => {
+            const pathKey = `${docType}_path`;
+            if (formData[pathKey]) {
+                console.log(`Fichier déjà uploadé pour ${docType}:`, formData[pathKey]);
+                markFileAsUploaded(docType, formData[pathKey]);
+            }
+        });
+    }
+
+    // Fonction pour afficher l'aperçu d'un document
+    function showFilePreview(filePath, fileName) {
+        console.log('Aperçu du fichier:', fileName, filePath);
+        
+        const extension = fileName.split('.').pop().toLowerCase();
+        
+        // Créer le HTML du modal
+        let contentHtml = '';
+        
+        if (extension === 'pdf') {
+            contentHtml = `
+                <iframe src="${filePath}" style="width: 100%; height: 600px; border: 1px solid #ddd;"></iframe>
+            `;
+        } else if (['jpg', 'jpeg', 'png'].includes(extension)) {
+            contentHtml = `
+                <img src="${filePath}" alt="${fileName}" style="max-width: 100%; max-height: 600px; border: 1px solid #ddd;" />
+            `;
+        } else {
+            contentHtml = `
+                <p>Aperçu non disponible pour ce type de fichier.</p>
+            `;
+        }
+        
+        // Créer le modal complet
+        const modalHtml = `
+            <div id="custom-modal-overlay" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 9999; display: flex; align-items: center; justify-content: center;">
+                <div id="custom-modal-content" style="background: white; padding: 2rem; border-radius: 8px; max-width: 90vw; max-height: 90vh; overflow: auto; box-shadow: 0 8px 24px rgba(0,0,0,0.3);">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; border-bottom: 2px solid #e5e5e5; padding-bottom: 1rem;">
+                        <h2 style="margin: 0; font-size: 1.5rem;">Aperçu du document</h2>
+                        <button id="close-custom-modal" class="fr-btn fr-btn--close" style="cursor: pointer;">Fermer</button>
+                    </div>
+                    <div style="text-align: center;">
+                        ${contentHtml}
+                    </div>
+                </div>
+            </div>
+        `;
+        
+        // Supprimer l'ancien modal s'il existe
+        const oldModal = document.getElementById('custom-modal-overlay');
+        if (oldModal) {
+            oldModal.remove();
+        }
+        
+        // Insérer le nouveau modal
+        document.body.insertAdjacentHTML('beforeend', modalHtml);
+        
+        // Gérer la fermeture
+        const overlay = document.getElementById('custom-modal-overlay');
+        const closeBtn = document.getElementById('close-custom-modal');
+        
+        closeBtn.onclick = function() {
+            overlay.remove();
+        };
+        
+        overlay.onclick = function(e) {
+            if (e.target === overlay) {
+                overlay.remove();
+            }
+        };
+        
+        console.log('Modal créé et affiché');
+    }
+
+    // Marquer un fichier comme déjà uploadé
+    function markFileAsUploaded(documentType, filePath) {
+        const groupId = `upload-${documentType.replace(/_/g, '-')}-group`;
+        const group = document.getElementById(groupId);
+        
+        if (group) {
+            const fileInfo = group.querySelector('.uploaded-file-info');
+            const fileInput = group.querySelector('input[type="file"]');
+            const fileName = filePath.split('/').pop();
+            
+            if (fileInfo && fileInput) {
+                // Afficher l'info du fichier uploadé
+                const fileLink = fileInfo.querySelector('.file-name');
+                if (!fileLink) {
+                    console.error('Lien du fichier non trouvé dans:', groupId);
+                    return;
+                }
+                
+                fileLink.textContent = fileName;
+                fileLink.href = '#';
+                fileLink.onclick = function(e) {
+                    e.preventDefault();
+                    console.log('Clic sur le fichier détecté:', fileName);
+                    showFilePreview(filePath, fileName);
+                    return false;
+                };
+                
+                console.log('Lien configuré pour:', fileName, 'dans', groupId);
+                
+                fileInfo.style.display = 'block';
+                
+                // Cacher l'input et le rendre non requis
+                fileInput.style.display = 'none';
+                fileInput.removeAttribute('required');
+                
+                // Gérer le bouton "Changer"
+                const changeBtn = fileInfo.querySelector('.change-file-btn');
+                changeBtn.onclick = function() {
+                    fileInfo.style.display = 'none';
+                    fileInput.style.display = 'block';
+                    fileInput.setAttribute('required', 'required');
+                };
+            }
+        }
+    }
+
+    // Gestion de l'upload des documents
+    const fileInputs = document.querySelectorAll('input[type="file"]');
+    fileInputs.forEach(input => {
+        input.addEventListener('change', async function(e) {
+            const file = e.target.files[0];
+            if (!file) return;
+
+            const documentType = e.target.name;
+            const formData = new FormData();
+            formData.append('file', file);
+            formData.append('document_type', documentType);
+
+            console.log(`Upload du fichier ${documentType}:`, file.name);
+
+            try {
+                const response = await fetch(`/bts/inscription/${specialisationId}/upload-document`, {
+                    method: 'POST',
+                    body: formData
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    console.log(`✓ Fichier ${documentType} uploadé:`, result.filename);
+                    
+                    // Marquer le fichier comme uploadé
+                    markFileAsUploaded(documentType, result.path);
+                    
+                } else {
+                    console.error(`Erreur upload ${documentType}:`, result.error);
+                    alert(`Erreur lors de l'upload: ${result.error}`);
+                    e.target.value = ''; // Réinitialiser l'input
+                }
+            } catch (error) {
+                console.error(`Erreur upload ${documentType}:`, error);
+                alert('Erreur lors de l\'upload du fichier');
+                e.target.value = '';
+            }
+        });
+    });
 
     // Charger les données au démarrage avec un délai pour s'assurer que le DOM est prêt
     setTimeout(() => {

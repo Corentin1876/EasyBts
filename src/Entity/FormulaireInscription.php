@@ -77,6 +77,19 @@ class FormulaireInscription
     #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
     private ?\DateTimeInterface $draft_updated_at = null;
 
+    // Documents justificatifs
+    #[ORM\Column(type: Types::STRING, length: 255, nullable: true)]
+    private ?string $carte_identite_recto = null;
+
+    #[ORM\Column(type: Types::STRING, length: 255, nullable: true)]
+    private ?string $carte_identite_verso = null;
+
+    #[ORM\Column(type: Types::STRING, length: 255, nullable: true)]
+    private ?string $justificatif_domicile = null;
+
+    #[ORM\Column(type: Types::STRING, length: 255, nullable: true)]
+    private ?string $releves_notes = null;
+
     public function __construct()
     {
         $this->a_informations_sante = new ArrayCollection();
@@ -363,6 +376,51 @@ class FormulaireInscription
     public function setDraftUpdatedAt(?\DateTimeInterface $draft_updated_at): static
     {
         $this->draft_updated_at = $draft_updated_at;
+        return $this;
+    }
+
+    // Getters et Setters pour les documents
+    public function getCarteIdentiteRecto(): ?string
+    {
+        return $this->carte_identite_recto;
+    }
+
+    public function setCarteIdentiteRecto(?string $carte_identite_recto): static
+    {
+        $this->carte_identite_recto = $carte_identite_recto;
+        return $this;
+    }
+
+    public function getCarteIdentiteVerso(): ?string
+    {
+        return $this->carte_identite_verso;
+    }
+
+    public function setCarteIdentiteVerso(?string $carte_identite_verso): static
+    {
+        $this->carte_identite_verso = $carte_identite_verso;
+        return $this;
+    }
+
+    public function getJustificatifDomicile(): ?string
+    {
+        return $this->justificatif_domicile;
+    }
+
+    public function setJustificatifDomicile(?string $justificatif_domicile): static
+    {
+        $this->justificatif_domicile = $justificatif_domicile;
+        return $this;
+    }
+
+    public function getRelevesNotes(): ?string
+    {
+        return $this->releves_notes;
+    }
+
+    public function setRelevesNotes(?string $releves_notes): static
+    {
+        $this->releves_notes = $releves_notes;
         return $this;
     }
 }

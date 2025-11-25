@@ -25,11 +25,50 @@
         <div class="fr-col-12 fr-col-md-8">
             <h1 class="fr-h1 fr-mb-3v">Inscription aux formations BTS</h1>
             
-            {% if brouillon %}
-            <!-- Inscription en cours -->
-            <div class="fr-alert fr-alert--info fr-mb-4v">
-                <h3 class="fr-alert__title">Vous avez une inscription en cours</h3>
-                <p class="fr-mb-2v">Votre dossier pour <strong>{{ brouillon.typeFormulaire }}</strong> est sauvegardé.</p>
+            {% if dossierSoumis %}
+            <!-- Dossier soumis ou validé -->
+            <div class="fr-alert {% if dossierSoumis.statut == 'validé' %}fr-alert--success{% elseif dossierSoumis.statut == 'rejeté' %}fr-alert--error{% else %}fr-alert--warning{% endif %} fr-mb-4v">
+                <h3 class="fr-alert__title">
+                    {% if dossierSoumis.statut == 'soumis' %}
+                        Votre dossier est en cours de vérification
+                    {% elseif dossierSoumis.statut == 'validé' %}
+                        Votre dossier a été validé
+                    {% elseif dossierSoumis.statut == 'rejeté' %}
+                        Votre dossier a été rejeté
+                    {% endif %}
+                </h3>
+                <p class="fr-mb-2v">Dossier pour <strong>{{ dossierSoumis.typeFormulaire }}</strong></p>
+                {% if dossierSoumis.dateSoumission %}
+                <p class="fr-text--sm fr-mb-2v">Date de soumission : {{ dossierSoumis.dateSoumission|date('d/m/Y à H:i') }}</p>
+                {% endif %}
+                <p class="fr-mb-0">
+                    {% if dossierSoumis.statut == 'soumis' %}
+                        Votre dossier est actuellement en cours de vérification par nos équipes. Vous recevrez une notification par email dès qu'il sera traité.
+                    {% elseif dossierSoumis.statut == 'validé' %}
+                        Félicitations ! Votre dossier d'inscription a été validé. Vous recevrez prochainement des informations complémentaires par email.
+                    {% elseif dossierSoumis.statut == 'rejeté' %}
+                        Votre dossier a été rejeté. Veuillez contacter l'administration pour plus d'informations.
+                    {% endif %}
+                </p>
+            </div>
+            
+            {% elseif brouillon %}
+            <!-- Inscription en cours ou à modifier -->
+            <div class="fr-alert {% if brouillon.statut == 'à modifier' %}fr-alert--warning{% else %}fr-alert--info{% endif %} fr-mb-4v">
+                <h3 class="fr-alert__title">
+                    {% if brouillon.statut == 'à modifier' %}
+                        Des modifications sont requises sur votre dossier
+                    {% else %}
+                        Vous avez une inscription en cours
+                    {% endif %}
+                </h3>
+                <p class="fr-mb-2v">
+                    {% if brouillon.statut == 'à modifier' %}
+                        L'administration vous demande de corriger certaines informations de votre dossier pour <strong>{{ brouillon.typeFormulaire }}</strong>.
+                    {% else %}
+                        Votre dossier pour <strong>{{ brouillon.typeFormulaire }}</strong> est sauvegardé.
+                    {% endif %}
+                </p>
                 {% if brouillon.draftUpdatedAt %}
                 <p class="fr-text--sm fr-mb-0">Dernière sauvegarde : {{ brouillon.draftUpdatedAt|date('d/m/Y à H:i') }}</p>
                 {% endif %}
@@ -39,18 +78,28 @@
                 {% if specialisation %}
                 <a class="fr-btn fr-btn--lg" href="{{ path('app_bts_inscription', {'id': specialisation.id}) }}" data-turbo="false">
                     <span class="fr-icon-edit-line fr-icon--lg fr-mr-1w" aria-hidden="true"></span>
-                    Continuer mon inscription
+                    {% if brouillon.statut == 'à modifier' %}
+                        Modifier mon dossier
+                    {% else %}
+                        Continuer mon inscription
+                    {% endif %}
                 </a>
                 {% else %}
                 <a class="fr-btn fr-btn--lg" href="{{ path('app_bts_choix') }}" data-turbo="false">
                     <span class="fr-icon-edit-line fr-icon--lg fr-mr-1w" aria-hidden="true"></span>
-                    Continuer mon inscription
+                    {% if brouillon.statut == 'à modifier' %}
+                        Modifier mon dossier
+                    {% else %}
+                        Continuer mon inscription
+                    {% endif %}
                 </a>
                 {% endif %}
+                {% if brouillon.statut != 'à modifier' %}
                 <a class="fr-btn fr-btn--lg fr-btn--secondary" href="{{ path('app_bts_inscription_reset') }}" onclick="return confirm('Êtes-vous sûr de vouloir supprimer votre dossier en cours ?');" data-turbo="false">
                     <span class="fr-icon-delete-line fr-icon--lg fr-mr-1w" aria-hidden="true"></span>
                     Recommencer une nouvelle inscription
                 </a>
+                {% endif %}
             </div>
             {% else %}
             <!-- Aucune inscription en cours -->

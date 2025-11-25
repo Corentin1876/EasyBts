@@ -14,6 +14,25 @@
     <link rel="icon" href="https://www.systeme-de-design.gouv.fr/dist/favicon/favicon.svg" type="image/svg+xml">
     <link rel="shortcut icon" href="https://www.systeme-de-design.gouv.fr/dist/favicon/favicon.ico" type="image/x-icon">
     
+    <style>
+        html, body {
+            height: 100%;
+            margin: 0;
+        }
+        body {
+            display: flex;
+            flex-direction: column;
+        }
+        main {
+            flex: 1 0 auto;
+            margin-bottom: 3rem;
+        }
+        .fr-footer {
+            flex-shrink: 0;
+            margin-top: auto;
+        }
+    </style>
+    
     {% block stylesheets %}{% endblock %}
 </head>
 <body>
@@ -97,14 +116,23 @@
                             <li class="fr-nav__item">
                                 <a class="fr-nav__link" href="{{ path('app_inscription') }}">Inscription</a>
                             </li>
+                            {% elseif is_granted('ROLE_ADMIN') %}
+                            <li class="fr-nav__item">
+                                <a class="fr-nav__link" href="{{ path('app_admin_utilisateurs') }}">Gestion des utilisateurs</a>
+                            </li>
+                            <li class="fr-nav__item">
+                                <a class="fr-nav__link" href="{{ path('app_admin_dossiers_bts') }}">Dossiers BTS</a>
+                            </li>
                             {% else %}
                             <li class="fr-nav__item">
                                 <a class="fr-nav__link" href="{{ path('app_bts_liste') }}">Inscription BTS</a>
                             </li>
                             {% endif %}
+                            {% if not is_granted('ROLE_ADMIN') %}
                             <li class="fr-nav__item">
                                 <a class="fr-nav__link" href="{{ path('app_contact') }}">Contact</a>
                             </li>
+                            {% endif %}
                             {% if app.user %}
                             <li class="fr-nav__item">
                                 <a class="fr-nav__link" href="{{ path('app_logout') }}">Déconnexion</a>
@@ -131,6 +159,17 @@
                     Inscription
                 </a>
             </li>
+            {% elseif is_granted('ROLE_ADMIN') %}
+            <li class="fr-nav__item">
+                <a class="fr-nav__link" href="{{ path('app_admin_utilisateurs') }}" {% if app.request.get('_route') == 'app_admin_utilisateurs' %}aria-current="page"{% endif %}>
+                    Gestion des utilisateurs
+                </a>
+            </li>
+            <li class="fr-nav__item">
+                <a class="fr-nav__link" href="{{ path('app_admin_dossiers_bts') }}" {% if app.request.get('_route') starts with 'app_admin_dossier' %}aria-current="page"{% endif %}>
+                    Dossiers BTS
+                </a>
+            </li>
             {% else %}
             <li class="fr-nav__item">
                 <a class="fr-nav__link" href="{{ path('app_bts_liste') }}" {% if app.request.get('_route') starts with 'app_bts' %}aria-current="page"{% endif %}>
@@ -138,6 +177,7 @@
                 </a>
             </li>
             {% endif %}
+            {% if not is_granted('ROLE_ADMIN') %}
             <li class="fr-nav__item">
                 <a class="fr-nav__link" href="{{ path('app_faq') }}" {% if app.request.get('_route') == 'app_faq' %}aria-current="page"{% endif %}>FAQ</a>
             </li>
@@ -146,6 +186,7 @@
                     Contact
                 </a>
             </li>
+            {% endif %}
         </ul>
     </nav>
 

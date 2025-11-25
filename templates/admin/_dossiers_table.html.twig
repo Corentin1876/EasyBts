@@ -1,0 +1,50 @@
+<div class="fr-table fr-mt-2w">
+    <table>
+        <thead>
+            <tr>
+                <th scope="col">ID</th>
+                <th scope="col">Candidat</th>
+                <th scope="col">Email</th>
+                <th scope="col">BTS</th>
+                <th scope="col">Date de soumission</th>
+                <th scope="col">Statut</th>
+                <th scope="col">Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for dossier in dossiers %}
+            <tr>
+                <td>{{ dossier.id }}</td>
+                <td>{{ dossier.remplitFormulaire.prenom }} {{ dossier.remplitFormulaire.nom }}</td>
+                <td>{{ dossier.remplitFormulaire.email }}</td>
+                <td>{{ dossier.typeFormulaire|default('-') }}</td>
+                <td>{{ dossier.dateSoumission ? dossier.dateSoumission|date('d/m/Y H:i') : '-' }}</td>
+                <td>
+                    {% if dossier.statut == 'soumis' %}
+                        <span class="fr-badge fr-badge--warning">En attente</span>
+                    {% elseif dossier.statut == 'validé' %}
+                        <span class="fr-badge fr-badge--success">Validé</span>
+                    {% elseif dossier.statut == 'rejeté' %}
+                        <span class="fr-badge fr-badge--error">Rejeté</span>
+                    {% elseif dossier.statut == 'à modifier' %}
+                        <span class="fr-badge fr-badge--warning fr-badge--sm">À modifier</span>
+                    {% else %}
+                        <span class="fr-badge">{{ dossier.statut }}</span>
+                    {% endif %}
+                </td>
+                <td>
+                    <a href="{{ path('app_admin_dossier_detail', {id: dossier.id}) }}" 
+                       class="fr-btn fr-btn--sm fr-btn--secondary fr-btn--icon-left fr-icon-eye-line"
+                       title="Voir le détail">
+                        Voir le détail
+                    </a>
+                </td>
+            </tr>
+            {% else %}
+            <tr>
+                <td colspan="7" class="fr-text--center">Aucun dossier trouvé</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
