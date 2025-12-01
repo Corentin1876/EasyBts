@@ -15,6 +15,9 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
+use PhpOffice\PhpWord\TemplateProcessor;
+use PhpOffice\PhpWord\Settings;
+use PhpOffice\PhpWord\IOFactory;
 
 class BtsInscriptionController extends AbstractController
 {
@@ -413,5 +416,128 @@ class BtsInscriptionController extends AbstractController
         } catch (\Exception $e) {
             return $this->json(['success' => false, 'error' => 'Erreur lors de la soumission: ' . $e->getMessage()], 500);
         }
+    }
+
+    #[Route('/bts/inscription/{id}/pdf', name: 'app_bts_inscription_pdf')]
+    #[IsGranted('ROLE_USER')]
+    public function downloadPdf(
+        FormulaireInscription $formulaire,
+        EntityManagerInterface $entityManager
+    ): Response {
+        $user = $this->getUser();
+        
+        // Vérifier que c'est bien le dossier de l'utilisateur
+        if ($formulaire->getRemplitFormulaire() !== $user) {
+            throw $this->createAccessDeniedException('Vous ne pouvez pas accéder à ce dossier.');
+        }
+        
+        // Vérifier que le dossier est validé
+        if ($formulaire->getStatut() !== 'validé') {
+            $this->addFlash('error', 'Seuls les dossiers validés peuvent être téléchargés en PDF.');
+            return $this->redirectToRoute('app_bts_liste');
+        }
+        
+        // Récupérer les données du formulaire
+        $data = json_decode($formulaire->getDraftJson(), true) ?? [];
+        
+        // Charger le template Word
+        $templatePath = $this->getParameter('kernel.project_dir') . '/dossier_inscription_bts.docx';
+        $templateProcessor = new TemplateProcessor($templatePath);
+        
+        // Remplir le template avec les données
+        // Informations personnelles
+        $templateProcessor->setValue('nom', $data['nom'] ?? $user->getNom() ?? '');
+        $templateProcessor->setValue('prenom', $data['prenom'] ?? $user->getPrenom() ?? '');
+        $templateProcessor->setValue('date_naissance', $data['date_naissance'] ?? '');
+        $templateProcessor->setValue('lieu_naissance', $data['lieu_naissance'] ?? '');
+        $templateProcessor->setValue('nationalite', $data['nationalite'] ?? '');
+        $templateProcessor->setValue('sexe', $data['sexe'] ?? '');
+        $templateProcessor->setValue('adresse', $data['adresse'] ?? '');
+        $templateProcessor->setValue('code_postal', $data['code_postal'] ?? '');
+        $templateProcessor->setValue('commune', $data['commune'] ?? '');
+        $templateProcessor->setValue('tel_mobile', $data['tel_mobile'] ?? '');
+        $templateProcessor->setValue('tel_fixe', $data['tel_fixe'] ?? '');
+        $templateProcessor->setValue('email', $data['email'] ?? $user->getEmail() ?? '');
+        
+        // Scolarité année en cours
+        $templateProcessor->setValue('etablissement_actuel', $data['etablissement_actuel'] ?? '');
+        $templateProcessor->setValue('commune_etab', $data['commune_etab'] ?? '');
+        $templateProcessor->setValue('classe_actuelle', $data['classe_actuelle'] ?? '');
+        $templateProcessor->setValue('specialite', $data['specialite'] ?? '');
+        $templateProcessor->setValue('lv1', $data['lv1'] ?? '');
+        $templateProcessor->setValue('lv2', $data['lv2'] ?? '');
+        $templateProcessor->setValue('regime_scolaire', $data['regime_scolaire'] ?? '');
+        
+        // Année N-1
+        $templateProcessor->setValue('etablissement_n1', $data['etablissement_n1'] ?? '');
+        $templateProcessor->setValue('commune_n1', $data['commune_n1'] ?? '');
+        $templateProcessor->setValue('classe_n1', $data['classe_n1'] ?? '');
+        $templateProcessor->setValue('option_n1', $data['option_n1'] ?? '');
+        
+        // Année N-2
+        $templateProcessor->setValue('etablissement_n2', $data['etablissement_n2'] ?? '');
+        $templateProcessor->setValue('commune_n2', $data['commune_n2'] ?? '');
+        $templateProcessor->setValue('classe_n2', $data['classe_n2'] ?? '');
+        $templateProcessor->setValue('option_n2', $data['option_n2'] ?? '');
+        
+        // Responsable légal 1
+        $templateProcessor->setValue('lien_resp1', $data['lien_resp1'] ?? '');
+        $templateProcessor->setValue('nom_resp1', $data['nom_resp1'] ?? '');
+        $templateProcessor->setValue('prenom_resp1', $data['prenom_resp1'] ?? '');
+        $templateProcessor->setValue('adresse_resp1', $data['adresse_resp1'] ?? '');
+        $templateProcessor->setValue('commune_resp1', $data['commune_resp1'] ?? '');
+        $templateProcessor->setValue('tel_mobile_resp1', $data['tel_mobile_resp1'] ?? '');
+        $templateProcessor->setValue('tel_travail_resp1', $data['tel_travail_resp1'] ?? '');
+        $templateProcessor->setValue('tel_domicile_resp1', $data['tel_domicile_resp1'] ?? '');
+        $templateProcessor->setValue('email_resp1', $data['email_resp1'] ?? '');
+        $templateProcessor->setValue('profession_resp1', $data['profession_resp1'] ?? '');
+        
+        // Responsable légal 2
+        $templateProcessor->setValue('lien_resp2', $data['lien_resp2'] ?? '');
+        $templateProcessor->setValue('nom_resp2', $data['nom_resp2'] ?? '');
+        $templateProcessor->setValue('prenom_resp2', $data['prenom_resp2'] ?? '');
+        $templateProcessor->setValue('adresse_resp2', $data['adresse_resp2'] ?? '');
+        $templateProcessor->setValue('commune_resp2', $data['commune_resp2'] ?? '');
+        $templateProcessor->setValue('tel_mobile_resp2', $data['tel_mobile_resp2'] ?? '');
+        $templateProcessor->setValue('tel_travail_resp2', $data['tel_travail_resp2'] ?? '');
+        $templateProcessor->setValue('tel_domicile_resp2', $data['tel_domicile_resp2'] ?? '');
+        $templateProcessor->setValue('email_resp2', $data['email_resp2'] ?? '');
+        $templateProcessor->setValue('profession_resp2', $data['profession_resp2'] ?? '');
+        
+        // Informations administratives
+        $templateProcessor->setValue('date_soumission', $formulaire->getDateSoumission()?->format('d/m/Y') ?? '');
+        $templateProcessor->setValue('numero_dossier', $formulaire->getId() ?? '');
+        
+        // Sauvegarder le document Word rempli temporairement
+        $tempWordPath = sys_get_temp_dir() . '/dossier_' . $formulaire->getId() . '.docx';
+        $templateProcessor->saveAs($tempWordPath);
+        
+        // Convertir le Word en PDF
+        Settings::setPdfRendererName(Settings::PDF_RENDERER_TCPDF);
+        Settings::setPdfRendererPath($this->getParameter('kernel.project_dir') . '/vendor/tecnickcom/tcpdf');
+        
+        $phpWord = IOFactory::load($tempWordPath);
+        $tempPdfPath = sys_get_temp_dir() . '/dossier_' . $formulaire->getId() . '.pdf';
+        
+        $pdfWriter = IOFactory::createWriter($phpWord, 'PDF');
+        $pdfWriter->save($tempPdfPath);
+        
+        // Nom du fichier PDF
+        $filename = sprintf(
+            'Dossier_Inscription_%s_%s_%s.pdf',
+            $user->getNom(),
+            $user->getPrenom(),
+            date('Y-m-d')
+        );
+        
+        $response = new Response(file_get_contents($tempPdfPath));
+        $response->headers->set('Content-Type', 'application/pdf');
+        $response->headers->set('Content-Disposition', sprintf('attachment; filename="%s"', $filename));
+        
+        // Supprimer les fichiers temporaires
+        unlink($tempWordPath);
+        unlink($tempPdfPath);
+        
+        return $response;
     }
 }

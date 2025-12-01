@@ -1,0 +1,433 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Dossier d'inscription BTS - {{ user.prenom }} {{ user.nom }}</title>
+    <style>
+        @page {
+            margin: 2cm;
+        }
+        
+        body {
+            font-family: Arial, Helvetica, sans-serif;
+            font-size: 11pt;
+            line-height: 1.4;
+            color: #000;
+        }
+        
+        h1 {
+            font-size: 18pt;
+            color: #000091;
+            text-align: center;
+            margin-bottom: 5mm;
+            border-bottom: 2px solid #000091;
+            padding-bottom: 3mm;
+        }
+        
+        h2 {
+            font-size: 14pt;
+            color: #000091;
+            margin-top: 8mm;
+            margin-bottom: 4mm;
+            border-left: 4px solid #000091;
+            padding-left: 3mm;
+        }
+        
+        h3 {
+            font-size: 12pt;
+            color: #161616;
+            margin-top: 5mm;
+            margin-bottom: 3mm;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 5mm;
+        }
+        
+        table th {
+            background-color: #f5f5fe;
+            color: #000091;
+            padding: 3mm;
+            text-align: left;
+            font-weight: bold;
+            border: 1px solid #ddd;
+        }
+        
+        table td {
+            padding: 2.5mm;
+            border: 1px solid #ddd;
+        }
+        
+        .info-box {
+            background-color: #f5f5fe;
+            border: 1px solid #000091;
+            padding: 4mm;
+            margin-bottom: 5mm;
+            border-radius: 2mm;
+        }
+        
+        .footer {
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+            text-align: center;
+            font-size: 9pt;
+            color: #666;
+            border-top: 1px solid #ddd;
+            padding-top: 2mm;
+        }
+        
+        .badge {
+            display: inline-block;
+            padding: 2mm 4mm;
+            background-color: #18753c;
+            color: white;
+            border-radius: 2mm;
+            font-weight: bold;
+        }
+        
+        .label {
+            font-weight: bold;
+            color: #161616;
+        }
+    </style>
+</head>
+<body>
+    <h1>DOSSIER D'INSCRIPTION BTS</h1>
+    
+    <div class="info-box">
+        <p><span class="label">Candidat :</span> {{ user.prenom }} {{ user.nom }}</p>
+        <p><span class="label">Formation :</span> {{ formulaire.typeFormulaire }}</p>
+        <p><span class="label">Statut :</span> <span class="badge">VALIDÉ</span></p>
+        <p><span class="label">Date de validation :</span> {{ formulaire.dateSoumission|date('d/m/Y') }}</p>
+    </div>
+
+    <h2>1. IDENTITÉ DE L'ÉTUDIANT</h2>
+    <table>
+        <tr>
+            <th style="width: 40%;">Champ</th>
+            <th>Valeur</th>
+        </tr>
+        <tr>
+            <td class="label">Nom</td>
+            <td>{{ data.nom is defined ? data.nom|upper : (user.nom|upper) }}</td>
+        </tr>
+        <tr>
+            <td class="label">Prénom</td>
+            <td>{{ data.prenom|default(user.prenom) }}</td>
+        </tr>
+        <tr>
+            <td class="label">Sexe</td>
+            <td>{{ data.sexe|default('-') }}</td>
+        </tr>
+        <tr>
+            <td class="label">Date de naissance</td>
+            <td>{{ data.date_naissance is defined ? data.date_naissance : (user.dateNaissance ? user.dateNaissance|date('d/m/Y') : '-') }}</td>
+        </tr>
+        <tr>
+            <td class="label">Nationalité</td>
+            <td>{{ data.nationalite|default('-') }}</td>
+        </tr>
+        <tr>
+            <td class="label">Numéro de sécurité sociale</td>
+            <td>{{ data.numero_secu|default('-') }}</td>
+        </tr>
+        <tr>
+            <td class="label">Département de naissance</td>
+            <td>{{ data.dep_naissance|default('-') }}</td>
+        </tr>
+        <tr>
+            <td class="label">Commune de naissance</td>
+            <td>{{ data.commune_naissance|default('-') }}</td>
+        </tr>
+        <tr>
+            <td class="label">Téléphone mobile</td>
+            <td>{{ data.tel_eleve is defined ? data.tel_eleve : (user.telephone|default('-')) }}</td>
+        </tr>
+        <tr>
+            <td class="label">Courriel</td>
+            <td>{{ data.email_eleve|default(user.email) }}</td>
+        </tr>
+        <tr>
+            <td class="label">Date d'entrée</td>
+            <td>{{ data.date_entree|default('-') }}</td>
+        </tr>
+    </table>
+
+    <h2>2. SCOLARITÉ DE L'ANNÉE D'INSCRIPTION</h2>
+    <table>
+        <tr>
+            <th style="width: 40%;">Champ</th>
+            <th>Valeur</th>
+        </tr>
+        <tr>
+            <td class="label">Spécialité</td>
+            <td>{{ data.specialite|default('-') }}</td>
+        </tr>
+        <tr>
+            <td class="label">Redoublement BTS</td>
+            <td>{{ data.redoublement == '1' ? 'Oui' : 'Non' }}</td>
+        </tr>
+        <tr>
+            <td class="label">Classe</td>
+            <td>{{ data.niveau_classe|default('-') }}</td>
+        </tr>
+        <tr>
+            <td class="label">Régime scolaire</td>
+            <td>{{ data.regime_scolaire|default('-') }}</td>
+        </tr>
+        <tr>
+            <td class="label">Transport</td>
+            <td>{{ data.transport == '1' ? 'Oui' : 'Non' }}</td>
+        </tr>
+        <tr>
+            <td class="label">Type de transport</td>
+            <td>{{ data.type_transport|default('-') }}</td>
+        </tr>
+        <tr>
+            <td class="label">Immatriculation véhicule</td>
+            <td>{{ data.immatriculation|default('-') }}</td>
+        </tr>
+        <tr>
+            <td class="label">Langue LV1</td>
+            <td>{{ data.lv1|default('-') }}</td>
+        </tr>
+        <tr>
+            <td class="label">Langue LV2</td>
+            <td>{{ data.lv2|default('-') }}</td>
+        </tr>
+    </table>
+
+    <div style="page-break-before: always;"></div>
+
+    <h2>3. SCOLARITÉ DES 2 ANNÉES ANTÉRIEURES</h2>
+    
+    <h3>Année N-1</h3>
+    <table>
+        <tr>
+            <th style="width: 40%;">Champ</th>
+            <th>Valeur</th>
+        </tr>
+        <tr>
+            <td class="label">Année scolaire</td>
+            <td>{{ data.annee_n1|default('-') }}</td>
+        </tr>
+        <tr>
+            <td class="label">Classe</td>
+            <td>{{ data.classe_n1|default('-') }}</td>
+        </tr>
+        <tr>
+            <td class="label">LV1</td>
+            <td>{{ data.lv1_n1|default('-') }}</td>
+        </tr>
+        <tr>
+            <td class="label">LV2</td>
+            <td>{{ data.lv2_n1|default('-') }}</td>
+        </tr>
+        <tr>
+            <td class="label">Établissement</td>
+            <td>{{ data.etablissement_n1|default('-') }}</td>
+        </tr>
+        <tr>
+            <td class="label">Option</td>
+            <td>{{ data.option_n1|default('-') }}</td>
+        </tr>
+    </table>
+
+    <h3>Année N-2</h3>
+    <table>
+        <tr>
+            <th style="width: 40%;">Champ</th>
+            <th>Valeur</th>
+        </tr>
+        <tr>
+            <td class="label">Année scolaire</td>
+            <td>{{ data.annee_n2|default('-') }}</td>
+        </tr>
+        <tr>
+            <td class="label">Classe</td>
+            <td>{{ data.classe_n2|default('-') }}</td>
+        </tr>
+        <tr>
+            <td class="label">LV1</td>
+            <td>{{ data.lv1_n2|default('-') }}</td>
+        </tr>
+        <tr>
+            <td class="label">LV2</td>
+            <td>{{ data.lv2_n2|default('-') }}</td>
+        </tr>
+        <tr>
+            <td class="label">Établissement</td>
+            <td>{{ data.etablissement_n2|default('-') }}</td>
+        </tr>
+        <tr>
+            <td class="label">Option</td>
+            <td>{{ data.option_n2|default('-') }}</td>
+        </tr>
+    </table>
+
+    <table>
+        <tr>
+            <th style="width: 40%;">Dernier diplôme obtenu</th>
+            <td>{{ data.dernier_diplome|default('-') }}</td>
+        </tr>
+    </table>
+
+    <div style="page-break-before: always;"></div>
+
+    <h2>4. RESPONSABLES LÉGAUX</h2>
+    
+    <h3>Responsable légal 1</h3>
+    <table>
+        <tr>
+            <th style="width: 40%;">Champ</th>
+            <th>Valeur</th>
+        </tr>
+        <tr>
+            <td class="label">Lien avec l'élève</td>
+            <td>{{ data.lien_resp1|default('-') }}</td>
+        </tr>
+        <tr>
+            <td class="label">Nom</td>
+            <td>{{ data.nom_resp1|default('-') }}</td>
+        </tr>
+        <tr>
+            <td class="label">Prénom</td>
+            <td>{{ data.prenom_resp1|default('-') }}</td>
+        </tr>
+        <tr>
+            <td class="label">Adresse</td>
+            <td>{{ data.adresse_resp1|default('-') }}</td>
+        </tr>
+        <tr>
+            <td class="label">Commune</td>
+            <td>{{ data.commune_resp1|default('-') }}</td>
+        </tr>
+        <tr>
+            <td class="label">Téléphone mobile</td>
+            <td>{{ data.tel_mobile_resp1|default('-') }}</td>
+        </tr>
+        <tr>
+            <td class="label">Téléphone travail</td>
+            <td>{{ data.tel_travail_resp1|default('-') }}</td>
+        </tr>
+        <tr>
+            <td class="label">Téléphone domicile</td>
+            <td>{{ data.tel_domicile_resp1|default('-') }}</td>
+        </tr>
+        <tr>
+            <td class="label">Courriel</td>
+            <td>{{ data.email_resp1|default('-') }}</td>
+        </tr>
+        <tr>
+            <td class="label">Profession</td>
+            <td>{{ data.profession_resp1|default('-') }}</td>
+        </tr>
+        <tr>
+            <td class="label">Acceptation SMS</td>
+            <td>{{ data.sms_resp1 == '1' ? 'Oui' : 'Non' }}</td>
+        </tr>
+        <tr>
+            <td class="label">Autorisation communication associations parents</td>
+            <td>{{ data.comm_asso_resp1 == '1' ? 'Oui' : 'Non' }}</td>
+        </tr>
+    </table>
+
+    <h3>Responsable légal 2</h3>
+    <table>
+        <tr>
+            <th style="width: 40%;">Champ</th>
+            <th>Valeur</th>
+        </tr>
+        <tr>
+            <td class="label">Lien avec l'élève</td>
+            <td>{{ data.lien_resp2|default('-') }}</td>
+        </tr>
+        <tr>
+            <td class="label">Nom</td>
+            <td>{{ data.nom_resp2|default('-') }}</td>
+        </tr>
+        <tr>
+            <td class="label">Prénom</td>
+            <td>{{ data.prenom_resp2|default('-') }}</td>
+        </tr>
+        <tr>
+            <td class="label">Adresse</td>
+            <td>{{ data.adresse_resp2|default('-') }}</td>
+        </tr>
+        <tr>
+            <td class="label">Commune</td>
+            <td>{{ data.commune_resp2|default('-') }}</td>
+        </tr>
+        <tr>
+            <td class="label">Téléphone mobile</td>
+            <td>{{ data.tel_mobile_resp2|default('-') }}</td>
+        </tr>
+        <tr>
+            <td class="label">Téléphone travail</td>
+            <td>{{ data.tel_travail_resp2|default('-') }}</td>
+        </tr>
+        <tr>
+            <td class="label">Téléphone domicile</td>
+            <td>{{ data.tel_domicile_resp2|default('-') }}</td>
+        </tr>
+        <tr>
+            <td class="label">Courriel</td>
+            <td>{{ data.email_resp2|default('-') }}</td>
+        </tr>
+        <tr>
+            <td class="label">Profession</td>
+            <td>{{ data.profession_resp2|default('-') }}</td>
+        </tr>
+        <tr>
+            <td class="label">Acceptation SMS</td>
+            <td>{{ data.sms_resp2 == '1' ? 'Oui' : 'Non' }}</td>
+        </tr>
+        <tr>
+            <td class="label">Autorisation communication associations parents</td>
+            <td>{{ data.comm_asso_resp2 == '1' ? 'Oui' : 'Non' }}</td>
+        </tr>
+    </table>
+
+    <div style="page-break-before: always;"></div>
+
+    <h2>5. DOCUMENTS JUSTIFICATIFS</h2>
+    <table>
+        <tr>
+            <th style="width: 40%;">Document</th>
+            <th>Statut</th>
+        </tr>
+        <tr>
+            <td class="label">Carte d'identité (recto)</td>
+            <td>{{ formulaire.carteIdentiteRecto ? '✓ Fourni' : 'Non fourni' }}</td>
+        </tr>
+        <tr>
+            <td class="label">Carte d'identité (verso)</td>
+            <td>{{ formulaire.carteIdentiteVerso ? '✓ Fourni' : 'Non fourni' }}</td>
+        </tr>
+        <tr>
+            <td class="label">Justificatif de domicile</td>
+            <td>{{ formulaire.justificatifDomicile ? '✓ Fourni' : 'Non fourni' }}</td>
+        </tr>
+        <tr>
+            <td class="label">Relevés de notes</td>
+            <td>{{ formulaire.relevesNotes ? '✓ Fourni' : 'Non fourni' }}</td>
+        </tr>
+    </table>
+
+    <h2>6. VALIDATION</h2>
+    <div class="info-box">
+        <p><strong>✓</strong> Le candidat certifie que les informations fournies sont exactes</p>
+        <p><strong>✓</strong> Autorisation du responsable légal confirmée</p>
+        <p><strong>Date de soumission :</strong> {{ formulaire.dateSoumission|date('d/m/Y à H:i') }}</p>
+    </div>
+
+    <div class="footer">
+        <p>Dossier d'inscription BTS - Document généré le {{ "now"|date('d/m/Y à H:i') }}</p>
+        <p>Lycée Fulbert - Inscription BTS - {{ formulaire.id }}</p>
+    </div>
+</body>
+</html>
+
