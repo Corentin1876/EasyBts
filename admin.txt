@@ -7,14 +7,17 @@ changer le style document et changer la vue pour les pdf
 
 et faire le bouton changement
 
+- prblm heure date de soumission dossier bts
+- prbm doit raffaichir la page au debut du dossier bts.
+- 
 
 
 
 
 
 
-- Changer les type de bts du lycee fulbert
 
+<<<<<<< Updated upstream
 - Mettre les information manquante du dossiers d'inscription
     - enlever dans regime les choix avec le fortfait 
      juste laisser externe et demis pensionnaire
@@ -27,3 +30,5 @@ et faire le bouton changement
        faire en sorte que se soit pas des champ obligatoire, et faire en sorte 
        d'avoir une coche pour accepter la communication de l'adreesse mail au parent
        d'eleve
+=======
+>>>>>>> Stashed changes
