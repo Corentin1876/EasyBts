@@ -1,0 +1,170 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Guide d'inscription - Inscription BTS{% endblock %}
+
+{% block body %}
+<!-- Fil d'ariane -->
+<nav class="fr-breadcrumb" aria-label="vous êtes ici :">
+    <button class="fr-breadcrumb__button" aria-expanded="false" aria-controls="breadcrumb-guide">Voir le fil d'Ariane</button>
+    <div class="fr-collapse" id="breadcrumb-guide">
+        <ol class="fr-breadcrumb__list">
+            <li><a class="fr-breadcrumb__link" href="{{ path('app_home') }}">Accueil</a></li>
+            <li><a class="fr-breadcrumb__link" aria-current="page">Guide d'inscription</a></li>
+        </ol>
+    </div>
+</nav>
+
+<div class="fr-container fr-py-6v">
+    <div class="fr-grid-row">
+        <div class="fr-col-12">
+            <h1 class="fr-h1">Guide d'inscription</h1>
+            <p class="fr-text--lead">Suivez ce guide pour compléter votre dossier d'inscription BTS étape par étape.</p>
+        </div>
+    </div>
+
+    <!-- Étapes d'inscription -->
+    <div class="fr-grid-row fr-grid-row--gutters fr-mt-6v">
+        <div class="fr-col-12 fr-col-md-6 fr-col-lg-4">
+            <div class="fr-card fr-card--no-arrow">
+                <div class="fr-card__body">
+                    <div class="fr-card__content">
+                        <div class="fr-card__start">
+                            <p class="fr-badge fr-badge--info fr-badge--no-icon">Étape 1</p>
+                        </div>
+                        <h2 class="fr-card__title">Création de compte</h2>
+                        <p class="fr-card__desc">
+                            Créez votre compte en fournissant votre adresse email et en choisissant un mot de passe sécurisé.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="fr-col-12 fr-col-md-6 fr-col-lg-4">
+            <div class="fr-card fr-card--no-arrow">
+                <div class="fr-card__body">
+                    <div class="fr-card__content">
+                        <div class="fr-card__start">
+                            <p class="fr-badge fr-badge--info fr-badge--no-icon">Étape 2</p>
+                        </div>
+                        <h2 class="fr-card__title">Choix de la spécialisation</h2>
+                        <p class="fr-card__desc">
+                            Sélectionnez la spécialisation BTS qui correspond à votre projet professionnel.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="fr-col-12 fr-col-md-6 fr-col-lg-4">
+            <div class="fr-card fr-card--no-arrow">
+                <div class="fr-card__body">
+                    <div class="fr-card__content">
+                        <div class="fr-card__start">
+                            <p class="fr-badge fr-badge--info fr-badge--no-icon">Étape 3</p>
+                        </div>
+                        <h2 class="fr-card__title">Informations personnelles</h2>
+                        <p class="fr-card__desc">
+                            Renseignez vos informations personnelles : état civil, coordonnées, responsables légaux.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="fr-col-12 fr-col-md-6 fr-col-lg-4">
+            <div class="fr-card fr-card--no-arrow">
+                <div class="fr-card__body">
+                    <div class="fr-card__content">
+                        <div class="fr-card__start">
+                            <p class="fr-badge fr-badge--info fr-badge--no-icon">Étape 4</p>
+                        </div>
+                        <h2 class="fr-card__title">Parcours scolaire</h2>
+                        <p class="fr-card__desc">
+                            Saisissez votre parcours scolaire et téléchargez vos relevés de notes.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="fr-col-12 fr-col-md-6 fr-col-lg-4">
+            <div class="fr-card fr-card--no-arrow">
+                <div class="fr-card__body">
+                    <div class="fr-card__content">
+                        <div class="fr-card__start">
+                            <p class="fr-badge fr-badge--info fr-badge--no-icon">Étape 5</p>
+                        </div>
+                        <h2 class="fr-card__title">Documents justificatifs</h2>
+                        <p class="fr-card__desc">
+                            Téléchargez tous les documents requis : pièce d'identité, justificatif de domicile, etc.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="fr-col-12 fr-col-md-6 fr-col-lg-4">
+            <div class="fr-card fr-card--no-arrow">
+                <div class="fr-card__body">
+                    <div class="fr-card__content">
+                        <div class="fr-card__start">
+                            <p class="fr-badge fr-badge--success fr-badge--no-icon">Étape 6</p>
+                        </div>
+                        <h2 class="fr-card__title">Validation et soumission</h2>
+                        <p class="fr-card__desc">
+                            Vérifiez toutes les informations et soumettez votre dossier complet.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Documents nécessaires -->
+    <div class="fr-grid-row fr-mt-6v">
+        <div class="fr-col-12">
+            <h2 class="fr-h2">Documents nécessaires</h2>
+        </div>
+        <div class="fr-col-12 fr-col-lg-8">
+            <div class="fr-callout">
+                <h3 class="fr-callout__title">Liste des documents à préparer</h3>
+                <ul class="fr-list">
+                    <li>Pièce d'identité (carte nationale d'identité ou passeport)</li>
+                    <li>Justificatif de domicile de moins de 3 mois</li>
+                    <li>Relevés de notes des années précédentes</li>
+                    <li>Diplôme du Baccalauréat ou équivalent</li>
+                    <li>Photo d'identité récente</li>
+                    <li>Certificat de scolarité (si applicable)</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- Aide -->
+    <div class="fr-grid-row fr-mt-6v">
+        <div class="fr-col-12 fr-col-lg-6">
+            <div class="fr-callout fr-callout--green-emeraude">
+                <h3 class="fr-callout__title">Besoin d'aide ?</h3>
+                <p class="fr-callout__text">
+                    Notre équipe support est disponible pour vous accompagner dans votre inscription.
+                </p>
+                <a class="fr-btn fr-btn--secondary" href="{{ path('app_contact') }}">
+                    Nous contacter
+                </a>
+            </div>
+        </div>
+        <div class="fr-col-12 fr-col-lg-6">
+            <div class="fr-callout">
+                <h3 class="fr-callout__title">Questions fréquentes</h3>
+                <p class="fr-callout__text">
+                    Consultez notre FAQ pour trouver rapidement des réponses à vos questions.
+                </p>
+                <a class="fr-btn fr-btn--secondary" href="{{ path('app_faq') }}">
+                    Consulter la FAQ
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

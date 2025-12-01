@@ -1,0 +1,134 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Taux de réussite - Inscription BTS{% endblock %}
+
+{% block body %}
+<!-- Fil d'ariane -->
+<nav class="fr-breadcrumb" aria-label="vous êtes ici :">
+    <button class="fr-breadcrumb__button" aria-expanded="false" aria-controls="breadcrumb-taux">Voir le fil d'Ariane</button>
+    <div class="fr-collapse" id="breadcrumb-taux">
+        <ol class="fr-breadcrumb__list">
+            <li><a class="fr-breadcrumb__link" href="{{ path('app_home') }}">Accueil</a></li>
+            <li><a class="fr-breadcrumb__link" aria-current="page">Taux de réussite</a></li>
+        </ol>
+    </div>
+</nav>
+
+<div class="fr-container fr-py-6v">
+    <div class="fr-grid-row">
+        <div class="fr-col-12">
+            <h1 class="fr-h1">Taux de réussite aux examens</h1>
+            <p class="fr-text--lead">Consultez les statistiques de réussite par établissement et par formation.</p>
+        </div>
+    </div>
+
+    <!-- Fonctionnalité à venir -->
+    <div class="fr-grid-row fr-mt-6v">
+        <div class="fr-col-12">
+            <div class="fr-alert fr-alert--info">
+                <h3 class="fr-alert__title">Statistiques en cours de compilation</h3>
+                <p>Les taux de réussite détaillés seront bientôt disponibles. Vous pourrez consulter :</p>
+                <ul>
+                    <li>Les taux de réussite par établissement</li>
+                    <li>Les taux de réussite par spécialisation BTS</li>
+                    <li>L'évolution des résultats sur plusieurs années</li>
+                    <li>Les statistiques comparatives entre établissements</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- Informations générales -->
+    <div class="fr-grid-row fr-mt-6v">
+        <div class="fr-col-12">
+            <h2 class="fr-h2">Informations sur les examens BTS</h2>
+        </div>
+        <div class="fr-col-12 fr-col-lg-8">
+            <div class="fr-card fr-card--no-arrow">
+                <div class="fr-card__body">
+                    <div class="fr-card__content">
+                        <h3 class="fr-card__title">Modalités d'examen</h3>
+                        <p>Le Brevet de Technicien Supérieur (BTS) est un diplôme national de l'enseignement supérieur français.</p>
+                        <ul class="fr-list">
+                            <li>Formation en 2 ans après le baccalauréat</li>
+                            <li>Évaluation par contrôle continu et examens finaux</li>
+                            <li>Diplôme reconnu par l'État (niveau 5 - Bac+2)</li>
+                            <li>120 crédits ECTS pour poursuivre en licence</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Placeholder statistiques -->
+    <div class="fr-grid-row fr-grid-row--gutters fr-mt-6v">
+        <div class="fr-col-12 fr-col-md-6 fr-col-lg-3">
+            <div class="fr-card fr-card--no-arrow">
+                <div class="fr-card__body">
+                    <div class="fr-card__content">
+                        <p class="fr-text--sm fr-mb-1w">Taux moyen national</p>
+                        <p class="fr-display--xs" style="color: #000091;">~75%</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="fr-col-12 fr-col-md-6 fr-col-lg-3">
+            <div class="fr-card fr-card--no-arrow">
+                <div class="fr-card__body">
+                    <div class="fr-card__content">
+                        <p class="fr-text--sm fr-mb-1w">Nombre de candidats</p>
+                        <p class="fr-display--xs" style="color: #000091;">Données à venir</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="fr-col-12 fr-col-md-6 fr-col-lg-3">
+            <div class="fr-card fr-card--no-arrow">
+                <div class="fr-card__body">
+                    <div class="fr-card__content">
+                        <p class="fr-text--sm fr-mb-1w">Établissements</p>
+                        <p class="fr-display--xs" style="color: #000091;">Données à venir</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="fr-col-12 fr-col-md-6 fr-col-lg-3">
+            <div class="fr-card fr-card--no-arrow">
+                <div class="fr-card__body">
+                    <div class="fr-card__content">
+                        <p class="fr-text--sm fr-mb-1w">Spécialisations</p>
+                        <p class="fr-display--xs" style="color: #000091;">Données à venir</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Actions -->
+    <div class="fr-grid-row fr-mt-6v">
+        <div class="fr-col-12 fr-col-lg-6">
+            <div class="fr-callout">
+                <h3 class="fr-callout__title">Consultez les formations</h3>
+                <p class="fr-callout__text">
+                    Découvrez toutes les spécialisations BTS disponibles.
+                </p>
+                <a class="fr-btn fr-btn--secondary" href="{{ path('app_formations') }}">
+                    Voir les formations
+                </a>
+            </div>
+        </div>
+        <div class="fr-col-12 fr-col-lg-6">
+            <div class="fr-callout fr-callout--green-emeraude">
+                <h3 class="fr-callout__title">Questions ?</h3>
+                <p class="fr-callout__text">
+                    Contactez-nous pour obtenir plus d'informations.
+                </p>
+                <a class="fr-btn fr-btn--secondary" href="{{ path('app_contact') }}">
+                    Nous contacter
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

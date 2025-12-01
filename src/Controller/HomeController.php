@@ -110,9 +110,13 @@ class HomeController extends AbstractController
     }
 
     #[Route('/plan-du-site', name: 'app_sitemap')]
-    public function sitemap(): Response
+    public function sitemap(EntityManagerInterface $entityManager): Response
     {
-        return $this->render('legal/sitemap.html.twig');
+        $specialisations = $entityManager->getRepository(Specialisation::class)->findAll();
+        
+        return $this->render('legal/sitemap.html.twig', [
+            'specialisations' => $specialisations,
+        ]);
     }
 
     #[Route('/accessibilite', name: 'app_accessibility')]
@@ -143,5 +147,65 @@ class HomeController extends AbstractController
     public function faq(): Response
     {
         return $this->render('faq/index.html.twig');
+    }
+
+    
+    #[Route('/mon-compte', name: 'app_mon_compte')]
+    public function monCompte(): Response
+    {
+        // Vérifier que l'utilisateur est connecté
+        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
+        
+        $user = $this->getUser();
+        
+        return $this->render('utilisateur/mon_compte.html.twig', [
+            'user' => $user,
+        ]);
+    }
+
+    #[Route('/guide-inscription', name: 'app_guide')]
+    public function guide(): Response
+    {
+        return $this->render('ressources/guide.html.twig');
+    }
+
+    #[Route('/calendrier-inscriptions', name: 'app_calendrier')]
+    public function calendrier(): Response
+    {
+        return $this->render('ressources/calendrier.html.twig');
+    }
+
+    #[Route('/aide-technique', name: 'app_aide_technique')]
+    public function aideTechnique(): Response
+    {
+        return $this->render('ressources/aide_technique.html.twig');
+    }
+
+    #[Route('/etablissements', name: 'app_etablissements')]
+    public function etablissements(): Response
+    {
+        return $this->render('etablissements/recherche.html.twig');
+    }
+
+    #[Route('/formations', name: 'app_formations')]
+    public function formations(EntityManagerInterface $entityManager): Response
+    {
+        $specialisations = $entityManager->getRepository(Specialisation::class)->findAll();
+        
+        return $this->render('etablissements/formations.html.twig', [
+            'specialisations' => $specialisations,
+        ]);
+    }
+
+    #[Route('/carte-etablissements', name: 'app_carte_etablissements')]
+    public function carteEtablissements(): Response
+    {
+        return $this->render('etablissements/carte.html.twig');
+    }
+
+    #[Route('/taux-reussite', name: 'app_taux_reussite')]
+    public function tauxReussite(): Response
+    {
+        return $this->render('etablissements/taux_reussite.html.twig');
     }
 }

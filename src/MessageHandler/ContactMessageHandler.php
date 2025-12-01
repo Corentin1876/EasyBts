@@ -2,13 +2,16 @@
 
 namespace App\MessageHandler;
 
+use App\Entity\Contact;
 use App\Message\ContactMessage;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Mailer\MailerInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\Mime\Address;
 use Symfony\Bridge\Twig\Mime\TemplatedEmail;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
+use Symfony\Bundle\SecurityBundle\Security;
 
 #[AsMessageHandler]
 class ContactMessageHandler
@@ -16,6 +19,8 @@ class ContactMessageHandler
     public function __construct(
         private MailerInterface $mailer,
         private LoggerInterface $logger,
+        private EntityManagerInterface $entityManager,
+        private Security $security,
         #[Autowire(env: 'CONTACT_RECIPIENT')] private string $to,
         #[Autowire(env: 'CONTACT_RECIPIENT_BCC')] private ?string $bcc = null,
     )
@@ -25,6 +30,28 @@ class ContactMessageHandler
     public function __invoke(ContactMessage $message): void
     {
         try {
+            // Sauvegarder le message en base de données
+            $contact = new Contact();
+            $contact->setCivilite($message->getCivilite());
+            $contact->setNom($message->getNom());
+            $contact->setPrenom($message->getPrenom());
+            $contact->setEmail($message->getEmail());
+            $contact->setTelephone($message->getTelephone());
+            $contact->setSujet($message->getSujet());
+            $contact->setMessage($message->getMessage());
+            $contact->setConsent($message->isConsent());
+            $contact->setStatus('nouveau');
+            
+            // Associer l'utilisateur connecté si disponible
+            $user = $this->security->getUser();
+            if ($user) {
+                $contact->setUtilisateur($user);
+            }
+            
+            $this->entityManager->persist($contact);
+            $this->entityManager->flush();
+            
+            // Envoyer l'email
             $from = new Address('yousri.bchk@gmail.com', 'Inscription BTS - Formulaire');
             $email = (new TemplatedEmail())
                 ->from($from)
@@ -42,12 +69,13 @@ class ContactMessageHandler
             }
 
             $this->mailer->send($email);
-            $this->logger->info('Email de contact envoyé', [
+            $this->logger->info('Email de contact envoyé et sauvegardé', [
                 'channel' => 'contact_email',
                 'sujet' => $message->getSujet(),
                 'from_user' => $message->getEmail(),
                 'to' => $this->to,
                 'bcc' => $this->bcc,
+                'contact_id' => $contact->getId(),
                 'created_at' => $message->getCreatedAt()->format(DATE_ATOM),
             ]);
             // Journal brut pour audit (optionnel)
