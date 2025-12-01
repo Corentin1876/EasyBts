@@ -133,9 +133,13 @@
                         </div>
                     </div>
 
-                    <div class="fr-input-group">
-                        <label class="fr-label" for="date_entree">Date d'entrée <span class="fr-text--red">*</span></label>
-                        <input class="fr-input" type="date" id="date_entree" name="date_entree" required>
+                    <div class="fr-select-group">
+                        <label class="fr-label" for="sms_eleve">Acceptation SMS <span class="fr-text--red">*</span></label>
+                        <select class="fr-select" id="sms_eleve" name="sms_eleve" required>
+                            <option value="" selected disabled>Sélectionner</option>
+                            <option value="1">Oui</option>
+                            <option value="0">Non</option>
+                        </select>
                     </div>
                 </div>
             </div>
