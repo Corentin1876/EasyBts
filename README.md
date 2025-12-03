@@ -347,5 +347,3 @@ Puis allez sur http://localhost:8080
 - Vérifiez votre fichier `.env.local`
 
 ---
-
-**Projet réalisé par Corentin & Etienne** - Lycée Fulbert 2025
