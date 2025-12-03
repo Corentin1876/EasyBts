@@ -52,6 +52,14 @@
                 </p>
             </div>
             
+            {% if dossierSoumis.statut == 'validé' %}
+            <div class="fr-btns-group fr-btns-group--inline-md fr-btns-group--center fr-mb-4v">
+                <a class="fr-btn fr-btn--lg fr-btn--icon-left fr-icon-download-line" href="{{ path('app_bts_inscription_pdf', {'id': dossierSoumis.id}) }}" target="_blank">
+                    Télécharger mon dossier d'inscription en PDF
+                </a>
+            </div>
+            {% endif %}
+            
             {% elseif brouillon %}
             <!-- Inscription en cours ou à modifier -->
             <div class="fr-alert {% if brouillon.statut == 'à modifier' %}fr-alert--warning{% else %}fr-alert--info{% endif %} fr-mb-4v">
