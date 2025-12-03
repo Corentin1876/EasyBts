@@ -1,100 +1,148 @@
-# EasyBTS - Plateforme de gestion des inscriptions BTS
+# 🎓 EasyBTS - Plateforme d'inscription BTS en ligne
 
-![Symfony](https://img.shields.io/badge/Symfony-6.x-000000?style=flat&logo=symfony)
-![PHP](https://img.shields.io/badge/PHP-8.2+-777BB4?style=flat&logo=php)
-![MySQL](https://img.shields.io/badge/MySQL-8.0+-4479A1?style=flat&logo=mysql)
+Application web permettant aux étudiants de s'inscrire en BTS via un formulaire en ligne et aux administrateurs de gérer et valider les dossiers.
 
-## 📋 Description
+## ✨ Fonctionnalités
 
-EasyBTS est une plateforme web de gestion des dossiers d'inscription pour les formations BTS (Brevet de Technicien Supérieur). Elle permet aux étudiants de soumettre leur dossier d'inscription en ligne et aux administrateurs de gérer et valider ces dossiers.
+- Formulaire d'inscription en 6 étapes avec sauvegarde automatique
+- Interface administrateur pour validation des dossiers
+- Génération automatique de PDF pour les dossiers validés
+- Upload de documents justificatifs
+- Système d'authentification sécurisé
 
-### Fonctionnalités principales
+## 📋 Prérequis - Ce dont vous avez besoin
 
-- ✅ **Inscription en ligne** : Formulaire multi-étapes pour les candidats
-- ✅ **Gestion des dossiers** : Interface administrateur pour valider/rejeter les dossiers
-- ✅ **Génération PDF** : Export automatique des dossiers validés au format PDF
-- ✅ **Authentification sécurisée** : Système de connexion avec gestion des rôles
-- ✅ **Sauvegarde automatique** : Sauvegarde des brouillons en temps réel
-- ✅ **Upload de documents** : Gestion des pièces justificatives
+Avant de commencer, installez ces logiciels sur votre ordinateur :
 
-## 🛠️ Technologies utilisées
+### 1️⃣ PHP (version 8.2 ou supérieure)
 
-- **Framework** : Symfony 6.x
-- **Langage** : PHP 8.2+
-- **Base de données** : MySQL 8.0+
-- **Frontend** : Twig, Stimulus.js, DSFR (Système de Design de l'État Français)
-- **PDF** : PHPWord + LibreOffice
-- **Asset Management** : Asset Mapper (Symfony UX)
+**Windows :**
+- Téléchargez PHP depuis [windows.php.net/download](https://windows.php.net/download/)
+- Choisissez "VS16 x64 Thread Safe" (dernière version 8.2 ou 8.3)
+- Décompressez dans `C:\php`
+- Ajoutez `C:\php` à votre PATH Windows
 
-## 📦 Prérequis
+**Vérification :** Ouvrez un terminal et tapez :
+```bash
+php -v
+```
+Vous devez voir : `PHP 8.2.x` ou supérieur
 
-Avant de commencer, assurez-vous d'avoir installé :
+### 2️⃣ Composer (gestionnaire de dépendances PHP)
 
-- **PHP** >= 8.2
-  - Extensions requises : `pdo_mysql`, `intl`, `xml`, `zip`, `gd`
-- **Composer** >= 2.0
-- **MySQL** >= 8.0 ou MariaDB >= 10.5
-- **Node.js** >= 18.x (optionnel, pour le développement frontend)
-- **Symfony CLI** (recommandé)
-- **LibreOffice** (pour la génération de PDF)
+- Téléchargez depuis [getcomposer.org](https://getcomposer.org/download/)
+- Installez l'exécutable Windows (Composer-Setup.exe)
 
-## 🚀 Installation
+**Vérification :**
+```bash
+composer -V
+```
 
-### 1. Cloner le projet
+### 3️⃣ MySQL (base de données)
+
+**Option facile - XAMPP (recommandé pour débutants) :**
+- Téléchargez [XAMPP](https://www.apachefriends.org/fr/download.html)
+- Installez uniquement MySQL
+- Démarrez MySQL depuis le panneau XAMPP
+
+**Ou MySQL seul :**
+- Téléchargez [MySQL Community Server](https://dev.mysql.com/downloads/mysql/)
+- Lors de l'installation, notez le mot de passe root
+
+**Vérification :** Ouvrez XAMPP et vérifiez que MySQL est démarré (vert)
+
+### 4️⃣ Git
+
+- Téléchargez depuis [git-scm.com](https://git-scm.com/downloads)
+- Installez avec les options par défaut
+
+**Vérification :**
+```bash
+git --version
+```
+
+### 5️⃣ LibreOffice (pour les PDF)
+
+- Téléchargez depuis [libreoffice.org](https://fr.libreoffice.org/download/telecharger-libreoffice/)
+- Installez dans le dossier par défaut
+
+## 🚀 Installation - Étape par étape
+
+### Étape 1 : Télécharger le projet
+
+Ouvrez un terminal (PowerShell ou CMD) et tapez :
 
 ```bash
+cd C:\
 git clone https://github.com/Corentin1876/EasyBts.git
 cd EasyBts
 ```
 
-### 2. Installer les dépendances
+### Étape 2 : Installer les dépendances
+
+Dans le dossier du projet, tapez :
 
 ```bash
 composer install
 ```
 
-### 3. Configurer l'environnement
+⏱️ Cela prend 2-3 minutes. Attendez que ça finisse.
 
-Créez un fichier `.env.local` à la racine du projet :
+### Étape 3 : Configurer la base de données
+
+Créez un fichier `.env.local` dans le dossier du projet :
+
+**Windows (PowerShell) :**
+```bash
+notepad .env.local
+```
+
+Copiez-collez ce texte dans le fichier :
 
 ```env
-# Configuration de la base de données
+# Si vous utilisez XAMPP (sans mot de passe)
 DATABASE_URL="mysql://root:@127.0.0.1:3306/easybts?serverVersion=8.0&charset=utf8mb4"
 
-# Configuration de l'application
-APP_ENV=dev
-APP_SECRET=votre_secret_genere_ici
+# Si vous avez mis un mot de passe MySQL, remplacez par :
+# DATABASE_URL="mysql://root:VOTRE_MOT_DE_PASSE@127.0.0.1:3306/easybts?serverVersion=8.0&charset=utf8mb4"
 
-# Configuration Mailer (optionnel pour dev)
+APP_ENV=dev
+APP_SECRET=change_this_secret_key_123456789
 MAILER_DSN=null://null
 ```
 
-### 4. Créer la base de données
+**💾 Enregistrez** et fermez le fichier.
+
+### Étape 4 : Créer la base de données
+
+Tapez ces commandes une par une :
 
 ```bash
 php bin/console doctrine:database:create
+```
+✅ Vous devez voir : "Created database `easybts`"
+
+```bash
 php bin/console doctrine:migrations:migrate
 ```
+✅ Tapez `yes` quand on vous demande, puis appuyez sur Entrée
 
-### 5. Charger les données de test
+### Étape 5 : Charger les données de test
 
 ```bash
 php bin/console doctrine:fixtures:load
 ```
+✅ Tapez `yes` pour confirmer
 
-### 6. Lancer le serveur de développement
-
-```bash
-symfony server:start
-```
-
-Ou avec PHP :
+### Étape 6 : Lancer le site
 
 ```bash
 php -S localhost:8000 -t public/
 ```
 
-L'application est maintenant accessible sur : **http://localhost:8000**
+✅ **C'est prêt !** Ouvrez votre navigateur et allez sur : **http://localhost:8000**
+
+> 💡 Pour arrêter le serveur, appuyez sur `Ctrl + C` dans le terminal
 
 ## 👥 Jeu de données
 
@@ -242,3 +290,62 @@ php bin/console asset-map:compile
 ## 🐛 Problèmes connus
 
 - **Rafraîchissement page** : Recharger la page au début du formulaire après sauvegarde
+
+## 🔐 Comptes de test - Pour vous connecter
+
+Une fois l'installation terminée, utilisez ces comptes :
+
+### 👨‍💼 Compte Administrateur
+
+```
+Email : admin@easybts.fr
+Mot de passe : Admin123!
+```
+
+**Ce que vous pouvez faire :**
+- Voir tous les dossiers d'inscription
+- Valider ou rejeter les dossiers
+- Gérer les spécialisations BTS
+
+### 👨‍🎓 Compte Étudiant
+
+```
+Email : etudiant@example.fr
+Mot de passe : Password123!
+```
+
+**Ce que vous pouvez faire :**
+- Créer un dossier d'inscription
+- Remplir le formulaire en 6 étapes
+- Télécharger le PDF une fois validé
+
+## ❓ Problèmes fréquents
+
+### ❌ "Base de données inexistante"
+```bash
+php bin/console doctrine:database:create
+```
+
+### ❌ "Tables inexistantes"
+```bash
+php bin/console doctrine:migrations:migrate
+```
+
+### ❌ "Pas de données"
+```bash
+php bin/console doctrine:fixtures:load
+```
+
+### ❌ "Port 8000 déjà utilisé"
+```bash
+php -S localhost:8080 -t public/
+```
+Puis allez sur http://localhost:8080
+
+### ❌ "Erreur MySQL"
+- Vérifiez que MySQL est démarré dans XAMPP
+- Vérifiez votre fichier `.env.local`
+
+---
+
+**Projet réalisé par Corentin & Etienne** - Lycée Fulbert 2025
