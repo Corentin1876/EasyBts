@@ -6,12 +6,3 @@ Rôle : ROLE_ADMIN
 changer le style document et changer la vue pour les pdf
 
 et faire le bouton changement
-
-
-
-
-
-
-
-
-
