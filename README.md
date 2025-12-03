@@ -241,25 +241,4 @@ php bin/console asset-map:compile
 
 ## 🐛 Problèmes connus
 
-- **Date/heure de soumission** : Peut nécessiter une configuration de fuseau horaire
 - **Rafraîchissement page** : Recharger la page au début du formulaire après sauvegarde
-
-## 📄 Licence
-
-Ce projet est développé dans le cadre d'un projet scolaire.
-
-## 👨‍💻 Auteurs
-
-- **Corentin** - Développement principal
-- **Etienne** - Développement et documentation
-
-## 🤝 Contribution
-
-Ce projet étant un projet scolaire, les contributions externes ne sont pas acceptées pour le moment.
-
-## 📞 Support
-
-Pour toute question, veuillez contacter l'équipe de développement via GitHub Issues.
-
----
-
