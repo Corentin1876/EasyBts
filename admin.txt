@@ -7,7 +7,9 @@ changer le style document et changer la vue pour les pdf
 
 et faire le bouton changement
 
-
+- prblm heure date de soumission dossier bts
+- prbm doit raffaichir la page au debut du dossier bts.
+- 
 
 
 
