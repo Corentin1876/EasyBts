@@ -4,11 +4,29 @@ Application web permettant aux étudiants de s'inscrire en BTS via un formulaire
 
 ## ✨ Fonctionnalités
 
+### Gestion des inscriptions
 - Formulaire d'inscription en 6 étapes avec sauvegarde automatique
 - Interface administrateur pour validation des dossiers
 - Génération automatique de PDF pour les dossiers validés
 - Upload de documents justificatifs
 - Système d'authentification sécurisé
+- Espace personnel "Mon compte" pour suivre ses dossiers et messages
+
+### Pages d'information et ressources
+- Guide d'inscription étape par étape
+- Calendrier des inscriptions et dates importantes
+- FAQ (Foire Aux Questions)
+- Aide technique et support
+- Catalogue des formations BTS disponibles
+- Liste des établissements partenaires
+
+### Conformité légale et RGPD
+- Design System de l'État (DSFR) - Interface officielle République Française
+- Déclaration d'accessibilité conforme RGAA
+- Mentions légales complètes
+- Politique de confidentialité et gestion des données personnelles
+- Gestion des cookies
+- Plan du site
 
 ## 📋 Prérequis - Ce dont vous avez besoin
 
@@ -207,7 +225,7 @@ EasyBts/
 ### Pour un étudiant
 
 1. **Créer un compte** : S'inscrire sur la plateforme
-2. **Choisir une spécialisation BTS** : Sélectionner le BTS souhaité
+2. **Choisir une spécialisation BTS** : Sélectionner le BTS souhaité (SISR, SLAM, etc.)
 3. **Remplir le formulaire** : Compléter les 6 étapes du formulaire
    - Identité de l'étudiant
    - Scolarité année en cours
@@ -216,15 +234,31 @@ EasyBts/
    - Documents justificatifs
    - Validation
 4. **Soumettre le dossier** : Envoyer pour validation
-5. **Télécharger le PDF** : Une fois validé, télécharger le dossier complet
+5. **Suivre son dossier** : Consulter l'état dans "Mon compte"
+6. **Télécharger le PDF** : Une fois validé, télécharger le dossier complet
+
+**Ressources disponibles :**
+- 📖 Consulter le [Guide d'inscription](/guide-inscription)
+- 📅 Voir le [Calendrier des inscriptions](/calendrier-inscriptions)
+- ❓ Consulter la [FAQ](/faq)
+- 🔧 Besoin d'aide ? [Support technique](/aide-technique)
+- 📧 [Contacter l'administration](/contact)
 
 ### Pour un administrateur
 
 1. **Se connecter** avec les identifiants admin
-2. **Accéder au tableau de bord** : `/bts/admin`
-3. **Consulter les dossiers** : Voir tous les dossiers soumis
-4. **Valider/Rejeter** : Gérer le statut des dossiers
-5. **Gérer les spécialisations** : Ajouter/modifier les BTS disponibles
+2. **Accéder au tableau de bord** : `/bts/admin` ou `/admin/dashboard`
+3. **Consulter les dossiers** : Voir tous les dossiers soumis avec filtres par statut
+4. **Valider/Rejeter** : Gérer le statut des dossiers (en_attente → validé/refusé)
+5. **Gérer les spécialisations** : Ajouter/modifier les BTS disponibles (CRUD complet)
+6. **Gérer les utilisateurs** : Voir et modifier les comptes étudiants
+
+**Pages d'administration :**
+- 📊 Dashboard : Vue d'ensemble des inscriptions
+- 📄 Gestion des dossiers : Validation et suivi
+- 🎓 Gestion des spécialisations : CRUD des formations BTS
+- 📅 Gestion des années scolaires : Configuration des périodes
+- 👥 Gestion des utilisateurs : Administration des comptes
 
 ## 🔧 Configuration LibreOffice (pour PDF)
 
@@ -255,10 +289,58 @@ Les principales entités :
 
 - **Utilisateur** : Gestion des comptes (étudiants et admins)
 - **FormulaireInscription** : Dossiers d'inscription BTS
-- **Specialisation** : Types de BTS disponibles
-- **InformationEleve** : Données personnelles
-- **Responsable** : Responsables légaux
+- **Specialisation** : Types de BTS disponibles (SISR, SLAM, etc.)
+- **InformationEleve** : Données personnelles des élèves
+- **Responsable** : Responsables légaux (jusqu'à 2 par dossier)
 - **ScolariteDes2AnneeAnterieur** : Historique scolaire
+- **Sante** : Informations médicales et vaccins
+- **Medecin** : Médecins traitants
+- **Contact** : Messages de contact liés aux utilisateurs (nouveau)
+- **SecuriteSociale** : Informations sécurité sociale
+- **AssuranceScolaire** : Assurances des élèves
+- **AdhesionMDL** : Adhésion Maison Des Lycéens
+- **AnneeScolaire** : Périodes académiques
+- **TypeResponsable** : Types de responsabilité légale
+- **PasswordResetToken** : Tokens de réinitialisation
+
+**Total : 15 entités avec relations OneToMany, ManyToOne**
+
+## 🎨 Design et accessibilité
+
+Le projet utilise le **Design System de l'État (DSFR)** :
+
+- ✅ Interface conforme aux standards de la République Française
+- ✅ Accessibilité RGAA (Référentiel Général d'Amélioration de l'Accessibilité)
+- ✅ CDN jsDelivr pour CSS/JS (https://cdn.jsdelivr.net/npm/@gouvfr/dsfr)
+- ✅ Icônes Marianne officielles
+- ✅ Responsive mobile-first (Bootstrap 5 + DSFR)
+- ✅ Navigation au clavier optimisée
+- ✅ Couleurs et contrastes conformes
+
+**Pages légales obligatoires :**
+- Déclaration d'accessibilité : `/accessibilite`
+- Mentions légales : `/mentions-legales`
+- Politique de confidentialité : `/donnees-personnelles`
+- Gestion des cookies : `/gestion-des-cookies`
+- Plan du site : `/plan-du-site`
+
+## 🔗 Routes principales
+
+| Route | URL | Description |
+|-------|-----|-------------|
+| Accueil | `/` | Page d'accueil |
+| Inscription | `/inscription` | Créer un compte |
+| Connexion | `/login` | Se connecter |
+| Formulaire BTS | `/bts/inscription/formulaire` | Formulaire 6 étapes |
+| Mon compte | `/mon-compte` | Espace personnel utilisateur |
+| Contact | `/contact` | Formulaire de contact |
+| FAQ | `/faq` | Questions fréquentes |
+| Guide | `/guide-inscription` | Guide d'inscription |
+| Calendrier | `/calendrier-inscriptions` | Dates importantes |
+| Formations | `/formations` | Catalogue des BTS |
+| Aide technique | `/aide-technique` | Support technique |
+| Admin Dashboard | `/admin/dashboard` | Tableau de bord admin |
+| Plan du site | `/plan-du-site` | Navigation complète |
 
 ## 🧪 Tests
 
@@ -274,18 +356,66 @@ php bin/phpunit
 # Vider le cache
 php bin/console cache:clear
 
-# Voir les routes
+# Voir les routes disponibles
 php bin/console debug:router
 
-# Créer une migration
+# Voir une route spécifique
+php bin/console debug:router app_home
+
+# Créer une migration après modification d'entité
 php bin/console make:migration
 
-# Créer une entité
+# Appliquer les migrations
+php bin/console doctrine:migrations:migrate
+
+# Créer une nouvelle entité
 php bin/console make:entity
+
+# Créer un nouveau controller
+php bin/console make:controller
 
 # Installer les assets
 php bin/console asset-map:compile
+
+# Créer un utilisateur admin (si fixtures non chargées)
+php bin/console app:create-admin
+
+# Lister les services disponibles
+php bin/console debug:container
+
+# Voir la configuration Symfony
+php bin/console debug:config
 ```
+
+## 🌐 Technologies utilisées
+
+### Backend
+- **PHP 8.2+** - Langage serveur
+- **Symfony 6.4 LTS** - Framework MVC
+- **Doctrine ORM** - Mapping objet-relationnel
+- **Twig** - Moteur de templates
+- **Symfony Security** - Authentification et autorisation
+- **Symfony Messenger** - Gestion asynchrone des messages (contacts)
+- **Monolog** - Logging
+
+### Frontend
+- **DSFR (Design System FR)** - Design officiel République Française
+- **Bootstrap 5** - Framework CSS responsive
+- **Stimulus** - JavaScript framework léger
+- **Turbo** - Navigation SPA partielle
+- **Vanilla JavaScript** - Interactions dynamiques
+
+### Base de données
+- **MySQL 8.0** ou **MariaDB 10.5+**
+- 15 tables avec relations complexes
+- Migrations versionnées
+
+### Outils
+- **Composer** - Gestionnaire de dépendances PHP
+- **npm** - Gestionnaire de dépendances JavaScript
+- **Git** - Contrôle de version
+- **LibreOffice** - Conversion ODT → PDF
+- **PHPUnit** - Tests unitaires
 
 ## 🐛 Problèmes connus
 
