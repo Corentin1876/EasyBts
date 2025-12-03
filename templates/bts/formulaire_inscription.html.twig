@@ -35,9 +35,9 @@
 <section class="fr-container fr-mb-4v">
     <div class="fr-stepper">
         <h2 class="fr-stepper__title">
-            <span class="fr-stepper__state">Étape <span id="current-step">1</span> sur 5</span>
+            <span class="fr-stepper__state">Étape <span id="current-step">1</span> sur 6</span>
         </h2>
-        <div class="fr-stepper__steps" data-fr-current-step="1" data-fr-steps="5"></div>
+        <div class="fr-stepper__steps" data-fr-current-step="1" data-fr-steps="6"></div>
         <p class="fr-stepper__details">
             <span class="fr-text--bold" id="step-title">Identité de l'étudiant</span>
         </p>
@@ -46,7 +46,7 @@
 
 <!-- Formulaire d'inscription -->
 <section class="fr-container fr-pb-6v">
-    <form class="fr-form" id="inscription-form" method="post" action="{{ path('app_bts_inscription_submit', {'id': specialisation.id}) }}">
+    <form class="fr-form" id="inscription-form" method="post" action="{{ path('app_bts_inscription_submit', {'id': specialisation.id}) }}" enctype="multipart/form-data">
 
         <!-- Section 1: Identité de l'étudiant -->
         <div class="form-step" id="step-1">
@@ -133,9 +133,13 @@
                         </div>
                     </div>
 
-                    <div class="fr-input-group">
-                        <label class="fr-label" for="date_entree">Date d'entrée <span class="fr-text--red">*</span></label>
-                        <input class="fr-input" type="date" id="date_entree" name="date_entree" required>
+                    <div class="fr-select-group">
+                        <label class="fr-label" for="sms_eleve">Acceptation SMS <span class="fr-text--red">*</span></label>
+                        <select class="fr-select" id="sms_eleve" name="sms_eleve" required>
+                            <option value="" selected disabled>Sélectionner</option>
+                            <option value="1">Oui</option>
+                            <option value="0">Non</option>
+                        </select>
                     </div>
                 </div>
             </div>
@@ -146,6 +150,11 @@
             <div class="fr-card">
                 <div class="fr-card__body">
                     <h2 class="fr-h2 fr-mb-3v">Scolarité de l'année d'inscription</h2>
+
+                    <div class="fr-input-group">
+                        <label class="fr-label" for="specialite">Spécialité <span class="fr-text--red">*</span></label>
+                        <input class="fr-input" type="text" id="specialite" name="specialite" required placeholder="Ex : SIO, CG, MCO, NDRC">
+                    </div>
 
                     <div class="fr-grid-row fr-grid-row--gutters">
                         <div class="fr-col-12 fr-col-md-6">
@@ -175,9 +184,7 @@
                         <select class="fr-select" id="regime_scolaire" name="regime_scolaire" required>
                             <option value="" selected disabled>Sélectionner</option>
                             <option value="Externe">Externe</option>
-                            <option value="Demi-pensionnaire à l'unité">Demi-pensionnaire à l'unité</option>
-                            <option value="Demi-pensionnaire au forfait 4 jours">Demi-pensionnaire au forfait 4 jours</option>
-                            <option value="Demi-pensionnaire au forfait 5 jours">Demi-pensionnaire au forfait 5 jours</option>
+                            <option value="Demi-pensionnaire à l'unité (4€55)">Demi-pensionnaire à l'unité (4€55)</option>
                         </select>
                     </div>
 
@@ -197,8 +204,8 @@
                                 <label class="fr-label" for="type_transport">Type de transport</label>
                                 <select class="fr-select" id="type_transport" name="type_transport">
                                     <option value="">Aucun</option>
-                                    <option value="Train">Train</option>
-                                    <option value="Bus">Bus</option>
+                                    <option value="Filibus">Filibus</option>
+                                    <option value="SNCF">SNCF</option>
                                     <option value="Autres">Autres</option>
                                 </select>
                             </div>
@@ -268,6 +275,10 @@
                         <label class="fr-label" for="etablissement_n1">Établissement <span class="fr-text--red">*</span></label>
                         <input class="fr-input" type="text" id="etablissement_n1" name="etablissement_n1" required>
                     </div>
+                    <div class="fr-input-group">
+                        <label class="fr-label" for="option_n1">Option <span class="fr-text--red">*</span></label>
+                        <input class="fr-input" type="text" id="option_n1" name="option_n1" required>
+                    </div>
 
                     <hr class="fr-hr fr-my-4v">
 
@@ -303,6 +314,10 @@
                     <div class="fr-input-group">
                         <label class="fr-label" for="etablissement_n2">Établissement <span class="fr-text--red">*</span></label>
                         <input class="fr-input" type="text" id="etablissement_n2" name="etablissement_n2" required>
+                    </div>
+                    <div class="fr-input-group">
+                        <label class="fr-label" for="option_n2">Option <span class="fr-text--red">*</span></label>
+                        <input class="fr-input" type="text" id="option_n2" name="option_n2" required>
                     </div>
 
                     <hr class="fr-hr fr-my-4v">
@@ -371,6 +386,20 @@
                             </div>
                         </div>
                     </div>
+                    <div class="fr-grid-row fr-grid-row--gutters">
+                        <div class="fr-col-12 fr-col-md-6">
+                            <div class="fr-input-group">
+                                <label class="fr-label" for="tel_travail_resp1">Téléphone travail</label>
+                                <input class="fr-input" type="tel" id="tel_travail_resp1" name="tel_travail_resp1">
+                            </div>
+                        </div>
+                        <div class="fr-col-12 fr-col-md-6">
+                            <div class="fr-input-group">
+                                <label class="fr-label" for="tel_domicile_resp1">Téléphone domicile</label>
+                                <input class="fr-input" type="tel" id="tel_domicile_resp1" name="tel_domicile_resp1">
+                            </div>
+                        </div>
+                    </div>
 
                     <div class="fr-input-group">
                         <label class="fr-label" for="profession_resp1">Profession <span class="fr-text--red">*</span></label>
@@ -399,12 +428,204 @@
                             </div>
                         </div>
                     </div>
+
+                    <hr class="fr-hr fr-my-4v">
+
+                    <h3 class="fr-h3 fr-mb-2v">Responsable légal 2</h3>
+                    <div class="fr-select-group">
+                        <label class="fr-label" for="lien_resp2">Lien avec l'élève <span class="fr-text--red">*</span></label>
+                        <select class="fr-select" id="lien_resp2" name="lien_resp2" required>
+                            <option value="" selected disabled>Sélectionner</option>
+                            <option value="Père">Père</option>
+                            <option value="Mère">Mère</option>
+                            <option value="Autre">Autre</option>
+                        </select>
+                    </div>
+
+                    <div class="fr-grid-row fr-grid-row--gutters">
+                        <div class="fr-col-12 fr-col-md-6">
+                            <div class="fr-input-group">
+                                <label class="fr-label" for="nom_resp2">Nom <span class="fr-text--red">*</span></label>
+                                <input class="fr-input" type="text" id="nom_resp2" name="nom_resp2" required>
+                            </div>
+                        </div>
+                        <div class="fr-col-12 fr-col-md-6">
+                            <div class="fr-input-group">
+                                <label class="fr-label" for="prenom_resp2">Prénom <span class="fr-text--red">*</span></label>
+                                <input class="fr-input" type="text" id="prenom_resp2" name="prenom_resp2" required>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="fr-input-group">
+                        <label class="fr-label" for="adresse_resp2">Adresse <span class="fr-text--red">*</span></label>
+                        <input class="fr-input" type="text" id="adresse_resp2" name="adresse_resp2" required>
+                    </div>
+
+                    <div class="fr-input-group">
+                        <label class="fr-label" for="commune_resp2">Commune <span class="fr-text--red">*</span></label>
+                        <input class="fr-input" type="text" id="commune_resp2" name="commune_resp2" required>
+                    </div>
+
+                    <div class="fr-grid-row fr-grid-row--gutters">
+                        <div class="fr-col-12 fr-col-md-6">
+                            <div class="fr-input-group">
+                                <label class="fr-label" for="tel_mobile_resp2">Téléphone mobile <span class="fr-text--red">*</span></label>
+                                <input class="fr-input" type="tel" id="tel_mobile_resp2" name="tel_mobile_resp2" required>
+                            </div>
+                        </div>
+                        <div class="fr-col-12 fr-col-md-6">
+                            <div class="fr-input-group">
+                                <label class="fr-label" for="email_resp2">Courriel <span class="fr-text--red">*</span></label>
+                                <input class="fr-input" type="email" id="email_resp2" name="email_resp2" required>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="fr-grid-row fr-grid-row--gutters">
+                        <div class="fr-col-12 fr-col-md-6">
+                            <div class="fr-input-group">
+                                <label class="fr-label" for="tel_travail_resp2">Téléphone travail</label>
+                                <input class="fr-input" type="tel" id="tel_travail_resp2" name="tel_travail_resp2">
+                            </div>
+                        </div>
+                        <div class="fr-col-12 fr-col-md-6">
+                            <div class="fr-input-group">
+                                <label class="fr-label" for="tel_domicile_resp2">Téléphone domicile</label>
+                                <input class="fr-input" type="tel" id="tel_domicile_resp2" name="tel_domicile_resp2">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="fr-input-group">
+                        <label class="fr-label" for="profession_resp2">Profession <span class="fr-text--red">*</span></label>
+                        <input class="fr-input" type="text" id="profession_resp2" name="profession_resp2" required>
+                    </div>
+
+                    <div class="fr-grid-row fr-grid-row--gutters">
+                        <div class="fr-col-12 fr-col-md-6">
+                            <div class="fr-select-group">
+                                <label class="fr-label" for="sms_resp2">Acceptation SMS <span class="fr-text--red">*</span></label>
+                                <select class="fr-select" id="sms_resp2" name="sms_resp2" required>
+                                    <option value="" selected disabled>Sélectionner</option>
+                                    <option value="1">Oui</option>
+                                    <option value="0">Non</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="fr-col-12 fr-col-md-6">
+                            <div class="fr-select-group">
+                                <label class="fr-label" for="comm_asso_resp2">Autorisation communication associations parents <span class="fr-text--red">*</span></label>
+                                <select class="fr-select" id="comm_asso_resp2" name="comm_asso_resp2" required>
+                                    <option value="" selected disabled>Sélectionner</option>
+                                    <option value="1">Oui</option>
+                                    <option value="0">Non</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
 
         <!-- Section 5: Signature et validation -->
+        <!-- Étape 5 : Documents justificatifs -->
         <div class="form-step" id="step-5" style="display: none;">
+            <div class="fr-card">
+                <div class="fr-card__body">
+                    <h2 class="fr-h2 fr-mb-3v">Documents justificatifs</h2>
+                    
+                    <p class="fr-text--lead fr-mb-4v">
+                        Veuillez télécharger les documents suivants pour compléter votre dossier d'inscription.
+                    </p>
+
+                    <!-- Carte d'identité recto -->
+                    <div class="fr-upload-group fr-mb-3v" id="upload-carte-identite-recto-group">
+                        <label class="fr-label" for="carte_identite_recto">
+                            Carte d'identité (recto) <span class="fr-text--red">*</span>
+                            <span class="fr-hint-text">Format accepté : JPG, PNG, PDF - Taille max : 5Mo</span>
+                        </label>
+                        <div class="uploaded-file-info" style="display:none; margin-bottom: 0.5rem;">
+                            <span class="fr-icon-check-circle-fill fr-icon--sm" style="color: green;" aria-hidden="true"></span>
+                            <a href="#" class="file-name file-preview-link" style="text-decoration: underline; margin: 0 0.5rem;"></a>
+                            <button type="button" class="fr-btn fr-btn--tertiary-no-outline fr-btn--sm change-file-btn">Changer</button>
+                        </div>
+                        <input class="fr-upload" 
+                               type="file" 
+                               id="carte_identite_recto" 
+                               name="carte_identite_recto" 
+                               accept=".jpg,.jpeg,.png,.pdf"
+                               required>
+                    </div>
+
+                    <!-- Carte d'identité verso -->
+                    <div class="fr-upload-group fr-mb-3v" id="upload-carte-identite-verso-group">
+                        <label class="fr-label" for="carte_identite_verso">
+                            Carte d'identité (verso) <span class="fr-text--red">*</span>
+                            <span class="fr-hint-text">Format accepté : JPG, PNG, PDF - Taille max : 5Mo</span>
+                        </label>
+                        <div class="uploaded-file-info" style="display:none; margin-bottom: 0.5rem;">
+                            <span class="fr-icon-check-circle-fill fr-icon--sm" style="color: green;" aria-hidden="true"></span>
+                            <a href="#" class="file-name file-preview-link" style="text-decoration: underline; margin: 0 0.5rem;"></a>
+                            <button type="button" class="fr-btn fr-btn--tertiary-no-outline fr-btn--sm change-file-btn">Changer</button>
+                        </div>
+                        <input class="fr-upload" 
+                               type="file" 
+                               id="carte_identite_verso" 
+                               name="carte_identite_verso" 
+                               accept=".jpg,.jpeg,.png,.pdf"
+                               required>
+                    </div>
+
+                    <!-- Justificatif de domicile -->
+                    <div class="fr-upload-group fr-mb-3v" id="upload-justificatif-domicile-group">
+                        <label class="fr-label" for="justificatif_domicile">
+                            Justificatif de domicile <span class="fr-text--red">*</span>
+                            <span class="fr-hint-text">Facture d'électricité, eau, gaz ou téléphone de moins de 3 mois - Format : JPG, PNG, PDF - Taille max : 5Mo</span>
+                        </label>
+                        <div class="uploaded-file-info" style="display:none; margin-bottom: 0.5rem;">
+                            <span class="fr-icon-check-circle-fill fr-icon--sm" style="color: green;" aria-hidden="true"></span>
+                            <a href="#" class="file-name file-preview-link" style="text-decoration: underline; margin: 0 0.5rem;"></a>
+                            <button type="button" class="fr-btn fr-btn--tertiary-no-outline fr-btn--sm change-file-btn">Changer</button>
+                        </div>
+                        <input class="fr-upload" 
+                               type="file" 
+                               id="justificatif_domicile" 
+                               name="justificatif_domicile" 
+                               accept=".jpg,.jpeg,.png,.pdf"
+                               required>
+                    </div>
+
+                    <!-- Relevés de notes -->
+                    <div class="fr-upload-group fr-mb-3v" id="upload-releves-notes-group">
+                        <label class="fr-label" for="releves_notes">
+                            Relevés de notes <span class="fr-text--red">*</span>
+                            <span class="fr-hint-text">Bulletins scolaires des 2 dernières années - Format : JPG, PNG, PDF - Taille max : 10Mo</span>
+                        </label>
+                        <div class="uploaded-file-info" style="display:none; margin-bottom: 0.5rem;">
+                            <span class="fr-icon-check-circle-fill fr-icon--sm" style="color: green;" aria-hidden="true"></span>
+                            <a href="#" class="file-name file-preview-link" style="text-decoration: underline; margin: 0 0.5rem;"></a>
+                            <button type="button" class="fr-btn fr-btn--tertiary-no-outline fr-btn--sm change-file-btn">Changer</button>
+                        </div>
+                        <input class="fr-upload" 
+                               type="file" 
+                               id="releves_notes" 
+                               name="releves_notes" 
+                               accept=".jpg,.jpeg,.png,.pdf"
+                               required>
+                    </div>
+
+                    <div class="fr-alert fr-alert--info fr-mt-4v">
+                        <p class="fr-text--sm">
+                            <strong>Important :</strong> Assurez-vous que vos documents sont lisibles et que toutes les informations sont visibles.
+                            Les fichiers doivent être au format JPG, PNG ou PDF uniquement.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Étape 6 : Validation du dossier -->
+        <div class="form-step" id="step-6" style="display: none;">
             <div class="fr-card">
                 <div class="fr-card__body">
                     <h2 class="fr-h2 fr-mb-3v">Validation du dossier</h2>
@@ -452,8 +673,49 @@
     </form>
 </section>
 
+{# Modal pour l'aperçu des documents #}
+<dialog id="modal-document-preview" class="fr-modal" role="dialog" aria-labelledby="modal-preview-title" style="z-index: 10000; border: none; padding: 2rem; max-width: 90vw; max-height: 90vh; background: white; border-radius: 8px; box-shadow: 0 8px 24px rgba(0,0,0,0.3);">
+    <div style="width: 100%;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; border-bottom: 2px solid #e5e5e5; padding-bottom: 1rem;">
+            <h1 id="modal-preview-title" style="margin: 0; font-size: 1.5rem; color: #161616;">
+                Aperçu du document
+            </h1>
+            <button class="fr-btn fr-btn--close" aria-controls="modal-document-preview" title="Fermer" style="cursor: pointer;">
+                Fermer
+            </button>
+        </div>
+        <div id="preview-content" style="text-align: center; min-height: 400px; width: 100%;">
+            <!-- Le contenu sera inséré ici par JavaScript -->
+        </div>
+    </div>
+</dialog>
+
 <input type="hidden" id="specialisation-id" value="{{ specialisation.id }}">
 <input type="hidden" id="user-id" value="{{ app.user.id }}">
-<input type="hidden" id="saved-data" value="{{ savedData|default('{}') }}">
-<script src="/js/formulaire-inscription.js"></script>
+
+{# Stocker les données JSON dans un script type="application/json" pour éviter les problèmes d'échappement #}
+<script type="application/json" id="saved-data-json">
+{{ savedData|default('{}')|raw }}
+</script>
+
+<script>
+    // Debug: afficher ce que le backend envoie
+    console.log('=== DONNÉES ENVOYÉES PAR LE BACKEND ===');
+    console.log('specialisation-id:', {{ specialisation.id }});
+    console.log('user-id:', {{ app.user.id }});
+    
+    // Récupérer savedData depuis le script JSON
+    const savedDataElement = document.getElementById('saved-data-json');
+    if (savedDataElement) {
+        console.log('savedData brut:', savedDataElement.textContent);
+        try {
+            const parsedData = JSON.parse(savedDataElement.textContent);
+            console.log('savedData parsé:', parsedData);
+        } catch (e) {
+            console.error('Erreur de parsing savedData:', e);
+        }
+    }
+</script>
+
+<script src="/js/formulaire-inscription.js?v={{ random() }}"></script>
 {% endblock %}

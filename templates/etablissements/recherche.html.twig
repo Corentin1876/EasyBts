@@ -1,0 +1,118 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Recherche d'établissements - Inscription BTS{% endblock %}
+
+{% block body %}
+<!-- Fil d'ariane -->
+<nav class="fr-breadcrumb" aria-label="vous êtes ici :">
+    <button class="fr-breadcrumb__button" aria-expanded="false" aria-controls="breadcrumb-etablissements">Voir le fil d'Ariane</button>
+    <div class="fr-collapse" id="breadcrumb-etablissements">
+        <ol class="fr-breadcrumb__list">
+            <li><a class="fr-breadcrumb__link" href="{{ path('app_home') }}">Accueil</a></li>
+            <li><a class="fr-breadcrumb__link" aria-current="page">Recherche d'établissements</a></li>
+        </ol>
+    </div>
+</nav>
+
+<div class="fr-container fr-py-6v">
+    <div class="fr-grid-row">
+        <div class="fr-col-12">
+            <h1 class="fr-h1">Recherche d'établissements</h1>
+            <p class="fr-text--lead">Trouvez les établissements proposant des formations BTS par région.</p>
+        </div>
+    </div>
+
+    <!-- Fonctionnalité à venir -->
+    <div class="fr-grid-row fr-mt-6v">
+        <div class="fr-col-12">
+            <div class="fr-alert fr-alert--info">
+                <h3 class="fr-alert__title">Fonctionnalité en cours de développement</h3>
+                <p>La recherche d'établissements par région sera bientôt disponible. Cette fonctionnalité vous permettra de :</p>
+                <ul>
+                    <li>Rechercher des établissements par région, département ou ville</li>
+                    <li>Filtrer par spécialisation BTS proposée</li>
+                    <li>Consulter les informations de contact de chaque établissement</li>
+                    <li>Voir les modalités d'inscription spécifiques</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- Informations temporaires -->
+    <div class="fr-grid-row fr-grid-row--gutters fr-mt-6v">
+        <div class="fr-col-12 fr-col-lg-4">
+            <div class="fr-card fr-card--no-arrow">
+                <div class="fr-card__body">
+                    <div class="fr-card__content">
+                        <h3 class="fr-card__title">
+                            <span class="fr-icon-map-pin-2-line fr-mr-1w" aria-hidden="true"></span>
+                            Par région
+                        </h3>
+                        <p class="fr-card__desc">
+                            Recherchez les établissements dans votre région géographique.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="fr-col-12 fr-col-lg-4">
+            <div class="fr-card fr-card--no-arrow">
+                <div class="fr-card__body">
+                    <div class="fr-card__content">
+                        <h3 class="fr-card__title">
+                            <span class="fr-icon-award-line fr-mr-1w" aria-hidden="true"></span>
+                            Par formation
+                        </h3>
+                        <p class="fr-card__desc">
+                            Filtrez les établissements selon la spécialisation BTS souhaitée.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="fr-col-12 fr-col-lg-4">
+            <div class="fr-card fr-card--no-arrow">
+                <div class="fr-card__body">
+                    <div class="fr-card__content">
+                        <h3 class="fr-card__title">
+                            <span class="fr-icon-building-line fr-mr-1w" aria-hidden="true"></span>
+                            Informations détaillées
+                        </h3>
+                        <p class="fr-card__desc">
+                            Accédez aux coordonnées et modalités de chaque établissement.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Actions -->
+    <div class="fr-grid-row fr-mt-6v">
+        <div class="fr-col-12 fr-col-lg-6">
+            <div class="fr-callout">
+                <h3 class="fr-callout__title">Consulter les formations</h3>
+                <p class="fr-callout__text">
+                    En attendant, consultez le catalogue complet des formations BTS disponibles.
+                </p>
+                <a class="fr-btn fr-btn--secondary" href="{{ path('app_formations') }}">
+                    Voir les formations
+                </a>
+            </div>
+        </div>
+        <div class="fr-col-12 fr-col-lg-6">
+            <div class="fr-callout fr-callout--green-emeraude">
+                <h3 class="fr-callout__title">Besoin d'informations ?</h3>
+                <p class="fr-callout__text">
+                    Contactez-nous pour obtenir des informations sur les établissements.
+                </p>
+                <a class="fr-btn fr-btn--secondary" href="{{ path('app_contact') }}">
+                    Nous contacter
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,224 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Carte des établissements - Inscription BTS{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <!-- Leaflet CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+          integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+          crossorigin=""/>
+    <style>
+        #map {
+            height: 600px;
+            width: 100%;
+            border-radius: 0.25rem;
+            box-shadow: 0 0 0 1px #ddd;
+        }
+        .leaflet-popup-content {
+            margin: 1rem;
+            line-height: 1.5;
+        }
+        .leaflet-popup-content h3 {
+            margin: 0 0 0.5rem 0;
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: #000091;
+        }
+        .leaflet-popup-content p {
+            margin: 0.25rem 0;
+            font-size: 0.9rem;
+        }
+        .leaflet-popup-content .fr-badge {
+            margin-top: 0.5rem;
+        }
+    </style>
+{% endblock %}
+
+{% block body %}
+<!-- Fil d'ariane -->
+<nav class="fr-breadcrumb" aria-label="vous êtes ici :">
+    <button class="fr-breadcrumb__button" aria-expanded="false" aria-controls="breadcrumb-carte">Voir le fil d'Ariane</button>
+    <div class="fr-collapse" id="breadcrumb-carte">
+        <ol class="fr-breadcrumb__list">
+            <li><a class="fr-breadcrumb__link" href="{{ path('app_home') }}">Accueil</a></li>
+            <li><a class="fr-breadcrumb__link" aria-current="page">Carte des établissements</a></li>
+        </ol>
+    </div>
+</nav>
+
+<div class="fr-container fr-py-6v">
+    <div class="fr-grid-row">
+        <div class="fr-col-12">
+            <h1 class="fr-h1">Carte des établissements</h1>
+            <p class="fr-text--lead">Localisez les établissements proposant des formations BTS sur une carte interactive.</p>
+        </div>
+    </div>
+
+    <!-- Instructions -->
+    <div class="fr-grid-row fr-mt-4v">
+        <div class="fr-col-12">
+            <div class="fr-callout fr-callout--blue-ecume">
+                <p class="fr-callout__text">
+                    <span class="fr-icon-information-line fr-mr-1w" aria-hidden="true"></span>
+                    Cliquez sur le marqueur pour afficher les informations détaillées de l'établissement.
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Carte interactive -->
+    <div class="fr-grid-row fr-mt-4v">
+        <div class="fr-col-12">
+            <div id="map"></div>
+        </div>
+    </div>
+
+    <!-- Informations établissement -->
+    <div class="fr-grid-row fr-mt-4v">
+        <div class="fr-col-12">
+            <div class="fr-card fr-card--no-arrow">
+                <div class="fr-card__body">
+                    <div class="fr-card__content">
+                        <h3 class="fr-card__title">Lycée Fulbert - Chartres</h3>
+                        <p><strong>Adresse :</strong> 62 Rue Saint-Chéron, 28000 Chartres</p>
+                        <p><strong>Téléphone :</strong> 02 37 18 66 00</p>
+                        <p><strong>Email :</strong> ce.0280006g@ac-orleans-tours.fr</p>
+                        <p><strong>Type :</strong> Établissement public</p>
+                        <p><strong>Formations BTS proposées :</strong></p>
+                        <p>
+                            <span class="fr-badge fr-badge--info">BTS SIO</span>
+                            <span class="fr-badge fr-badge--info">BTS MCO</span>
+                            <span class="fr-badge fr-badge--info">BTS NDRC</span>
+                            <span class="fr-badge fr-badge--info">BTS CG</span>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Liens utiles -->
+    <div class="fr-grid-row fr-grid-row--gutters fr-mt-6v">
+        <div class="fr-col-12 fr-col-lg-4">
+            <div class="fr-callout">
+                <h3 class="fr-callout__title">Recherche d'établissements</h3>
+                <p class="fr-callout__text">
+                    Recherchez des établissements par critères.
+                </p>
+                <a class="fr-btn fr-btn--secondary" href="{{ path('app_etablissements') }}">
+                    Rechercher
+                </a>
+            </div>
+        </div>
+        <div class="fr-col-12 fr-col-lg-4">
+            <div class="fr-callout">
+                <h3 class="fr-callout__title">Formations disponibles</h3>
+                <p class="fr-callout__text">
+                    Consultez le catalogue des formations BTS.
+                </p>
+                <a class="fr-btn fr-btn--secondary" href="{{ path('app_formations') }}">
+                    Voir les formations
+                </a>
+            </div>
+        </div>
+        <div class="fr-col-12 fr-col-lg-4">
+            <div class="fr-callout fr-callout--green-emeraude">
+                <h3 class="fr-callout__title">Besoin d'aide ?</h3>
+                <p class="fr-callout__text">
+                    Contactez-nous pour plus d'informations.
+                </p>
+                <a class="fr-btn fr-btn--secondary" href="{{ path('app_contact') }}">
+                    Contact
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <!-- Leaflet JS -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+            integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+            crossorigin=""></script>
+    
+    <script>
+        function initMap() {
+            // Vérifier si la carte existe déjà
+            var container = L.DomUtil.get('map');
+            if(container != null){
+                container._leaflet_id = null;
+            }
+            
+            // Initialisation de la carte centrée sur Chartres
+            var map = L.map('map').setView([48.4469, 1.4898], 14);
+
+            // Ajout de la couche de tuiles OpenStreetMap
+            L.tileLayer('https://{s}.tile.openstreetmap.fr/osmfr/{z}/{x}/{y}.png', {
+                attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+                maxZoom: 19
+            }).addTo(map);
+
+            // Lycée Fulbert
+            var lyceeFullbert = {
+                nom: "Lycée Fulbert",
+                ville: "Chartres",
+                adresse: "62 Rue Saint-Chéron, 28000 Chartres",
+                lat: 48.4469,
+                lng: 1.4898,
+                formations: ["BTS SIO", "BTS MCO", "BTS NDRC", "BTS CG"],
+                tel: "02 37 18 66 00",
+                email: "ce.0280006g@ac-orleans-tours.fr"
+            };
+
+            // Icône personnalisée
+            var customIcon = L.divIcon({
+                className: 'custom-marker',
+                html: '<div style="background-color: #000091; width: 30px; height: 30px; border-radius: 50%; border: 4px solid white; box-shadow: 0 2px 8px rgba(0,0,0,0.4);"></div>',
+                iconSize: [30, 30],
+                iconAnchor: [15, 15],
+                popupAnchor: [0, -15]
+            });
+
+            // Contenu du popup
+            var popupContent = `
+                <h3>${lyceeFullbert.nom}</h3>
+                <p><strong>📍 ${lyceeFullbert.ville}</strong></p>
+                <p>${lyceeFullbert.adresse}</p>
+                <p>📞 ${lyceeFullbert.tel}</p>
+                <p>✉️ ${lyceeFullbert.email}</p>
+                <p><strong>Formations BTS :</strong></p>
+                <p>
+                    <span class="fr-badge fr-badge--sm fr-badge--info">BTS SIO</span>
+                    <span class="fr-badge fr-badge--sm fr-badge--info">BTS MCO</span>
+                    <span class="fr-badge fr-badge--sm fr-badge--info">BTS NDRC</span>
+                    <span class="fr-badge fr-badge--sm fr-badge--info">BTS CG</span>
+                </p>
+            `;
+
+            // Ajout du marqueur
+            L.marker([lyceeFullbert.lat, lyceeFullbert.lng], {icon: customIcon})
+                .addTo(map)
+                .bindPopup(popupContent)
+                .openPopup();
+            
+            // Forcer le recalcul de la taille
+            setTimeout(function() {
+                map.invalidateSize();
+            }, 200);
+        }
+
+        // Initialiser au chargement de la page
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', initMap);
+        } else {
+            initMap();
+        }
+
+        // Réinitialiser si Turbo est utilisé
+        document.addEventListener('turbo:load', initMap);
+        document.addEventListener('turbo:render', initMap);
+    </script>
+{% endblock %}

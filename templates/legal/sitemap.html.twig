@@ -31,11 +31,11 @@
     <!-- Contenu principal organisé en grille -->
     <div class="fr-grid-row fr-grid-row--gutters">
         <!-- Navigation principale -->
-        <div class="fr-col-12 fr-col-md-6 fr-col-lg-4">
+        <div class="fr-col-12 fr-col-md-6 fr-col-lg-4" id="navigation">
             <div class="fr-card fr-card--no-arrow fr-card--equal-height">
                 <div class="fr-card__body">
                     <div class="fr-card__content">
-                        <h2 class="fr-card__title fr-mb-1w">
+                        <h2 class="fr-h4 fr-mb-1w">
                             <span class="fr-icon-home-4-line" aria-hidden="true"></span>
                             Navigation principale
                         </h2>
@@ -73,46 +73,39 @@
         </div>
         
         <!-- Spécialisations BTS -->
-        <div class="fr-col-12 fr-col-md-6 fr-col-lg-4">
+        <div class="fr-col-12 fr-col-md-6 fr-col-lg-4" id="specialisations">
             <div class="fr-card fr-card--no-arrow fr-card--equal-height">
                 <div class="fr-card__body">
                     <div class="fr-card__content">
-                        <h2 class="fr-card__title fr-mb-1w">
+                        <h2 class="fr-h4 fr-mb-1w">
                             <span class="fr-icon-award-line" aria-hidden="true"></span>
                             Spécialisations BTS
                         </h2>
                         <nav aria-label="Spécialisations disponibles">
                             <ul class="fr-list">
-                                <li>
-                                    <a href="#" class="fr-link">
-                                        BTS Services Informatiques aux Organisations (SIO)
-                                    </a>
-                                </li>
-                                <li>
-                                    <a href="#" class="fr-link">
-                                        BTS Management Commercial Opérationnel (MCO)
-                                    </a>
-                                </li>
-                                <li>
-                                    <a href="#" class="fr-link">
-                                        BTS Comptabilité et Gestion (CG)
-                                    </a>
-                                </li>
-                                <li>
-                                    <a href="#" class="fr-link">
-                                        BTS Négociation et Digitalisation (NDRC)
-                                    </a>
-                                </li>
-                                <li>
-                                    <a href="#" class="fr-link">
-                                        BTS Support à l'Action Managériale (SAM)
-                                    </a>
-                                </li>
-                                <li>
-                                    <a href="#" class="fr-link fr-link--icon-right fr-icon-arrow-right-line">
-                                        Toutes les spécialisations
-                                    </a>
-                                </li>
+                                {% if specialisations is defined and specialisations|length > 0 %}
+                                    {% for specialisation in specialisations %}
+                                        <li>
+                                            <a href="{{ path('app_specialisation_detail', {'id': specialisation.id}) }}" class="fr-link">
+                                                {{ specialisation.libelle|default(specialisation.nom) }}
+                                            </a>
+                                            <p class="fr-text--sm fr-text--mention-grey">
+                                                {{ specialisation.description|length > 60 ? specialisation.description|slice(0, 60) ~ '...' : specialisation.description|default('Formation BTS') }}
+                                            </p>
+                                        </li>
+                                    {% endfor %}
+                                    <li>
+                                        <a href="{{ path('app_bts_liste') }}" class="fr-link fr-link--icon-right fr-icon-arrow-right-line">
+                                            Toutes les spécialisations
+                                        </a>
+                                    </li>
+                                {% else %}
+                                    <li>
+                                        <a href="{{ path('app_bts_liste') }}" class="fr-link fr-link--icon-right fr-icon-arrow-right-line">
+                                            Voir les spécialisations disponibles
+                                        </a>
+                                    </li>
+                                {% endif %}
                             </ul>
                         </nav>
                     </div>
@@ -121,11 +114,11 @@
         </div>
         
         <!-- Espace utilisateur -->
-        <div class="fr-col-12 fr-col-md-6 fr-col-lg-4">
+        <div class="fr-col-12 fr-col-md-6 fr-col-lg-4" id="utilisateur">
             <div class="fr-card fr-card--no-arrow fr-card--equal-height">
                 <div class="fr-card__body">
                     <div class="fr-card__content">
-                        <h2 class="fr-card__title fr-mb-1w">
+                        <h2 class="fr-h4 fr-mb-1w">
                             <span class="fr-icon-user-line" aria-hidden="true"></span>
                             Espace utilisateur
                         </h2>
@@ -140,7 +133,7 @@
                                     </p>
                                 </li>
                                 <li>
-                                    <a href="#" class="fr-link">
+                                    <a href="{{ path('app_inscription') }}" class="fr-link">
                                         Créer un compte
                                     </a>
                                     <p class="fr-text--sm fr-text--mention-grey">
@@ -148,7 +141,7 @@
                                     </p>
                                 </li>
                                 <li>
-                                    <a href="#" class="fr-link">
+                                    <a href="{{ path('app_bts_liste') }}" class="fr-link">
                                         Mon dossier
                                     </a>
                                     <p class="fr-text--sm fr-text--mention-grey">
@@ -156,7 +149,7 @@
                                     </p>
                                 </li>
                                 <li>
-                                    <a href="#" class="fr-link">
+                                    <a href="{{ path('app_bts_liste') }}" class="fr-link">
                                         Suivi de candidature
                                     </a>
                                     <p class="fr-text--sm fr-text--mention-grey">
@@ -171,46 +164,46 @@
         </div>
         
         <!-- Ressources et aide -->
-        <div class="fr-col-12 fr-col-md-6 fr-col-lg-4">
+        <div class="fr-col-12 fr-col-md-6 fr-col-lg-4" id="ressources">
             <div class="fr-card fr-card--no-arrow fr-card--equal-height">
                 <div class="fr-card__body">
                     <div class="fr-card__content">
-                        <h2 class="fr-card__title fr-mb-1w">
+                        <h2 class="fr-h4 fr-mb-1w">
                             <span class="fr-icon-information-line" aria-hidden="true"></span>
                             Ressources et aide
                         </h2>
                         <nav aria-label="Ressources et aide">
                             <ul class="fr-list">
                                 <li>
-                                    <a href="#" class="fr-link">
+                                    <a href="{{ path('app_guide') }}" class="fr-link">
                                         Guide d'inscription
                                     </a>
                                     <p class="fr-text--sm fr-text--mention-grey">
-                                        Étapes détaillées du processus
+                                        Étapes détaillées du processus (à venir)
                                     </p>
                                 </li>
                                 <li>
-                                    <a href="#" class="fr-link">
+                                    <a href="{{ path('app_faq') }}" class="fr-link">
                                         FAQ - Questions fréquentes
                                     </a>
                                     <p class="fr-text--sm fr-text--mention-grey">
-                                        Réponses aux questions courantes
+                                        Réponses aux questions courantes (à venir)
                                     </p>
                                 </li>
                                 <li>
-                                    <a href="#" class="fr-link">
+                                    <a href="{{ path('app_calendrier') }}" class="fr-link">
                                         Calendrier des inscriptions
                                     </a>
                                     <p class="fr-text--sm fr-text--mention-grey">
-                                        Dates importantes à retenir
+                                        Dates importantes à retenir (à venir)
                                     </p>
                                 </li>
                                 <li>
-                                    <a href="#" class="fr-link">
+                                    <a href="{{ path('app_aide_technique') }}" class="fr-link">
                                         Aide technique
                                     </a>
                                     <p class="fr-text--sm fr-text--mention-grey">
-                                        Support pour problèmes techniques
+                                        Support pour problèmes techniques (à venir)
                                     </p>
                                 </li>
                             </ul>
@@ -221,46 +214,46 @@
         </div>
         
         <!-- Établissements -->
-        <div class="fr-col-12 fr-col-md-6 fr-col-lg-4">
+        <div class="fr-col-12 fr-col-md-6 fr-col-lg-4" id="etablissements">
             <div class="fr-card fr-card--no-arrow fr-card--equal-height">
                 <div class="fr-card__body">
                     <div class="fr-card__content">
-                        <h2 class="fr-card__title fr-mb-1w">
+                        <h2 class="fr-h4 fr-mb-1w">
                             <span class="fr-icon-building-line" aria-hidden="true"></span>
                             Établissements
                         </h2>
                         <nav aria-label="Établissements et formations">
                             <ul class="fr-list">
                                 <li>
-                                    <a href="#" class="fr-link">
+                                    <a href="{{ path('app_etablissements') }}" class="fr-link">
                                         Recherche d'établissements
                                     </a>
                                     <p class="fr-text--sm fr-text--mention-grey">
-                                        Trouvez les établissements par région
+                                        Trouvez les établissements par région (à venir)
                                     </p>
                                 </li>
                                 <li>
-                                    <a href="#" class="fr-link">
+                                    <a href="{{ path('app_formations') }}" class="fr-link">
                                         Formations proposées
                                     </a>
                                     <p class="fr-text--sm fr-text--mention-grey">
-                                        Catalogue complet des formations BTS
+                                        Catalogue complet des formations BTS (à venir)
                                     </p>
                                 </li>
                                 <li>
-                                    <a href="#" class="fr-link">
+                                    <a href="{{ path('app_carte') }}" class="fr-link">
                                         Carte des établissements
                                     </a>
                                     <p class="fr-text--sm fr-text--mention-grey">
-                                        Localisation interactive
+                                        Localisation interactive (à venir)
                                     </p>
                                 </li>
                                 <li>
-                                    <a href="#" class="fr-link">
+                                    <a href="{{ path('app_taux_reussite') }}" class="fr-link">
                                         Taux de réussite
                                     </a>
                                     <p class="fr-text--sm fr-text--mention-grey">
-                                        Statistiques par établissement
+                                        Statistiques par établissement (à venir)
                                     </p>
                                 </li>
                             </ul>
@@ -271,11 +264,11 @@
         </div>
         
         <!-- Informations légales -->
-        <div class="fr-col-12 fr-col-md-6 fr-col-lg-4">
+        <div class="fr-col-12 fr-col-md-6 fr-col-lg-4" id="legal">
             <div class="fr-card fr-card--no-arrow fr-card--equal-height">
                 <div class="fr-card__body">
                     <div class="fr-card__content">
-                        <h2 class="fr-card__title fr-mb-1w">
+                        <h2 class="fr-h4 fr-mb-1w">
                             <span class="fr-icon-article-line" aria-hidden="true"></span>
                             Informations légales
                         </h2>
@@ -321,47 +314,6 @@
         </div>
     </div>
     
-    <!-- Section statistiques -->
-    <div class="fr-grid-row fr-grid-row--gutters fr-mt-6w">
-        <div class="fr-col-12">
-            <div class="fr-card fr-card--horizontal fr-card--no-arrow">
-                <div class="fr-card__body">
-                    <div class="fr-card__content">
-                        <h2 class="fr-card__title">
-                            <span class="fr-icon-line-chart-line" aria-hidden="true"></span>
-                            Informations sur le site
-                        </h2>
-                        <div class="fr-grid-row fr-grid-row--gutters">
-                            <div class="fr-col-12 fr-col-sm-6 fr-col-md-3">
-                                <div class="fr-highlight">
-                                    <p class="fr-highlight__title">Pages principales</p>
-                                    <p class="fr-display--xs">15+</p>
-                                </div>
-                            </div>
-                            <div class="fr-col-12 fr-col-sm-6 fr-col-md-3">
-                                <div class="fr-highlight">
-                                    <p class="fr-highlight__title">Spécialisations BTS</p>
-                                    <p class="fr-display--xs">100+</p>
-                                </div>
-                            </div>
-                            <div class="fr-col-12 fr-col-sm-6 fr-col-md-3">
-                                <div class="fr-highlight">
-                                    <p class="fr-highlight__title">Établissements</p>
-                                    <p class="fr-display--xs">2000+</p>
-                                </div>
-                            </div>
-                            <div class="fr-col-12 fr-col-sm-6 fr-col-md-3">
-                                <div class="fr-highlight">
-                                    <p class="fr-highlight__title">Mise à jour</p>
-                                    <p class="fr-display--xs">{{ "now"|date("Y") }}</p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
     
     <!-- Section aide à la navigation -->
     <div class="fr-grid-row fr-mt-6w">
@@ -394,22 +346,22 @@
                 <div class="fr-summary__title" id="fr-summary-title">Navigation rapide</div>
                 <ol class="fr-summary__list">
                     <li>
-                        <a class="fr-summary__link" href="#navigation">Navigation principale</a>
+                        <a class="fr-summary__link" href="#navigation" data-turbo="false">Navigation principale</a>
                     </li>
                     <li>
-                        <a class="fr-summary__link" href="#specialisations">Spécialisations BTS</a>
+                        <a class="fr-summary__link" href="#specialisations" data-turbo="false">Spécialisations BTS</a>
                     </li>
                     <li>
-                        <a class="fr-summary__link" href="# ">Espace utilisateur</a>
+                        <a class="fr-summary__link" href="#utilisateur" data-turbo="false">Espace utilisateur</a>
                     </li>
                     <li>
-                        <a class="fr-summary__link" href="#ressources">Ressources et aide</a>
+                        <a class="fr-summary__link" href="#ressources" data-turbo="false">Ressources et aide</a>
                     </li>
                     <li>
-                        <a class="fr-summary__link" href="#etablissements">Établissements</a>
+                        <a class="fr-summary__link" href="#etablissements" data-turbo="false">Établissements</a>
                     </li>
                     <li>
-                        <a class="fr-summary__link" href="#legal">Informations légales</a>
+                        <a class="fr-summary__link" href="#legal" data-turbo="false">Informations légales</a>
                     </li>
                 </ol>
             </div>

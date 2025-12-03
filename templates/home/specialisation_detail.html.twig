@@ -1,0 +1,155 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ specialisation.libelle|default(specialisation.nom) }} - Inscription BTS{% endblock %}
+
+{% block body %}
+<!-- Fil d'ariane -->
+<nav class="fr-breadcrumb" aria-label="vous êtes ici :">
+    <button class="fr-breadcrumb__button" aria-expanded="false" aria-controls="breadcrumb-spec">Voir le fil d'Ariane</button>
+    <div class="fr-collapse" id="breadcrumb-spec">
+        <ol class="fr-breadcrumb__list">
+            <li>
+                <a class="fr-breadcrumb__link" href="{{ path('app_home') }}">Accueil</a>
+            </li>
+            <li>
+                <a class="fr-breadcrumb__link" aria-current="page">{{ specialisation.libelle|default(specialisation.nom) }}</a>
+            </li>
+        </ol>
+    </div>
+</nav>
+
+<!-- En-tête -->
+<section class="fr-container fr-py-6v">
+    <div class="fr-grid-row">
+        <div class="fr-col-12 {% if showInscription %}fr-col-lg-8{% endif %}">
+            <h1 class="fr-h1">{{ specialisation.libelle|default(specialisation.nom) }}</h1>
+            {% if specialisation.niveau %}
+                <p class="fr-badge fr-badge--info fr-mb-2w">Niveau : {{ specialisation.niveau }}</p>
+            {% endif %}
+            {% if specialisation.duree %}
+                <p class="fr-badge fr-badge--success">Durée : {{ specialisation.duree }}</p>
+            {% endif %}
+        </div>
+        {% if showInscription %}
+        <div class="fr-col-12 fr-col-lg-4">
+            {% if app.user %}
+                <a href="{{ path('app_bts_inscription', {id: specialisation.id}) }}" class="fr-btn fr-btn--lg fr-btn--icon-left fr-icon-edit-line">
+                    Commencer l'inscription
+                </a>
+            {% else %}
+                <a href="{{ path('app_inscription') }}" class="fr-btn fr-btn--lg fr-btn--icon-left fr-icon-account-line">
+                    Se connecter pour s'inscrire
+                </a>
+            {% endif %}
+        </div>
+        {% endif %}
+    </div>
+</section>
+
+<!-- Description -->
+{% if specialisation.description %}
+<section class="fr-container fr-pb-6v">
+    <div class="fr-grid-row">
+        <div class="fr-col-12 fr-col-lg-8">
+            <div class="fr-card fr-card--no-arrow">
+                <div class="fr-card__body">
+                    <div class="fr-card__content">
+                        <h2 class="fr-card__title">
+                            <span class="fr-icon-information-line fr-mr-1w" aria-hidden="true"></span>
+                            Présentation de la formation
+                        </h2>
+                        <p class="fr-card__desc">
+                            {{ specialisation.description|nl2br }}
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endif %}
+
+<!-- Conditions d'admission -->
+{% if specialisation.conditionsAdmission %}
+<section class="fr-container fr-pb-6v">
+    <div class="fr-grid-row">
+        <div class="fr-col-12 fr-col-lg-8">
+            <div class="fr-card fr-card--no-arrow">
+                <div class="fr-card__body">
+                    <div class="fr-card__content">
+                        <h2 class="fr-card__title">
+                            <span class="fr-icon-checkbox-circle-line fr-mr-1w" aria-hidden="true"></span>
+                            Conditions d'admission
+                        </h2>
+                        <p class="fr-card__desc">
+                            {{ specialisation.conditionsAdmission|nl2br }}
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endif %}
+
+<!-- Débouchés -->
+{% if specialisation.debouches %}
+<section class="fr-container fr-pb-6v">
+    <div class="fr-grid-row">
+        <div class="fr-col-12 fr-col-lg-8">
+            <div class="fr-card fr-card--no-arrow">
+                <div class="fr-card__body">
+                    <div class="fr-card__content">
+                        <h2 class="fr-card__title">
+                            <span class="fr-icon-briefcase-line fr-mr-1w" aria-hidden="true"></span>
+                            Débouchés professionnels
+                        </h2>
+                        <p class="fr-card__desc">
+                            {{ specialisation.debouches|nl2br }}
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endif %}
+
+<!-- Informations complémentaires -->
+<section class="fr-container fr-pb-6v">
+    <div class="fr-grid-row fr-grid-row--gutters">
+        <div class="fr-col-12 fr-col-md-6">
+            <div class="fr-callout">
+                <h3 class="fr-callout__title">Documents requis</h3>
+                <p class="fr-callout__text">
+                    Pour vous inscrire à cette formation, préparez les documents suivants :
+                </p>
+                <ul class="fr-list">
+                    <li>Diplôme du Baccalauréat ou équivalent</li>
+                    <li>Relevés de notes des années précédentes</li>
+                    <li>CV et lettre de motivation</li>
+                    <li>Pièce d'identité</li>
+                </ul>
+            </div>
+        </div>
+        <div class="fr-col-12 fr-col-md-6">
+            <div class="fr-callout fr-callout--green-emeraude">
+                <h3 class="fr-callout__title">Besoin d'aide ?</h3>
+                <p class="fr-callout__text">
+                    Notre équipe est à votre disposition pour répondre à toutes vos questions.
+                </p>
+                <a class="fr-btn fr-btn--secondary" href="{{ path('app_contact') }}">
+                    Nous contacter
+                </a>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Bouton retour -->
+<section class="fr-container fr-pb-6v">
+    <a href="{{ path('app_home') }}" class="fr-btn fr-btn--secondary fr-btn--icon-left fr-icon-arrow-left-line">
+        Retour aux spécialisations
+    </a>
+</section>
+{% endblock %}

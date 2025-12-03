@@ -54,7 +54,7 @@
             <div class="fr-card fr-card--no-arrow">
                 <div class="fr-card__body">
                     <div class="fr-card__content">
-                        <h2 class="fr-card__title">Vous avez déjà un compte ?</h2>
+                        <h2 class="fr-card__title fr-mb-1w">Vous avez déjà un compte ?</h2>
                         <p class="fr-card__desc fr-mb-4v">
                             Connectez-vous pour accéder à votre espace personnel et poursuivre votre inscription.
                         </p>
@@ -93,7 +93,7 @@
                                 <button class="fr-btn" type="submit">
                                     Se connecter
                                 </button>
-                                <a class="fr-btn fr-btn--tertiary-no-outline" href="#">
+                                <a class="fr-btn fr-btn--tertiary-no-outline" href="{{ path('app_forgot_password') }}">
                                     Mot de passe oublié ?
                                 </a>
                             </div>
@@ -162,6 +162,32 @@
                                     Date de naissance
                                 </label>
                                 <input class="fr-input" type="date" id="register-birth" name="date_naissance" required>
+                            </div>
+
+                            <!-- Téléphone -->
+                            <div class="fr-input-group">
+                                <label class="fr-label" for="register-telephone">
+                                    Téléphone
+                                    <span class="fr-hint-text">Format : 0123456789</span>
+                                </label>
+                                <input class="fr-input" type="tel" id="register-telephone" name="telephone" required pattern="[0-9]{10}">
+                            </div>
+
+                            <!-- Adresse -->
+                            <div class="fr-input-group">
+                                <label class="fr-label" for="register-adresse">
+                                    Adresse
+                                </label>
+                                <input class="fr-input" type="text" id="register-adresse" name="adresse" required>
+                            </div>
+
+                            <!-- Département -->
+                            <div class="fr-input-group">
+                                <label class="fr-label" for="register-departement">
+                                    Département
+                                    <span class="fr-hint-text">Code postal ou nom du département</span>
+                                </label>
+                                <input class="fr-input" type="text" id="register-departement" name="departement" required>
                             </div>
 
                             <!-- Mot de passe -->

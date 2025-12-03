@@ -1,0 +1,114 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Dossiers BTS - Administration{% endblock %}
+
+{% block body %}
+<div class="fr-container fr-my-4w">
+    <div class="fr-grid-row">
+        <div class="fr-col-12">
+            <h1 class="fr-h2">Gestion des dossiers BTS</h1>
+            
+            {% for message in app.flashes('success') %}
+                <div class="fr-alert fr-alert--success fr-my-2w">
+                    <p>{{ message }}</p>
+                </div>
+            {% endfor %}
+
+            {% for message in app.flashes('error') %}
+                <div class="fr-alert fr-alert--error fr-my-2w">
+                    <p>{{ message }}</p>
+                </div>
+            {% endfor %}
+
+            <div class="fr-tabs fr-mt-4w">
+                <ul class="fr-tabs__list" role="tablist" aria-label="Filtrer les dossiers">
+                    <li role="presentation">
+                        <button id="tabpanel-tous" class="fr-tabs__tab fr-tabs__tab--icon-left" tabindex="0" role="tab" aria-selected="true" aria-controls="tabpanel-tous-panel">
+                            Tous les dossiers
+                            <span class="fr-badge fr-badge--sm fr-ml-1w">{{ dossiers|length }}</span>
+                        </button>
+                    </li>
+                    <li role="presentation">
+                        <button id="tabpanel-soumis" class="fr-tabs__tab fr-tabs__tab--icon-left" tabindex="-1" role="tab" aria-selected="false" aria-controls="tabpanel-soumis-panel">
+                            En attente
+                            <span class="fr-badge fr-badge--sm fr-badge--warning fr-ml-1w">{{ dossiers|filter(d => d.statut == 'soumis')|length }}</span>
+                        </button>
+                    </li>
+                    <li role="presentation">
+                        <button id="tabpanel-valide" class="fr-tabs__tab fr-tabs__tab--icon-left" tabindex="-1" role="tab" aria-selected="false" aria-controls="tabpanel-valide-panel">
+                            Validés
+                            <span class="fr-badge fr-badge--sm fr-badge--success fr-ml-1w">{{ dossiers|filter(d => d.statut == 'validé')|length }}</span>
+                        </button>
+                    </li>
+                </ul>
+
+                <div id="tabpanel-tous-panel" class="fr-tabs__panel fr-tabs__panel--selected" role="tabpanel" aria-labelledby="tabpanel-tous">
+                    {% include 'admin/_dossiers_table.html.twig' with {'dossiers': dossiers} %}
+                </div>
+
+                <div id="tabpanel-soumis-panel" class="fr-tabs__panel" role="tabpanel" aria-labelledby="tabpanel-soumis">
+                    {% include 'admin/_dossiers_table.html.twig' with {'dossiers': dossiers|filter(d => d.statut == 'soumis')} %}
+                </div>
+
+                <div id="tabpanel-valide-panel" class="fr-tabs__panel" role="tabpanel" aria-labelledby="tabpanel-valide">
+                    {% include 'admin/_dossiers_table.html.twig' with {'dossiers': dossiers|filter(d => d.statut == 'validé')} %}
+                </div>
+            </div>
+
+            <div class="fr-mt-4w">
+                <a href="{{ path('app_home') }}" class="fr-btn fr-btn--secondary fr-btn--icon-left fr-icon-arrow-left-line">
+                    Retour à l'accueil
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Réinitialiser manuellement les tabs si DSFR ne fonctionne pas
+            const tabs = document.querySelectorAll('[role="tab"]');
+            const panels = document.querySelectorAll('[role="tabpanel"]');
+            
+            tabs.forEach(tab => {
+                tab.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    
+                    // Désactiver tous les tabs
+                    tabs.forEach(t => {
+                        t.setAttribute('aria-selected', 'false');
+                        t.setAttribute('tabindex', '-1');
+                        t.classList.remove('fr-tabs__tab--selected');
+                    });
+                    
+                    // Masquer tous les panels
+                    panels.forEach(p => {
+                        p.classList.remove('fr-tabs__panel--selected');
+                        p.style.display = 'none';
+                    });
+                    
+                    // Activer le tab cliqué
+                    this.setAttribute('aria-selected', 'true');
+                    this.setAttribute('tabindex', '0');
+                    this.classList.add('fr-tabs__tab--selected');
+                    
+                    // Afficher le panel correspondant
+                    const panelId = this.getAttribute('aria-controls');
+                    const panel = document.getElementById(panelId);
+                    if (panel) {
+                        panel.classList.add('fr-tabs__panel--selected');
+                        panel.style.display = 'block';
+                    }
+                });
+            });
+            
+            // S'assurer que le premier panel est visible au chargement
+            if (panels.length > 0) {
+                panels[0].style.display = 'block';
+            }
+        });
+    </script>
+{% endblock %}

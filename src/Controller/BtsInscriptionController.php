@@ -7,6 +7,7 @@ use App\Entity\FormulaireInscription;
 use App\Entity\InformationEleve;
 use App\Entity\Responsable;
 use App\Entity\ScolariteDes2AnneeAnterieur;
+use App\Entity\Utilisateur;
 use App\Repository\SpecialisationRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -14,57 +15,119 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
+use PhpOffice\PhpWord\TemplateProcessor;
+use PhpOffice\PhpWord\Settings;
+use PhpOffice\PhpWord\IOFactory;
 
 class BtsInscriptionController extends AbstractController
 {
     #[Route('/bts', name: 'app_bts_liste')]
     #[IsGranted('ROLE_USER')]
     public function liste(
-        SpecialisationRepository $specialisationRepository,
-        Request $request
+        EntityManagerInterface $entityManager,
+        SpecialisationRepository $specialisationRepository
     ): Response {
-        $session = $request->getSession();
-        $btsEnCours = null;
-        $btsEnCoursId = null;
-
-        // Chercher s'il y a un BTS en cours d'inscription dans la session
-        $allSpecialisations = $specialisationRepository->findAll();
-        foreach ($allSpecialisations as $spec) {
-            $sessionKey = 'bts_inscription_' . $spec->getId();
-            if ($session->has($sessionKey)) {
-                $btsEnCours = $spec;
-                $btsEnCoursId = $spec->getId();
-                break;
+        $user = $this->getUser();
+        $brouillon = null;
+        $dossierSoumis = null;
+        $specialisation = null;
+        
+        // Chercher un brouillon existant pour cet utilisateur
+        if ($user) {
+            $repo = $entityManager->getRepository(FormulaireInscription::class);
+            
+            // Chercher un dossier soumis ou validé
+            $dossierSoumis = $repo->findOneBy([
+                'remplit_formulaire' => $user,
+                'statut' => ['soumis', 'validé', 'rejeté'],
+            ]);
+            
+            // Si pas de dossier soumis, chercher un brouillon ou un dossier à modifier
+            if (!$dossierSoumis) {
+                $brouillon = $repo->findOneBy([
+                    'remplit_formulaire' => $user,
+                    'statut' => 'brouillon',
+                ]);
+                
+                // Si pas de brouillon, chercher un dossier à modifier
+                if (!$brouillon) {
+                    $brouillon = $repo->findOneBy([
+                        'remplit_formulaire' => $user,
+                        'statut' => 'à modifier',
+                    ]);
+                }
+                
+                // Extraire la spécialisation du type_formulaire
+                if ($brouillon && $brouillon->getTypeFormulaire()) {
+                    $typeFormulaire = $brouillon->getTypeFormulaire();
+                    // Format: "BTS - Nom de la spécialisation"
+                    $nomSpecialisation = str_replace('BTS - ', '', $typeFormulaire);
+                    $specialisation = $specialisationRepository->findOneBy(['nom' => $nomSpecialisation]);
+                }
             }
         }
 
-        // Si un BTS est en cours, afficher uniquement celui-là
-        if ($btsEnCours) {
-            $specialisations = [$btsEnCours];
-        } else {
-            // Sinon, afficher tous les BTS disponibles
-            $specialisations = $allSpecialisations;
-        }
-
-        return $this->render('bts/liste.html.twig', [
-            'specialisations' => $specialisations,
-            'btsEnCours' => $btsEnCours,
+        return $this->render('bts/accueil.html.twig', [
+            'brouillon' => $brouillon,
+            'dossierSoumis' => $dossierSoumis,
+            'specialisation' => $specialisation,
         ]);
     }
 
-    #[Route('/bts/inscription/{id}/reset', name: 'app_bts_inscription_reset')]
+    #[Route('/bts/choix', name: 'app_bts_choix')]
+    #[IsGranted('ROLE_USER')]
+    public function choix(
+        SpecialisationRepository $specialisationRepository,
+        EntityManagerInterface $entityManager
+    ): Response {
+        $user = $this->getUser();
+        $brouillon = null;
+        
+        // Vérifier s'il y a déjà un brouillon
+        if ($user) {
+            $repo = $entityManager->getRepository(FormulaireInscription::class);
+            $brouillon = $repo->findOneBy([
+                'remplit_formulaire' => $user,
+                'statut' => 'brouillon',
+            ]);
+            
+            // Si pas de brouillon, chercher un dossier à modifier
+            if (!$brouillon) {
+                $brouillon = $repo->findOneBy([
+                    'remplit_formulaire' => $user,
+                    'statut' => 'à modifier',
+                ]);
+            }
+        }
+
+        $specialisations = $specialisationRepository->findAll();
+
+        return $this->render('bts/choix.html.twig', [
+            'specialisations' => $specialisations,
+            'brouillon' => $brouillon,
+        ]);
+    }
+
+    #[Route('/bts/inscription/reset', name: 'app_bts_inscription_reset')]
     #[IsGranted('ROLE_USER')]
     public function reset(
-        Specialisation $specialisation,
-        Request $request
+        EntityManagerInterface $entityManager
     ): Response {
-        $session = $request->getSession();
-        $sessionKey = 'bts_inscription_' . $specialisation->getId();
-        if ($session->has($sessionKey)) {
-            $session->remove($sessionKey);
-            $this->addFlash('success', 'Le dossier d\'inscription pour « ' . $specialisation->getNom() . ' » a été supprimé. Vous pouvez choisir une autre spécialisation.');
-        } else {
-            $this->addFlash('info', 'Aucun dossier en cours pour cette spécialisation.');
+        $user = $this->getUser();
+        if ($user) {
+            $repo = $entityManager->getRepository(FormulaireInscription::class);
+            $brouillon = $repo->findOneBy([
+                'remplit_formulaire' => $user,
+                'statut' => 'brouillon',
+            ]);
+            
+            if ($brouillon) {
+                $entityManager->remove($brouillon);
+                $entityManager->flush();
+                $this->addFlash('success', 'Votre dossier d\'inscription a été supprimé.');
+            } else {
+                $this->addFlash('info', 'Aucun dossier en cours.');
+            }
         }
         return $this->redirectToRoute('app_bts_liste');
     }
@@ -73,31 +136,234 @@ class BtsInscriptionController extends AbstractController
     #[IsGranted('ROLE_USER')]
     public function inscription(
         Specialisation $specialisation,
-        Request $request
+        EntityManagerInterface $entityManager
     ): Response {
-        // Charger la progression depuis la session
-        $session = $request->getSession();
-        $savedData = $session->get('bts_inscription_' . $specialisation->getId(), '{}');
+        $user = $this->getUser();
+        $savedData = '{}';
+        
+        if ($user instanceof \App\Entity\Utilisateur) {
+            $repo = $entityManager->getRepository(FormulaireInscription::class);
+            $brouillon = $repo->findOneBy([
+                'remplit_formulaire' => $user,
+                'type_formulaire' => 'BTS - ' . $specialisation->getNom(),
+            ]);
+            
+            // Si le dossier existe et est déjà soumis, rediriger vers la page d'accueil
+            if ($brouillon && in_array($brouillon->getStatut(), ['soumis', 'validé', 'rejeté'])) {
+                $this->addFlash('info', 'Votre dossier a déjà été soumis et ne peut plus être modifié.');
+                return $this->redirectToRoute('app_bts_liste');
+            }
+            
+            // Préparer les données par défaut depuis l'utilisateur
+            $defaultData = [
+                'nom' => $user->getNom() ?? '',
+                'prenom' => $user->getPrenom() ?? '',
+                'email_eleve' => $user->getEmail() ?? '',
+                'tel_eleve' => $user->getTelephone() ?? '',
+                'date_naissance' => $user->getDateNaissance() ? $user->getDateNaissance()->format('Y-m-d') : '',
+                'adresse_resp1' => $user->getAdresse() ?? '',
+                'sexe' => $user->getUser() ?? '', // civilité
+            ];
+            
+            if ($brouillon && $brouillon->getStatut() === 'brouillon') {
+                // Fusionner les données du brouillon avec les données par défaut
+                $brouillonData = $brouillon->getDraftJson() ? json_decode($brouillon->getDraftJson(), true) : [];
+                $mergedData = array_merge($defaultData, $brouillonData);
+                
+                // Ajouter les chemins des documents uploadés
+                if ($brouillon->getCarteIdentiteRecto()) {
+                    $mergedData['carte_identite_recto_path'] = $brouillon->getCarteIdentiteRecto();
+                }
+                if ($brouillon->getCarteIdentiteVerso()) {
+                    $mergedData['carte_identite_verso_path'] = $brouillon->getCarteIdentiteVerso();
+                }
+                if ($brouillon->getJustificatifDomicile()) {
+                    $mergedData['justificatif_domicile_path'] = $brouillon->getJustificatifDomicile();
+                }
+                if ($brouillon->getRelevesNotes()) {
+                    $mergedData['releves_notes_path'] = $brouillon->getRelevesNotes();
+                }
+                
+                $savedData = json_encode([
+                    'currentStep' => $brouillon->getDraftStep(),
+                    'formData' => $mergedData
+                ]);
+            } else {
+                // Première fois : utiliser les données de l'utilisateur
+                $savedData = json_encode([
+                    'currentStep' => 1,
+                    'formData' => $defaultData
+                ]);
+            }
+        }
 
-        return $this->render('bts/formulaire_inscription.html.twig', [
+        $response = $this->render('bts/formulaire_inscription.html.twig', [
             'specialisation' => $specialisation,
-            'savedData' => is_string($savedData) ? $savedData : json_encode($savedData),
+            'savedData' => $savedData,
         ]);
+        
+        // Empêcher le cache du navigateur pour que les données soient toujours fraîches
+        $response->headers->set('Cache-Control', 'no-cache, no-store, must-revalidate');
+        $response->headers->set('Pragma', 'no-cache');
+        $response->headers->set('Expires', '0');
+        
+        return $response;
     }
 
     #[Route('/bts/inscription/{id}/save', name: 'app_bts_inscription_save', methods: ['POST'])]
     #[IsGranted('ROLE_USER')]
     public function saveProgress(
         Request $request,
-        Specialisation $specialisation
+        Specialisation $specialisation,
+        EntityManagerInterface $entityManager
     ): Response {
+        $user = $this->getUser();
+        if (!$user) {
+            return $this->json(['success' => false, 'error' => 'Non authentifié'], 401);
+        }
+        
         $data = json_decode($request->getContent(), true);
+        if (!$data) {
+            return $this->json(['success' => false, 'error' => 'Données invalides'], 400);
+        }
+        
+        $type = 'BTS - ' . $specialisation->getNom();
+        $repo = $entityManager->getRepository(FormulaireInscription::class);
+        
+        // Chercher un brouillon existant
+        $formulaire = $repo->findOneBy([
+            'remplit_formulaire' => $user,
+            'type_formulaire' => $type,
+        ]);
+        
+        // Empêcher la sauvegarde si le dossier est déjà soumis
+        if ($formulaire && in_array($formulaire->getStatut(), ['soumis', 'validé', 'rejeté'])) {
+            return $this->json(['success' => false, 'error' => 'Le dossier ne peut plus être modifié'], 403);
+        }
+        
+        if (!$formulaire) {
+            // Créer un nouveau brouillon
+            $formulaire = new FormulaireInscription();
+            $formulaire->setRemplitFormulaire($user);
+            $formulaire->setTypeFormulaire($type);
+            $formulaire->setStatut('brouillon');
+            $formulaire->setEstSigne(false);
+            $formulaire->setDateSoumission(new \DateTime()); // Requis par l'entité
+            $entityManager->persist($formulaire);
+        }
+        
+        // Mise à jour des données de brouillon
+        $formulaire->setDraftJson(json_encode($data['formData'] ?? []));
+        $formulaire->setDraftStep(isset($data['currentStep']) ? (int)$data['currentStep'] : 1);
+        $formulaire->setDraftUpdatedAt(new \DateTime());
+        
+        // Si le formulaire existe mais n'est pas un brouillon, ne pas modifier
+        if ($formulaire->getStatut() !== 'brouillon') {
+            return $this->json(['success' => false, 'error' => 'Le dossier ne peut plus être modifié'], 403);
+        }
+        
+        try {
+            $entityManager->flush();
+            return $this->json([
+                'success' => true, 
+                'draftId' => $formulaire->getId(),
+                'step' => $formulaire->getDraftStep(),
+                'message' => 'Sauvegarde réussie en base de données'
+            ]);
+        } catch (\Exception $e) {
+            return $this->json([
+                'success' => false, 
+                'error' => 'Erreur: ' . $e->getMessage()
+            ], 500);
+        }
+    }
 
-        // Sauvegarder dans la session
-        $session = $request->getSession();
-        $session->set('bts_inscription_' . $specialisation->getId(), $data);
+    #[Route('/bts/inscription/{id}/upload-document', name: 'app_bts_inscription_upload_document', methods: ['POST'])]
+    #[IsGranted('ROLE_USER')]
+    public function uploadDocument(
+        Request $request,
+        Specialisation $specialisation,
+        EntityManagerInterface $entityManager
+    ): Response {
+        /** @var Utilisateur $user */
+        $user = $this->getUser();
+        if (!$user) {
+            return $this->json(['success' => false, 'error' => 'Non authentifié'], 401);
+        }
 
-        return $this->json(['success' => true]);
+        $type = 'BTS - ' . $specialisation->getNom();
+        $repo = $entityManager->getRepository(FormulaireInscription::class);
+        
+        // Récupérer le formulaire
+        $formulaire = $repo->findOneBy([
+            'remplit_formulaire' => $user,
+            'type_formulaire' => $type,
+        ]);
+
+        if (!$formulaire) {
+            return $this->json(['success' => false, 'error' => 'Aucun dossier trouvé'], 404);
+        }
+
+        $documentType = $request->request->get('document_type');
+        $file = $request->files->get('file');
+
+        if (!$file || !$documentType) {
+            return $this->json(['success' => false, 'error' => 'Fichier ou type manquant'], 400);
+        }
+
+        // Vérifier l'extension
+        $allowedExtensions = ['jpg', 'jpeg', 'png', 'pdf'];
+        $extension = strtolower($file->getClientOriginalExtension());
+        
+        if (!in_array($extension, $allowedExtensions)) {
+            return $this->json(['success' => false, 'error' => 'Format de fichier non autorisé'], 400);
+        }
+
+        // Vérifier la taille (5Mo max, sauf relevés de notes 10Mo)
+        $maxSize = $documentType === 'releves_notes' ? 10 * 1024 * 1024 : 5 * 1024 * 1024;
+        if ($file->getSize() > $maxSize) {
+            $maxSizeMo = $maxSize / (1024 * 1024);
+            return $this->json(['success' => false, 'error' => "Fichier trop volumineux (max {$maxSizeMo}Mo)"], 400);
+        }
+
+        try {
+            // Créer un nom de fichier unique
+            $fileName = $user->getId() . '_' . $documentType . '_' . uniqid() . '.' . $extension;
+            
+            // Déplacer le fichier
+            $uploadDir = $this->getParameter('kernel.project_dir') . '/public/uploads/documents';
+            $file->move($uploadDir, $fileName);
+
+            // Enregistrer le chemin dans la base de données
+            $relativePath = '/uploads/documents/' . $fileName;
+            
+            switch ($documentType) {
+                case 'carte_identite_recto':
+                    $formulaire->setCarteIdentiteRecto($relativePath);
+                    break;
+                case 'carte_identite_verso':
+                    $formulaire->setCarteIdentiteVerso($relativePath);
+                    break;
+                case 'justificatif_domicile':
+                    $formulaire->setJustificatifDomicile($relativePath);
+                    break;
+                case 'releves_notes':
+                    $formulaire->setRelevesNotes($relativePath);
+                    break;
+                default:
+                    return $this->json(['success' => false, 'error' => 'Type de document inconnu'], 400);
+            }
+
+            $entityManager->flush();
+
+            return $this->json([
+                'success' => true,
+                'filename' => $fileName,
+                'path' => $relativePath
+            ]);
+        } catch (\Exception $e) {
+            return $this->json(['success' => false, 'error' => 'Erreur upload: ' . $e->getMessage()], 500);
+        }
     }
 
     #[Route('/bts/inscription/{id}/submit', name: 'app_bts_inscription_submit', methods: ['POST'])]
@@ -108,130 +374,253 @@ class BtsInscriptionController extends AbstractController
         EntityManagerInterface $entityManager
     ): Response {
         $user = $this->getUser();
-
-        try {
-            // Créer le formulaire d'inscription
+        
+        // Récupérer les données JSON du formulaire
+        $content = $request->getContent();
+        $data = json_decode($content, true);
+        
+        if (!$data || !isset($data['formData'])) {
+            $this->addFlash('error', 'Données du formulaire invalides');
+            return $this->redirectToRoute('app_bts_inscription', ['id' => $specialisation->getId()]);
+        }
+        
+        $type = 'BTS - ' . $specialisation->getNom();
+        $repo = $entityManager->getRepository(FormulaireInscription::class);
+        
+        // Chercher le brouillon existant
+        $formulaire = $repo->findOneBy([
+            'remplit_formulaire' => $user,
+            'type_formulaire' => $type,
+        ]);
+        
+        if (!$formulaire) {
+            // Créer un nouveau formulaire si aucun brouillon n'existe
             $formulaire = new FormulaireInscription();
             $formulaire->setRemplitFormulaire($user);
-            $formulaire->setTypeFormulaire('BTS - ' . $specialisation->getNom());
+            $formulaire->setTypeFormulaire($type);
             $formulaire->setDateSoumission(new \DateTime());
-            $formulaire->setStatut('en_attente');
-            $formulaire->setEstSigne((bool) $request->request->get('signature_resp'));
-
-            // Créer les informations de l'élève
-            $infoEleve = new InformationEleve();
-            $infoEleve->setNiveauClasse($request->request->get('niveau_classe'));
-            $infoEleve->setSexe($request->request->get('sexe'));
-
-            // Sécurité sociale (peut être vide)
-            $numSecu = $request->request->get('numero_secu');
-            $infoEleve->setNumeroSecuriterSocial($numSecu ? (int)$numSecu : 0);
-
-            $dateEntree = \DateTime::createFromFormat('Y-m-d', $request->request->get('date_entree'));
-            $infoEleve->setDateEntree($dateEntree ?: new \DateTime());
-
-            $infoEleve->setNationalite($request->request->get('nationalite'));
-            $infoEleve->setNaissanceDepartement($request->request->get('dep_naissance'));
-            $infoEleve->setNaissanceCommune($request->request->get('commune_naissance'));
-            $infoEleve->setRedoublement((bool)$request->request->get('redoublement'));
-            $infoEleve->setTransport((bool)$request->request->get('transport'));
-            $infoEleve->setTypeTransport($request->request->get('type_transport') ?? '');
-
-            $immat = $request->request->get('immatriculation');
-            $infoEleve->setNumeroImmatriculationVehicule($immat ? (int)$immat : 0);
-
-            $infoEleve->setSpecialiter($specialisation->getNom());
-            $infoEleve->setLangues($request->request->get('lv1') . ($request->request->get('lv2') ? ', ' . $request->request->get('lv2') : ''));
-            $infoEleve->setDernierDiplome($request->request->get('dernier_diplome'));
-            $infoEleve->setRegimeChoisi($request->request->get('regime_scolaire'));
-            $infoEleve->setDateChoixRegime(new \DateTime());
-            $infoEleve->setAutorisationDroitImage(true);
-            $infoEleve->setPosibiliteDeChangementFinTrimestre(false);
-            $infoEleve->setAcceptationSMS(true);
-            $infoEleve->setAutorisationCommunication(true);
-
-            // Déterminer si majeur (18 ans)
-            $dateNaissance = \DateTime::createFromFormat('Y-m-d', $request->request->get('date_naissance'));
-            $age = $dateNaissance ? $dateNaissance->diff(new \DateTime())->y : 0;
-            $infoEleve->setEstMajeur($age >= 18);
-
-            $entityManager->persist($infoEleve);
-
-            // Créer la scolarité N-1
-            $scolariteN1 = new ScolariteDes2AnneeAnterieur();
-            // Mapping vers entité: Classe, LangueLV1, LangueLV2, Option_Matiere, Etablisement
-            $scolariteN1->setClasse($request->request->get('classe_n1'));
-            $scolariteN1->setLangueLV1($request->request->get('lv1_n1'));
-            $scolariteN1->setLangueLV2($request->request->get('lv2_n1') ?? '');
-            $scolariteN1->setOptionMatiere($request->request->get('option_n1') ?? '');
-            $scolariteN1->setEtablisement($request->request->get('etablissement_n1'));
-            $scolariteN1->setFormulaireInscription($formulaire);
-            $entityManager->persist($scolariteN1);
-
-            // Créer la scolarité N-2
-            $scolariteN2 = new ScolariteDes2AnneeAnterieur();
-            $scolariteN2->setClasse($request->request->get('classe_n2'));
-            $scolariteN2->setLangueLV1($request->request->get('lv1_n2'));
-            $scolariteN2->setLangueLV2($request->request->get('lv2_n2') ?? '');
-            $scolariteN2->setOptionMatiere($request->request->get('option_n2') ?? '');
-            $scolariteN2->setEtablisement($request->request->get('etablissement_n2'));
-            $scolariteN2->setFormulaireInscription($formulaire);
-            $entityManager->persist($scolariteN2);
-
-            // Créer le responsable 1
-            $responsable1 = new Responsable();
-            $responsable1->setLienAvecEleve($request->request->get('lien_resp1'));
-            $responsable1->setNom($request->request->get('nom_resp1'));
-            $responsable1->setPrenom($request->request->get('prenom_resp1'));
-            $responsable1->setAdresse($request->request->get('adresse_resp1'));
-            $responsable1->setVille($request->request->get('commune_resp1'));
-            $responsable1->setCodePostal(''); // Non demandé dans le formulaire
-            $responsable1->setTellDomicile($request->request->get('tel_domicile_resp1') ?? '');
-            $responsable1->setTellTravail($request->request->get('tel_travail_resp1') ?? '');
-            $responsable1->setTellMobile($request->request->get('tel_mobile_resp1'));
-            $responsable1->setTellephone($request->request->get('tel_mobile_resp1')); // Champ principal
-            $responsable1->setMail($request->request->get('email_resp1'));
-            $responsable1->setProfession($request->request->get('profession_resp1'));
-            $responsable1->setNomEmployeur(''); // Non demandé
-            $responsable1->setAdresseEmployeur(''); // Non demandé
-            $responsable1->setAcceptationSMS((bool)$request->request->get('sms_resp1'));
-            $responsable1->setAutorisationCommunication((bool)$request->request->get('comm_asso_resp1'));
-            $responsable1->setFormulaireInscription($formulaire);
-            $entityManager->persist($responsable1);
-
-            // Créer le responsable 2 si existe
-            if ($request->request->get('has_resp2') && $request->request->get('nom_resp2')) {
-                $responsable2 = new Responsable();
-                $responsable2->setLienAvecEleve($request->request->get('lien_resp2') ?? 'Autre');
-                $responsable2->setNom($request->request->get('nom_resp2'));
-                $responsable2->setPrenom($request->request->get('prenom_resp2'));
-                $responsable2->setAdresse($request->request->get('adresse_resp2') ?? '');
-                $responsable2->setVille($request->request->get('commune_resp2') ?? '');
-                $responsable2->setCodePostal('');
-                $responsable2->setTellDomicile($request->request->get('tel_domicile_resp2') ?? '');
-                $responsable2->setTellTravail($request->request->get('tel_travail_resp2') ?? '');
-                $responsable2->setTellMobile($request->request->get('tel_mobile_resp2') ?? '');
-                $responsable2->setTellephone($request->request->get('tel_mobile_resp2') ?? '');
-                $responsable2->setMail($request->request->get('email_resp2') ?? '');
-                $responsable2->setProfession($request->request->get('profession_resp2') ?? '');
-                $responsable2->setNomEmployeur('');
-                $responsable2->setAdresseEmployeur('');
-                $responsable2->setAcceptationSMS((bool)$request->request->get('sms_resp2'));
-                $responsable2->setAutorisationCommunication((bool)$request->request->get('comm_asso_resp2'));
-                $responsable2->setFormulaireInscription($formulaire);
-                $entityManager->persist($responsable2);
-            }
-
-            // Sauvegarder le formulaire
             $entityManager->persist($formulaire);
+        }
+        
+        // Mettre à jour le formulaire avec les données finales
+        $formulaire->setDraftJson(json_encode($data['formData']));
+        $formulaire->setStatut('soumis'); // Statut = soumis pour validation admin
+        $formulaire->setEstSigne(true);
+        $formulaire->setDateSoumission(new \DateTime());
+        $formulaire->setDraftUpdatedAt(new \DateTime());
+        
+        try {
             $entityManager->flush();
-
-            $this->addFlash('success', 'Votre dossier d\'inscription a été soumis avec succès ! Vous recevrez un email de confirmation.');
-            return $this->redirectToRoute('app_home');
-
+            $this->addFlash('success', 'Votre dossier a été soumis avec succès ! Il est en cours de vérification par nos équipes.');
+            return $this->json(['success' => true, 'redirect' => $this->generateUrl('app_bts_liste')]);
         } catch (\Exception $e) {
-            $this->addFlash('error', 'Une erreur est survenue lors de la soumission de votre dossier. Veuillez réessayer.');
-            return $this->redirectToRoute('app_bts_inscription', ['id' => $specialisation->getId()]);
+            return $this->json(['success' => false, 'error' => 'Erreur lors de la soumission: ' . $e->getMessage()], 500);
+        }
+    }
+
+    #[Route('/bts/inscription/{id}/pdf', name: 'app_bts_inscription_pdf')]
+    #[IsGranted('ROLE_USER')]
+    public function downloadPdf(
+        FormulaireInscription $formulaire,
+        EntityManagerInterface $entityManager
+    ): Response {
+        $user = $this->getUser();
+        
+        // Vérifier que c'est bien le dossier de l'utilisateur
+        if ($formulaire->getRemplitFormulaire() !== $user) {
+            throw $this->createAccessDeniedException('Vous ne pouvez pas accéder à ce dossier.');
+        }
+        
+        // Vérifier que le dossier est validé
+        if ($formulaire->getStatut() !== 'validé') {
+            $this->addFlash('error', 'Seuls les dossiers validés peuvent être téléchargés en PDF.');
+            return $this->redirectToRoute('app_bts_liste');
+        }
+        
+        // Récupérer les données du formulaire
+        $data = json_decode($formulaire->getDraftJson(), true) ?? [];
+        
+        // Charger le template ODT
+        $templatePath = $this->getParameter('kernel.project_dir') . '/dossier_inscription_bts.odt';
+        
+        // Lire le contenu du template
+        $zip = new \ZipArchive();
+        $tempDir = sys_get_temp_dir();
+        $tempOdtPath = $tempDir . '/dossier_' . $formulaire->getId() . '.odt';
+        
+        try {
+            // Copier le template
+            copy($templatePath, $tempOdtPath);
+            
+            // Ouvrir le fichier ODT (qui est un ZIP)
+            if ($zip->open($tempOdtPath) === TRUE) {
+                // Lire le contenu XML
+                $content = $zip->getFromName('content.xml');
+                
+                if ($content === false) {
+                    throw new \Exception('Impossible de lire le contenu du template ODT');
+                }
+                
+                // Remplacer toutes les variables
+                $replacements = [
+                    // Identité élève
+                    'nom' => strtoupper($data['nom'] ?? $user->getNom() ?? ''),
+                    'prenom' => $data['prenom'] ?? $user->getPrenom() ?? '',
+                    'date_naissance' => $data['date_naissance'] ?? '',
+                    'dep_naissance' => $data['dep_naissance'] ?? '',
+                    'lieu_naissance' => $data['lieu_naissance'] ?? '',
+                    'commune_naissance' => $data['commune_naissance'] ?? '',
+                    'nationalite' => $data['nationalite'] ?? '',
+                    'sexe' => $data['sexe'] ?? '',
+                    'numero_secu' => $data['numero_secu'] ?? '',
+                    'adresse' => $data['adresse'] ?? '',
+                    'code_postal' => $data['code_postal'] ?? '',
+                    'commune' => $data['commune'] ?? '',
+                    'tel_mobile' => $data['tel_mobile'] ?? '',
+                    'tel_fixe' => $data['tel_fixe'] ?? '',
+                    'email' => $data['email'] ?? $user->getEmail() ?? '',
+                    'sms_eleve' => ($data['sms_eleve'] ?? '') == '1' ? 'Oui' : 'Non',
+                    
+                    // Scolarité année en cours
+                    'etablissement_actuel' => $data['etablissement_actuel'] ?? '',
+                    'commune_etab' => $data['commune_etab'] ?? '',
+                    'classe_actuelle' => $data['classe_actuelle'] ?? '',
+                    'specialite' => $data['specialite'] ?? '',
+                    'lv1' => $data['lv1'] ?? '',
+                    'lv2' => $data['lv2'] ?? '',
+                    'regime_scolaire' => $data['regime_scolaire'] ?? '',
+                    'redoublement' => $data['redoublement'] ?? '',
+                    
+                    // Transport
+                    'transport' => ($data['transport'] ?? '') == '1' ? 'Oui' : 'Non',
+                    'type_transport' => $data['type_transport'] ?? '',
+                    'immatriculation' => $data['immatriculation'] ?? '',
+                    
+                    // Année N-1
+                    'annee_n1' => $data['annee_n1'] ?? '',
+                    'classe_n1' => $data['classe_n1'] ?? '',
+                    'lv1_n1' => $data['lv1_n1'] ?? '',
+                    'lv2_n1' => $data['lv2_n1'] ?? '',
+                    'etablissement_n1' => $data['etablissement_n1'] ?? '',
+                    'option_n1' => $data['option_n1'] ?? '',
+                    
+                    // Année N-2
+                    'annee_n2' => $data['annee_n2'] ?? '',
+                    'classe_n2' => $data['classe_n2'] ?? '',
+                    'lv1_n2' => $data['lv1_n2'] ?? '',
+                    'lv2_n2' => $data['lv2_n2'] ?? '',
+                    'etablissement_n2' => $data['etablissement_n2'] ?? '',
+                    'option_n2' => $data['option_n2'] ?? '',
+                    
+                    // Diplôme
+                    'dernier_diplome' => $data['dernier_diplome'] ?? '',
+                    
+                    // Responsable légal 1
+                    'lien_resp1' => $data['lien_resp1'] ?? '',
+                    'nom_resp1' => $data['nom_resp1'] ?? '',
+                    'prenom_resp1' => $data['prenom_resp1'] ?? '',
+                    'adresse_resp1' => $data['adresse_resp1'] ?? '',
+                    'commune_resp1' => $data['commune_resp1'] ?? '',
+                    'tel_mobile_resp1' => $data['tel_mobile_resp1'] ?? '',
+                    'tel_travail_resp1' => $data['tel_travail_resp1'] ?? '',
+                    'tel_domicile_resp1' => $data['tel_domicile_resp1'] ?? '',
+                    'email_resp1' => $data['email_resp1'] ?? '',
+                    'profession_resp1' => $data['profession_resp1'] ?? '',
+                    'sms_resp1' => ($data['sms_resp1'] ?? '') == '1' ? 'Oui' : 'Non',
+                    'comm_asso_resp1' => ($data['comm_asso_resp1'] ?? '') == '1' ? 'Oui' : 'Non',
+                    
+                    // Responsable légal 2
+                    'lien_resp2' => $data['lien_resp2'] ?? '',
+                    'nom_resp2' => $data['nom_resp2'] ?? '',
+                    'prenom_resp2' => $data['prenom_resp2'] ?? '',
+                    'adresse_resp2' => $data['adresse_resp2'] ?? '',
+                    'commune_resp2' => $data['commune_resp2'] ?? '',
+                    'tel_mobile_resp2' => $data['tel_mobile_resp2'] ?? '',
+                    'tel_travail_resp2' => $data['tel_travail_resp2'] ?? '',
+                    'tel_domicile_resp2' => $data['tel_domicile_resp2'] ?? '',
+                    'email_resp2' => $data['email_resp2'] ?? '',
+                    'profession_resp2' => $data['profession_resp2'] ?? '',
+                    'sms_resp2' => ($data['sms_resp2'] ?? '') == '1' ? 'Oui' : 'Non',
+                    'comm_asso_resp2' => ($data['comm_asso_resp2'] ?? '') == '1' ? 'Oui' : 'Non',
+                    
+                    // Informations administratives
+                    'date_soumission' => $formulaire->getDateSoumission()?->format('d/m/Y') ?? '',
+                    'numero_dossier' => $formulaire->getId() ?? '',
+                ];
+                
+                // Remplacer dans le contenu XML
+                foreach ($replacements as $key => $value) {
+                    $content = str_replace('${' . $key . '}', htmlspecialchars($value, ENT_XML1, 'UTF-8'), $content);
+                }
+                
+                // Mettre à jour le fichier
+                $zip->deleteName('content.xml');
+                $zip->addFromString('content.xml', $content);
+                $zip->close();
+                
+                // Convertir en PDF avec LibreOffice
+                $tempPdfPath = $tempDir . '/dossier_' . $formulaire->getId() . '.pdf';
+                
+                $libreOfficePath = 'C:\\Program Files\\LibreOffice\\program\\soffice.exe';
+                if (!file_exists($libreOfficePath)) {
+                    $libreOfficePath = 'C:\\Program Files (x86)\\LibreOffice\\program\\soffice.exe';
+                }
+                
+                if (file_exists($libreOfficePath)) {
+                    $command = sprintf(
+                        '"%s" --headless --convert-to pdf --outdir "%s" "%s"',
+                        $libreOfficePath,
+                        $tempDir,
+                        $tempOdtPath
+                    );
+                    
+                    exec($command, $output, $returnCode);
+                    
+                    // Attendre que le fichier soit créé
+                    sleep(2);
+                    
+                    if (file_exists($tempPdfPath)) {
+                        $filename = sprintf(
+                            'Dossier_Inscription_%s_%s_%s.pdf',
+                            $user->getNom(),
+                            $user->getPrenom(),
+                            date('Y-m-d')
+                        );
+                        
+                        $response = new Response(file_get_contents($tempPdfPath));
+                        $response->headers->set('Content-Type', 'application/pdf');
+                        $response->headers->set('Content-Disposition', sprintf('attachment; filename="%s"', $filename));
+                        
+                        unlink($tempOdtPath);
+                        unlink($tempPdfPath);
+                        
+                        return $response;
+                    }
+                }
+                
+                // Fallback: renvoyer le ODT
+                $filename = sprintf(
+                    'Dossier_Inscription_%s_%s_%s.odt',
+                    $user->getNom(),
+                    $user->getPrenom(),
+                    date('Y-m-d')
+                );
+                
+                $response = new Response(file_get_contents($tempOdtPath));
+                $response->headers->set('Content-Type', 'application/vnd.oasis.opendocument.text');
+                $response->headers->set('Content-Disposition', sprintf('attachment; filename="%s"', $filename));
+                
+                unlink($tempOdtPath);
+                
+                return $response;
+            } else {
+                throw new \Exception('Impossible d\'ouvrir le fichier ODT');
+            }
+        } catch (\Exception $e) {
+            if (file_exists($tempOdtPath)) {
+                unlink($tempOdtPath);
+            }
+            throw new \Exception('Erreur lors de la génération du document: ' . $e->getMessage());
         }
     }
 }

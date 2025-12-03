@@ -1,0 +1,184 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Aide technique - Inscription BTS{% endblock %}
+
+{% block body %}
+<!-- Fil d'ariane -->
+<nav class="fr-breadcrumb" aria-label="vous êtes ici :">
+    <button class="fr-breadcrumb__button" aria-expanded="false" aria-controls="breadcrumb-aide">Voir le fil d'Ariane</button>
+    <div class="fr-collapse" id="breadcrumb-aide">
+        <ol class="fr-breadcrumb__list">
+            <li><a class="fr-breadcrumb__link" href="{{ path('app_home') }}">Accueil</a></li>
+            <li><a class="fr-breadcrumb__link" aria-current="page">Aide technique</a></li>
+        </ol>
+    </div>
+</nav>
+
+<div class="fr-container fr-py-6v">
+    <div class="fr-grid-row">
+        <div class="fr-col-12">
+            <h1 class="fr-h1">Aide technique</h1>
+            <p class="fr-text--lead">Vous rencontrez un problème technique ? Consultez nos solutions ou contactez notre support.</p>
+        </div>
+    </div>
+
+    <!-- Problèmes courants -->
+    <div class="fr-grid-row fr-mt-6v">
+        <div class="fr-col-12">
+            <h2 class="fr-h2">Problèmes courants et solutions</h2>
+        </div>
+    </div>
+
+    <div class="fr-grid-row fr-mt-4v">
+        <div class="fr-col-12">
+            <div class="fr-accordions-group">
+                <section class="fr-accordion">
+                    <h3 class="fr-accordion__title">
+                        <button class="fr-accordion__btn" aria-expanded="false" aria-controls="tech-1">
+                            Je ne peux pas me connecter à mon compte
+                        </button>
+                    </h3>
+                    <div class="fr-collapse" id="tech-1">
+                        <div class="fr-accordion__body">
+                            <p><strong>Solutions :</strong></p>
+                            <ul class="fr-list">
+                                <li>Vérifiez que vous utilisez la bonne adresse email</li>
+                                <li>Assurez-vous que votre mot de passe est correctement saisi (attention aux majuscules/minuscules)</li>
+                                <li>Utilisez la fonction "Mot de passe oublié" si nécessaire</li>
+                                <li>Videz le cache de votre navigateur et réessayez</li>
+                            </ul>
+                        </div>
+                    </div>
+                </section>
+
+                <section class="fr-accordion">
+                    <h3 class="fr-accordion__title">
+                        <button class="fr-accordion__btn" aria-expanded="false" aria-controls="tech-2">
+                            Le téléchargement de mes documents échoue
+                        </button>
+                    </h3>
+                    <div class="fr-collapse" id="tech-2">
+                        <div class="fr-accordion__body">
+                            <p><strong>Solutions :</strong></p>
+                            <ul class="fr-list">
+                                <li>Vérifiez que vos fichiers sont au format PDF, JPG ou PNG</li>
+                                <li>Assurez-vous que la taille de chaque fichier ne dépasse pas 5 Mo</li>
+                                <li>Vérifiez votre connexion Internet</li>
+                                <li>Essayez avec un autre navigateur</li>
+                            </ul>
+                        </div>
+                    </div>
+                </section>
+
+                <section class="fr-accordion">
+                    <h3 class="fr-accordion__title">
+                        <button class="fr-accordion__btn" aria-expanded="false" aria-controls="tech-3">
+                            Le formulaire ne se soumet pas
+                        </button>
+                    </h3>
+                    <div class="fr-collapse" id="tech-3">
+                        <div class="fr-accordion__body">
+                            <p><strong>Solutions :</strong></p>
+                            <ul class="fr-list">
+                                <li>Vérifiez que tous les champs obligatoires (marqués d'un *) sont remplis</li>
+                                <li>Assurez-vous que les formats de données sont corrects (email, téléphone, etc.)</li>
+                                <li>Désactivez temporairement les extensions de navigateur (bloqueurs de publicité, etc.)</li>
+                                <li>Essayez de recharger la page et de recommencer</li>
+                            </ul>
+                        </div>
+                    </div>
+                </section>
+
+                <section class="fr-accordion">
+                    <h3 class="fr-accordion__title">
+                        <button class="fr-accordion__btn" aria-expanded="false" aria-controls="tech-4">
+                            La page ne s'affiche pas correctement
+                        </button>
+                    </h3>
+                    <div class="fr-collapse" id="tech-4">
+                        <div class="fr-accordion__body">
+                            <p><strong>Solutions :</strong></p>
+                            <ul class="fr-list">
+                                <li>Utilisez un navigateur récent (Chrome, Firefox, Edge, Safari)</li>
+                                <li>Mettez à jour votre navigateur vers la dernière version</li>
+                                <li>Videz le cache et les cookies de votre navigateur</li>
+                                <li>Désactivez le mode de compatibilité si activé</li>
+                            </ul>
+                        </div>
+                    </div>
+                </section>
+
+                <section class="fr-accordion">
+                    <h3 class="fr-accordion__title">
+                        <button class="fr-accordion__btn" aria-expanded="false" aria-controls="tech-5">
+                            Je n'ai pas reçu l'email de confirmation
+                        </button>
+                    </h3>
+                    <div class="fr-collapse" id="tech-5">
+                        <div class="fr-accordion__body">
+                            <p><strong>Solutions :</strong></p>
+                            <ul class="fr-list">
+                                <li>Vérifiez votre dossier de courrier indésirable (spam)</li>
+                                <li>Assurez-vous que l'adresse email fournie est correcte</li>
+                                <li>Attendez quelques minutes, l'email peut mettre du temps à arriver</li>
+                                <li>Demandez un nouvel envoi depuis votre compte</li>
+                            </ul>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </div>
+    </div>
+
+    <!-- Configuration requise -->
+    <div class="fr-grid-row fr-mt-6v">
+        <div class="fr-col-12">
+            <h2 class="fr-h2">Configuration technique recommandée</h2>
+        </div>
+        <div class="fr-col-12 fr-col-lg-6">
+            <div class="fr-card fr-card--no-arrow">
+                <div class="fr-card__body">
+                    <div class="fr-card__content">
+                        <h3 class="fr-card__title">Navigateurs compatibles</h3>
+                        <ul class="fr-list">
+                            <li>Google Chrome (version 90 ou supérieure)</li>
+                            <li>Mozilla Firefox (version 88 ou supérieure)</li>
+                            <li>Microsoft Edge (version 90 ou supérieure)</li>
+                            <li>Safari (version 14 ou supérieure)</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="fr-col-12 fr-col-lg-6">
+            <div class="fr-card fr-card--no-arrow">
+                <div class="fr-card__body">
+                    <div class="fr-card__content">
+                        <h3 class="fr-card__title">Formats de fichiers acceptés</h3>
+                        <ul class="fr-list">
+                            <li>Documents : PDF</li>
+                            <li>Images : JPG, JPEG, PNG</li>
+                            <li>Taille maximale : 5 Mo par fichier</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Contact support -->
+    <div class="fr-grid-row fr-mt-6v">
+        <div class="fr-col-12">
+            <div class="fr-callout fr-callout--green-emeraude">
+                <h3 class="fr-callout__title">Toujours besoin d'aide ?</h3>
+                <p class="fr-callout__text">
+                    Notre équipe technique est disponible pour vous aider à résoudre vos problèmes.
+                </p>
+                <a class="fr-btn" href="{{ path('app_contact') }}">
+                    Contacter le support technique
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
