@@ -57,12 +57,19 @@ class Utilisateur implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\OneToMany(targetEntity: FormulaireInscription::class, mappedBy: 'remplit_formulaire')]
     private Collection $formulaireInscriptions;
 
+    /**
+     * @var Collection<int, Contact>
+     */
+    #[ORM\OneToMany(targetEntity: Contact::class, mappedBy: 'utilisateur')]
+    private Collection $contacts;
+
     #[ORM\OneToOne(cascade: ['persist', 'remove'])]
     private ?InformationEleve $contient_information_eleve = null;
 
     public function __construct()
     {
         $this->formulaireInscriptions = new ArrayCollection();
+        $this->contacts = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -232,6 +239,35 @@ class Utilisateur implements UserInterface, PasswordAuthenticatedUserInterface
             // set the owning side to null (unless already changed)
             if ($formulaireInscription->getRemplitFormulaire() === $this) {
                 $formulaireInscription->setRemplitFormulaire(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Contact>
+     */
+    public function getContacts(): Collection
+    {
+        return $this->contacts;
+    }
+
+    public function addContact(Contact $contact): static
+    {
+        if (!$this->contacts->contains($contact)) {
+            $this->contacts->add($contact);
+            $contact->setUtilisateur($this);
+        }
+
+        return $this;
+    }
+
+    public function removeContact(Contact $contact): static
+    {
+        if ($this->contacts->removeElement($contact)) {
+            if ($contact->getUtilisateur() === $this) {
+                $contact->setUtilisateur(null);
             }
         }
 

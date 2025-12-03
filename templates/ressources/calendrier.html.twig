@@ -1,0 +1,105 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Calendrier des inscriptions - Inscription BTS{% endblock %}
+
+{% block body %}
+<!-- Fil d'ariane -->
+<nav class="fr-breadcrumb" aria-label="vous êtes ici :">
+    <button class="fr-breadcrumb__button" aria-expanded="false" aria-controls="breadcrumb-calendrier">Voir le fil d'Ariane</button>
+    <div class="fr-collapse" id="breadcrumb-calendrier">
+        <ol class="fr-breadcrumb__list">
+            <li><a class="fr-breadcrumb__link" href="{{ path('app_home') }}">Accueil</a></li>
+            <li><a class="fr-breadcrumb__link" aria-current="page">Calendrier des inscriptions</a></li>
+        </ol>
+    </div>
+</nav>
+
+<div class="fr-container fr-py-6v">
+    <div class="fr-grid-row">
+        <div class="fr-col-12">
+            <h1 class="fr-h1">Calendrier des inscriptions</h1>
+            <p class="fr-text--lead">Retrouvez toutes les dates importantes pour votre inscription BTS.</p>
+        </div>
+    </div>
+
+    <!-- Dates importantes -->
+    <div class="fr-grid-row fr-grid-row--gutters fr-mt-6v">
+        <div class="fr-col-12">
+            <div class="fr-table fr-table--bordered">
+                <table>
+                    <thead>
+                        <tr>
+                            <th scope="col">Période</th>
+                            <th scope="col">Événement</th>
+                            <th scope="col">Description</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Janvier - Février</td>
+                            <td><strong>Ouverture des inscriptions</strong></td>
+                            <td>Début de la période d'inscription pour la rentrée suivante</td>
+                        </tr>
+                        <tr>
+                            <td>Mars - Avril</td>
+                            <td><strong>Constitution des dossiers</strong></td>
+                            <td>Période recommandée pour compléter et soumettre votre dossier</td>
+                        </tr>
+                        <tr>
+                            <td>Mai</td>
+                            <td><strong>Date limite de dépôt</strong></td>
+                            <td>Dernier délai pour soumettre un dossier complet</td>
+                        </tr>
+                        <tr>
+                            <td>Juin</td>
+                            <td><strong>Étude des dossiers</strong></td>
+                            <td>Examen des candidatures par les commissions d'admission</td>
+                        </tr>
+                        <tr>
+                            <td>Juillet</td>
+                            <td><strong>Résultats d'admission</strong></td>
+                            <td>Publication des résultats et envoi des notifications</td>
+                        </tr>
+                        <tr>
+                            <td>Septembre</td>
+                            <td><strong>Rentrée scolaire</strong></td>
+                            <td>Début des cours pour l'année académique</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Alertes importantes -->
+    <div class="fr-grid-row fr-mt-6v">
+        <div class="fr-col-12 fr-col-lg-6">
+            <div class="fr-alert fr-alert--info">
+                <h3 class="fr-alert__title">Inscription en cours</h3>
+                <p>Les inscriptions pour l'année académique {{ "now"|date("Y") }}-{{ ("now"|date_modify("+1 year"))|date("Y") }} sont actuellement ouvertes.</p>
+            </div>
+        </div>
+        <div class="fr-col-12 fr-col-lg-6">
+            <div class="fr-alert fr-alert--warning">
+                <h3 class="fr-alert__title">Attention aux délais</h3>
+                <p>Nous vous recommandons de soumettre votre dossier au moins 2 semaines avant la date limite pour éviter tout problème technique.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Commencer l'inscription -->
+    <div class="fr-grid-row fr-mt-6v">
+        <div class="fr-col-12">
+            <div class="fr-callout fr-callout--green-emeraude">
+                <h3 class="fr-callout__title">Prêt à vous inscrire ?</h3>
+                <p class="fr-callout__text">
+                    Commencez dès maintenant votre dossier d'inscription en ligne.
+                </p>
+                <a class="fr-btn" href="{{ path('app_inscription') }}">
+                    Commencer mon inscription
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
