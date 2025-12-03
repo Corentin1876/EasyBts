@@ -1,0 +1,152 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Établissements - Inscription BTS{% endblock %}
+
+{% block body %}
+<div class="fr-container fr-py-6w">
+    <nav class="fr-breadcrumb" aria-label="vous êtes ici :">
+        <button class="fr-breadcrumb__button" aria-expanded="false" aria-controls="breadcrumb-etablissements">
+            Voir le fil d'Ariane
+        </button>
+        <div class="fr-collapse" id="breadcrumb-etablissements">
+            <ol class="fr-breadcrumb__list">
+                <li><a class="fr-breadcrumb__link" href="{{ path('app_home') }}">Accueil</a></li>
+                <li><a class="fr-breadcrumb__link" href="{{ path('app_sitemap') }}">Établissements</a></li>
+                <li><a class="fr-breadcrumb__link" aria-current="page">Liste des établissements</a></li>
+            </ol>
+        </div>
+    </nav>
+
+    <h1 class="fr-h1">Établissements proposant des BTS</h1>
+    <p class="fr-text--lead fr-mb-6w">
+        Découvrez les établissements partenaires proposant des formations BTS.
+    </p>
+
+    <div class="fr-grid-row fr-grid-row--gutters">
+        <!-- Lycée Fulbert -->
+        <div class="fr-col-12 fr-col-md-6 fr-col-lg-4">
+            <div class="fr-card fr-enlarge-link">
+                <div class="fr-card__body">
+                    <div class="fr-card__content">
+                        <h2 class="fr-card__title">
+                            <a href="#fulbert" class="fr-card__link">Lycée Fulbert</a>
+                        </h2>
+                        <p class="fr-card__desc">
+                            Établissement d'excellence proposant plusieurs spécialisations BTS.
+                        </p>
+                        <div class="fr-card__start">
+                            <p class="fr-card__detail">
+                                <span class="fr-icon-map-pin-2-line" aria-hidden="true"></span>
+                                Chartres, Eure-et-Loir (28)
+                            </p>
+                        </div>
+                        <div class="fr-badges-group fr-mt-2w">
+                            <span class="fr-badge fr-badge--sm">BTS SIO</span>
+                            <span class="fr-badge fr-badge--sm">BTS MCO</span>
+                            <span class="fr-badge fr-badge--sm">BTS CG</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Autres établissements -->
+        <div class="fr-col-12 fr-col-md-6 fr-col-lg-4">
+            <div class="fr-card fr-enlarge-link">
+                <div class="fr-card__body">
+                    <div class="fr-card__content">
+                        <h2 class="fr-card__title">
+                            <a href="#" class="fr-card__link">Lycée Jean Moulin</a>
+                        </h2>
+                        <p class="fr-card__desc">
+                            Formation technologique et professionnelle de qualité.
+                        </p>
+                        <div class="fr-card__start">
+                            <p class="fr-card__detail">
+                                <span class="fr-icon-map-pin-2-line" aria-hidden="true"></span>
+                                Paris, Île-de-France (75)
+                            </p>
+                        </div>
+                        <div class="fr-badges-group fr-mt-2w">
+                            <span class="fr-badge fr-badge--sm">BTS SIO</span>
+                            <span class="fr-badge fr-badge--sm">BTS NDRC</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="fr-col-12 fr-col-md-6 fr-col-lg-4">
+            <div class="fr-card fr-enlarge-link">
+                <div class="fr-card__body">
+                    <div class="fr-card__content">
+                        <h2 class="fr-card__title">
+                            <a href="#" class="fr-card__link">Lycée Victor Hugo</a>
+                        </h2>
+                        <p class="fr-card__desc">
+                            Excellence académique et accompagnement personnalisé.
+                        </p>
+                        <div class="fr-card__start">
+                            <p class="fr-card__detail">
+                                <span class="fr-icon-map-pin-2-line" aria-hidden="true"></span>
+                                Lyon, Auvergne-Rhône-Alpes (69)
+                            </p>
+                        </div>
+                        <div class="fr-badges-group fr-mt-2w">
+                            <span class="fr-badge fr-badge--sm">BTS MCO</span>
+                            <span class="fr-badge fr-badge--sm">BTS CG</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Section détails Lycée Fulbert -->
+    <div class="fr-grid-row fr-mt-6w" id="fulbert">
+        <div class="fr-col-12">
+            <div class="fr-card">
+                <div class="fr-card__body">
+                    <div class="fr-card__content">
+                        <h2 class="fr-card__title">
+                            <span class="fr-icon-building-line" aria-hidden="true"></span>
+                            Lycée Fulbert - Établissement d'excellence
+                        </h2>
+                        
+                        <div class="fr-grid-row fr-grid-row--gutters fr-mt-4w">
+                            <div class="fr-col-12 fr-col-md-6">
+                                <h3 class="fr-h6">Coordonnées</h3>
+                                <p>
+                                    <strong>Adresse :</strong><br>
+                                    62 Rue Saint-Michel<br>
+                                    28000 Chartres
+                                </p>
+                                <p>
+                                    <strong>Téléphone :</strong> 02 37 18 26 00<br>
+                                    <strong>Email :</strong> contact@lycee-fulbert.fr
+                                </p>
+                            </div>
+                            
+                            <div class="fr-col-12 fr-col-md-6">
+                                <h3 class="fr-h6">Formations BTS proposées</h3>
+                                <ul class="fr-list">
+                                    <li><strong>BTS SIO</strong> - Services Informatiques aux Organisations</li>
+                                    <li><strong>BTS MCO</strong> - Management Commercial Opérationnel</li>
+                                    <li><strong>BTS CG</strong> - Comptabilité et Gestion</li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <div class="fr-mt-4w">
+                            <a href="{{ path('app_carte') }}" class="fr-btn fr-btn--secondary">
+                                <span class="fr-icon-map-pin-2-line" aria-hidden="true"></span>
+                                Voir sur la carte
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

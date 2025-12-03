@@ -79,14 +79,14 @@
                             <ul class="fr-btns-group">
                                 {% if app.user %}
                                 <li>
-                                    <a class="fr-btn fr-btn--tertiary-no-outline" href="{{ path('app_logout') }}">
-                                        Déconnexion
+                                    <a class="fr-btn fr-btn--secondary" href="{{ path('app_mon_compte') }}">
+                                        👤 {{ app.user.prenom }} {{ app.user.nom }}
                                     </a>
                                 </li>
                                 <li>
-                                    <span class="fr-btn fr-btn--secondary">
-                                        👤 {{ app.user.prenom }} {{ app.user.nom }}
-                                    </span>
+                                    <a class="fr-btn fr-btn--tertiary-no-outline" href="{{ path('app_logout') }}">
+                                        Déconnexion
+                                    </a>
                                 </li>
                                 {% else %}
                                 <li>
@@ -257,7 +257,7 @@
     </footer>
 
     <!-- DSFR JavaScript avec CDN jsDelivr -->
-    <script src="https://cdn.jsdelivr.net/npm/@gouvfr/dsfr@1.11.2/dist/dsfr.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@gouvfr/dsfr@1.11.2/dist/dsfr.module.min.js" type="module"></script>
     {% block javascripts %}
         {{ importmap('app') }}
         <script>

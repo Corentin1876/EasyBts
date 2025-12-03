@@ -14,6 +14,8 @@ use Psr\Log\LoggerInterface;
 use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 use Symfony\Component\Routing\Annotation\Route;
+use App\Entity\FormulaireInscription;
+use App\Entity\Contact;
 
 class HomeController extends AbstractController
 {
@@ -51,8 +53,8 @@ class HomeController extends AbstractController
     #[Route('/contact', name: 'app_contact', methods: ['GET', 'POST'])]
     public function contact(Request $request, MessageBusInterface $bus, ValidatorInterface $validator, LoggerInterface $logger): Response
     {
-    $formData = new ContactFormData();
-    $form = $this->createForm(ContactType::class, $formData);
+        $formData = new ContactFormData();
+        $form = $this->createForm(ContactType::class, $formData);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
@@ -72,7 +74,7 @@ class HomeController extends AbstractController
                 $formData->consent ?? false
             );
 
-            $errors = $validator->validate($message); // double sécurité
+            $errors = $validator->validate($message);
             if (count($errors) > 0) {
                 foreach ($errors as $error) {
                     $this->addFlash('error', $error->getPropertyPath() . ': ' . $error->getMessage());
@@ -90,7 +92,6 @@ class HomeController extends AbstractController
                 return $this->redirectToRoute('app_contact');
             }
         } elseif ($form->isSubmitted()) {
-            // Collecte explicite des erreurs pour debug
             $allErrors = [];
             foreach ($form->getErrors(true) as $err) {
                 $allErrors[] = ($err->getOrigin()?->getName() ?: 'form') . ' : ' . $err->getMessage();
@@ -110,9 +111,13 @@ class HomeController extends AbstractController
     }
 
     #[Route('/plan-du-site', name: 'app_sitemap')]
-    public function sitemap(): Response
+    public function sitemap(EntityManagerInterface $entityManager): Response
     {
-        return $this->render('legal/sitemap.html.twig');
+        $specialisations = $entityManager->getRepository(Specialisation::class)->findAll();
+        
+        return $this->render('legal/sitemap.html.twig', [
+            'specialisations' => $specialisations,
+        ]);
     }
 
     #[Route('/accessibilite', name: 'app_accessibility')]
@@ -144,4 +149,71 @@ class HomeController extends AbstractController
     {
         return $this->render('faq/index.html.twig');
     }
+
+    #[Route('/mon-compte', name: 'app_mon_compte')]
+    public function monCompte(EntityManagerInterface $entityManager): Response
+    {
+        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
+        
+        $user = $this->getUser();
+        
+        // Utiliser le nom correct de la propriété
+        $dossiers = $entityManager->getRepository(FormulaireInscription::class)
+            ->findBy(['remplit_formulaire' => $user], ['date_soumission' => 'DESC']);
+        
+        $messages = $entityManager->getRepository(Contact::class)
+            ->findBy(['utilisateur' => $user], ['id' => 'DESC']);
+        
+        return $this->render('utilisateur/mon_compte.html.twig', [
+            'dossiers' => $dossiers,
+            'messages' => $messages,
+        ]);
+    }
+
+    #[Route('/guide-inscription', name: 'app_guide')]
+    public function guide(): Response
+    {
+        return $this->render('ressources/guide.html.twig');
+    }
+
+    #[Route('/calendrier-inscriptions', name: 'app_calendrier')]
+    public function calendrier(): Response
+    {
+        return $this->render('ressources/calendrier.html.twig');
+    }
+
+    #[Route('/aide-technique', name: 'app_aide_technique')]
+    public function aideTechnique(): Response
+    {
+        return $this->render('ressources/aide_technique.html.twig');
+    }
+
+    #[Route('/etablissements', name: 'app_etablissements')]
+    public function etablissements(): Response
+    {
+        return $this->render('etablissements/liste.html.twig');
+    }
+
+    #[Route('/formations', name: 'app_formations')]
+    public function formations(EntityManagerInterface $entityManager): Response
+    {
+        $specialisations = $entityManager->getRepository(Specialisation::class)->findAll();
+        
+        return $this->render('etablissements/formations.html.twig', [
+            'specialisations' => $specialisations,
+        ]);
+    }
+
+    #[Route('/carte-etablissements', name: 'app_carte')]
+    public function carteEtablissements(): Response
+    {
+        return $this->render('etablissements/carte.html.twig');
+    }
+
+    #[Route('/taux-reussite', name: 'app_taux_reussite')]
+    public function tauxReussite(): Response
+    {
+        return $this->render('etablissements/taux_reussite.html.twig');
+    }
 }
+

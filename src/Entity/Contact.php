@@ -78,6 +78,10 @@ class Contact
     #[ORM\Column(length: 20)]
     private ?string $status = 'nouveau';
 
+    #[ORM\ManyToOne(targetEntity: Utilisateur::class)]
+    #[ORM\JoinColumn(nullable: true)]
+    private ?Utilisateur $utilisateur = null;
+
     public function __construct()
     {
         $this->createdAt = new \DateTimeImmutable();
@@ -204,6 +208,18 @@ class Contact
     public function setStatus(string $status): static
     {
         $this->status = $status;
+
+        return $this;
+    }
+
+    public function getUtilisateur(): ?Utilisateur
+    {
+        return $this->utilisateur;
+    }
+
+    public function setUtilisateur(?Utilisateur $utilisateur): static
+    {
+        $this->utilisateur = $utilisateur;
 
         return $this;
     }
