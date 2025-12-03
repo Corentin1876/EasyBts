@@ -15,6 +15,9 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
+use PhpOffice\PhpWord\TemplateProcessor;
+use PhpOffice\PhpWord\Settings;
+use PhpOffice\PhpWord\IOFactory;
 
 class BtsInscriptionController extends AbstractController
 {
@@ -412,6 +415,212 @@ class BtsInscriptionController extends AbstractController
             return $this->json(['success' => true, 'redirect' => $this->generateUrl('app_bts_liste')]);
         } catch (\Exception $e) {
             return $this->json(['success' => false, 'error' => 'Erreur lors de la soumission: ' . $e->getMessage()], 500);
+        }
+    }
+
+    #[Route('/bts/inscription/{id}/pdf', name: 'app_bts_inscription_pdf')]
+    #[IsGranted('ROLE_USER')]
+    public function downloadPdf(
+        FormulaireInscription $formulaire,
+        EntityManagerInterface $entityManager
+    ): Response {
+        $user = $this->getUser();
+        
+        // Vérifier que c'est bien le dossier de l'utilisateur
+        if ($formulaire->getRemplitFormulaire() !== $user) {
+            throw $this->createAccessDeniedException('Vous ne pouvez pas accéder à ce dossier.');
+        }
+        
+        // Vérifier que le dossier est validé
+        if ($formulaire->getStatut() !== 'validé') {
+            $this->addFlash('error', 'Seuls les dossiers validés peuvent être téléchargés en PDF.');
+            return $this->redirectToRoute('app_bts_liste');
+        }
+        
+        // Récupérer les données du formulaire
+        $data = json_decode($formulaire->getDraftJson(), true) ?? [];
+        
+        // Charger le template ODT
+        $templatePath = $this->getParameter('kernel.project_dir') . '/dossier_inscription_bts.odt';
+        
+        // Lire le contenu du template
+        $zip = new \ZipArchive();
+        $tempDir = sys_get_temp_dir();
+        $tempOdtPath = $tempDir . '/dossier_' . $formulaire->getId() . '.odt';
+        
+        try {
+            // Copier le template
+            copy($templatePath, $tempOdtPath);
+            
+            // Ouvrir le fichier ODT (qui est un ZIP)
+            if ($zip->open($tempOdtPath) === TRUE) {
+                // Lire le contenu XML
+                $content = $zip->getFromName('content.xml');
+                
+                if ($content === false) {
+                    throw new \Exception('Impossible de lire le contenu du template ODT');
+                }
+                
+                // Remplacer toutes les variables
+                $replacements = [
+                    // Identité élève
+                    'nom' => strtoupper($data['nom'] ?? $user->getNom() ?? ''),
+                    'prenom' => $data['prenom'] ?? $user->getPrenom() ?? '',
+                    'date_naissance' => $data['date_naissance'] ?? '',
+                    'dep_naissance' => $data['dep_naissance'] ?? '',
+                    'lieu_naissance' => $data['lieu_naissance'] ?? '',
+                    'commune_naissance' => $data['commune_naissance'] ?? '',
+                    'nationalite' => $data['nationalite'] ?? '',
+                    'sexe' => $data['sexe'] ?? '',
+                    'numero_secu' => $data['numero_secu'] ?? '',
+                    'adresse' => $data['adresse'] ?? '',
+                    'code_postal' => $data['code_postal'] ?? '',
+                    'commune' => $data['commune'] ?? '',
+                    'tel_mobile' => $data['tel_mobile'] ?? '',
+                    'tel_fixe' => $data['tel_fixe'] ?? '',
+                    'email' => $data['email'] ?? $user->getEmail() ?? '',
+                    'sms_eleve' => ($data['sms_eleve'] ?? '') == '1' ? 'Oui' : 'Non',
+                    
+                    // Scolarité année en cours
+                    'etablissement_actuel' => $data['etablissement_actuel'] ?? '',
+                    'commune_etab' => $data['commune_etab'] ?? '',
+                    'classe_actuelle' => $data['classe_actuelle'] ?? '',
+                    'specialite' => $data['specialite'] ?? '',
+                    'lv1' => $data['lv1'] ?? '',
+                    'lv2' => $data['lv2'] ?? '',
+                    'regime_scolaire' => $data['regime_scolaire'] ?? '',
+                    'redoublement' => $data['redoublement'] ?? '',
+                    
+                    // Transport
+                    'transport' => ($data['transport'] ?? '') == '1' ? 'Oui' : 'Non',
+                    'type_transport' => $data['type_transport'] ?? '',
+                    'immatriculation' => $data['immatriculation'] ?? '',
+                    
+                    // Année N-1
+                    'annee_n1' => $data['annee_n1'] ?? '',
+                    'classe_n1' => $data['classe_n1'] ?? '',
+                    'lv1_n1' => $data['lv1_n1'] ?? '',
+                    'lv2_n1' => $data['lv2_n1'] ?? '',
+                    'etablissement_n1' => $data['etablissement_n1'] ?? '',
+                    'option_n1' => $data['option_n1'] ?? '',
+                    
+                    // Année N-2
+                    'annee_n2' => $data['annee_n2'] ?? '',
+                    'classe_n2' => $data['classe_n2'] ?? '',
+                    'lv1_n2' => $data['lv1_n2'] ?? '',
+                    'lv2_n2' => $data['lv2_n2'] ?? '',
+                    'etablissement_n2' => $data['etablissement_n2'] ?? '',
+                    'option_n2' => $data['option_n2'] ?? '',
+                    
+                    // Diplôme
+                    'dernier_diplome' => $data['dernier_diplome'] ?? '',
+                    
+                    // Responsable légal 1
+                    'lien_resp1' => $data['lien_resp1'] ?? '',
+                    'nom_resp1' => $data['nom_resp1'] ?? '',
+                    'prenom_resp1' => $data['prenom_resp1'] ?? '',
+                    'adresse_resp1' => $data['adresse_resp1'] ?? '',
+                    'commune_resp1' => $data['commune_resp1'] ?? '',
+                    'tel_mobile_resp1' => $data['tel_mobile_resp1'] ?? '',
+                    'tel_travail_resp1' => $data['tel_travail_resp1'] ?? '',
+                    'tel_domicile_resp1' => $data['tel_domicile_resp1'] ?? '',
+                    'email_resp1' => $data['email_resp1'] ?? '',
+                    'profession_resp1' => $data['profession_resp1'] ?? '',
+                    'sms_resp1' => ($data['sms_resp1'] ?? '') == '1' ? 'Oui' : 'Non',
+                    'comm_asso_resp1' => ($data['comm_asso_resp1'] ?? '') == '1' ? 'Oui' : 'Non',
+                    
+                    // Responsable légal 2
+                    'lien_resp2' => $data['lien_resp2'] ?? '',
+                    'nom_resp2' => $data['nom_resp2'] ?? '',
+                    'prenom_resp2' => $data['prenom_resp2'] ?? '',
+                    'adresse_resp2' => $data['adresse_resp2'] ?? '',
+                    'commune_resp2' => $data['commune_resp2'] ?? '',
+                    'tel_mobile_resp2' => $data['tel_mobile_resp2'] ?? '',
+                    'tel_travail_resp2' => $data['tel_travail_resp2'] ?? '',
+                    'tel_domicile_resp2' => $data['tel_domicile_resp2'] ?? '',
+                    'email_resp2' => $data['email_resp2'] ?? '',
+                    'profession_resp2' => $data['profession_resp2'] ?? '',
+                    'sms_resp2' => ($data['sms_resp2'] ?? '') == '1' ? 'Oui' : 'Non',
+                    'comm_asso_resp2' => ($data['comm_asso_resp2'] ?? '') == '1' ? 'Oui' : 'Non',
+                    
+                    // Informations administratives
+                    'date_soumission' => $formulaire->getDateSoumission()?->format('d/m/Y') ?? '',
+                    'numero_dossier' => $formulaire->getId() ?? '',
+                ];
+                
+                // Remplacer dans le contenu XML
+                foreach ($replacements as $key => $value) {
+                    $content = str_replace('${' . $key . '}', htmlspecialchars($value, ENT_XML1, 'UTF-8'), $content);
+                }
+                
+                // Mettre à jour le fichier
+                $zip->deleteName('content.xml');
+                $zip->addFromString('content.xml', $content);
+                $zip->close();
+                
+                // Convertir en PDF avec LibreOffice
+                $tempPdfPath = $tempDir . '/dossier_' . $formulaire->getId() . '.pdf';
+                
+                $libreOfficePath = 'C:\\Program Files\\LibreOffice\\program\\soffice.exe';
+                if (!file_exists($libreOfficePath)) {
+                    $libreOfficePath = 'C:\\Program Files (x86)\\LibreOffice\\program\\soffice.exe';
+                }
+                
+                if (file_exists($libreOfficePath)) {
+                    $command = sprintf(
+                        '"%s" --headless --convert-to pdf --outdir "%s" "%s"',
+                        $libreOfficePath,
+                        $tempDir,
+                        $tempOdtPath
+                    );
+                    
+                    exec($command, $output, $returnCode);
+                    
+                    // Attendre que le fichier soit créé
+                    sleep(2);
+                    
+                    if (file_exists($tempPdfPath)) {
+                        $filename = sprintf(
+                            'Dossier_Inscription_%s_%s_%s.pdf',
+                            $user->getNom(),
+                            $user->getPrenom(),
+                            date('Y-m-d')
+                        );
+                        
+                        $response = new Response(file_get_contents($tempPdfPath));
+                        $response->headers->set('Content-Type', 'application/pdf');
+                        $response->headers->set('Content-Disposition', sprintf('attachment; filename="%s"', $filename));
+                        
+                        unlink($tempOdtPath);
+                        unlink($tempPdfPath);
+                        
+                        return $response;
+                    }
+                }
+                
+                // Fallback: renvoyer le ODT
+                $filename = sprintf(
+                    'Dossier_Inscription_%s_%s_%s.odt',
+                    $user->getNom(),
+                    $user->getPrenom(),
+                    date('Y-m-d')
+                );
+                
+                $response = new Response(file_get_contents($tempOdtPath));
+                $response->headers->set('Content-Type', 'application/vnd.oasis.opendocument.text');
+                $response->headers->set('Content-Disposition', sprintf('attachment; filename="%s"', $filename));
+                
+                unlink($tempOdtPath);
+                
+                return $response;
+            } else {
+                throw new \Exception('Impossible d\'ouvrir le fichier ODT');
+            }
+        } catch (\Exception $e) {
+            if (file_exists($tempOdtPath)) {
+                unlink($tempOdtPath);
+            }
+            throw new \Exception('Erreur lors de la génération du document: ' . $e->getMessage());
         }
     }
 }
