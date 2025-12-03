@@ -1,0 +1,94 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Catalogue des formations - Inscription BTS{% endblock %}
+
+{% block body %}
+<!-- Fil d'ariane -->
+<nav class="fr-breadcrumb" aria-label="vous êtes ici :">
+    <button class="fr-breadcrumb__button" aria-expanded="false" aria-controls="breadcrumb-formations">Voir le fil d'Ariane</button>
+    <div class="fr-collapse" id="breadcrumb-formations">
+        <ol class="fr-breadcrumb__list">
+            <li><a class="fr-breadcrumb__link" href="{{ path('app_home') }}">Accueil</a></li>
+            <li><a class="fr-breadcrumb__link" aria-current="page">Catalogue des formations</a></li>
+        </ol>
+    </div>
+</nav>
+
+<div class="fr-container fr-py-6v">
+    <div class="fr-grid-row">
+        <div class="fr-col-12">
+            <h1 class="fr-h1">Catalogue des formations BTS</h1>
+            <p class="fr-text--lead">Découvrez toutes les spécialisations BTS disponibles.</p>
+        </div>
+    </div>
+
+    <!-- Liste des formations -->
+    <div class="fr-grid-row fr-grid-row--gutters fr-mt-6v">
+        {% if specialisations is defined and specialisations|length > 0 %}
+            {% for specialisation in specialisations %}
+                <div class="fr-col-12 fr-col-md-6 fr-col-lg-4">
+                    <div class="fr-card fr-enlarge-link fr-card--horizontal-tier">
+                        <div class="fr-card__body">
+                            <div class="fr-card__content">
+                                <h3 class="fr-card__title">
+                                    <a href="{{ path('app_specialisation_detail', {id: specialisation.id}) }}" class="fr-card__link">
+                                        {{ specialisation.libelle|default(specialisation.nom) }}
+                                    </a>
+                                </h3>
+                                {% if specialisation.niveau %}
+                                    <p class="fr-badge fr-badge--info fr-badge--sm fr-mb-1w">{{ specialisation.niveau }}</p>
+                                {% endif %}
+                                {% if specialisation.duree %}
+                                    <p class="fr-badge fr-badge--success fr-badge--sm">{{ specialisation.duree }}</p>
+                                {% endif %}
+                                {% if specialisation.description %}
+                                    <p class="fr-card__desc fr-text--sm">
+                                        {{ specialisation.description|length > 120 ? specialisation.description|slice(0, 120) ~ '...' : specialisation.description }}
+                                    </p>
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="fr-card__footer">
+                            <a class="fr-btn fr-btn--sm fr-btn--secondary" href="{{ path('app_specialisation_detail', {id: specialisation.id}) }}">
+                                En savoir plus
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        {% else %}
+            <div class="fr-col-12">
+                <div class="fr-alert fr-alert--info">
+                    <p>Aucune formation disponible pour le moment.</p>
+                </div>
+            </div>
+        {% endif %}
+    </div>
+
+    <!-- Informations complémentaires -->
+    <div class="fr-grid-row fr-mt-6v">
+        <div class="fr-col-12 fr-col-lg-6">
+            <div class="fr-callout">
+                <h3 class="fr-callout__title">Besoin de conseils ?</h3>
+                <p class="fr-callout__text">
+                    Notre équipe peut vous aider à choisir la formation qui correspond à votre projet.
+                </p>
+                <a class="fr-btn fr-btn--secondary" href="{{ path('app_contact') }}">
+                    Nous contacter
+                </a>
+            </div>
+        </div>
+        <div class="fr-col-12 fr-col-lg-6">
+            <div class="fr-callout fr-callout--green-emeraude">
+                <h3 class="fr-callout__title">Prêt à vous inscrire ?</h3>
+                <p class="fr-callout__text">
+                    Commencez votre inscription dès maintenant.
+                </p>
+                <a class="fr-btn" href="{{ path('app_inscription') }}">
+                    S'inscrire
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,92 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Carte des établissements - Inscription BTS{% endblock %}
+
+{% block body %}
+<!-- Fil d'ariane -->
+<nav class="fr-breadcrumb" aria-label="vous êtes ici :">
+    <button class="fr-breadcrumb__button" aria-expanded="false" aria-controls="breadcrumb-carte">Voir le fil d'Ariane</button>
+    <div class="fr-collapse" id="breadcrumb-carte">
+        <ol class="fr-breadcrumb__list">
+            <li><a class="fr-breadcrumb__link" href="{{ path('app_home') }}">Accueil</a></li>
+            <li><a class="fr-breadcrumb__link" aria-current="page">Carte des établissements</a></li>
+        </ol>
+    </div>
+</nav>
+
+<div class="fr-container fr-py-6v">
+    <div class="fr-grid-row">
+        <div class="fr-col-12">
+            <h1 class="fr-h1">Carte des établissements</h1>
+            <p class="fr-text--lead">Localisez les établissements proposant des formations BTS sur une carte interactive.</p>
+        </div>
+    </div>
+
+    <!-- Fonctionnalité à venir -->
+    <div class="fr-grid-row fr-mt-6v">
+        <div class="fr-col-12">
+            <div class="fr-alert fr-alert--info">
+                <h3 class="fr-alert__title">Carte interactive en cours de développement</h3>
+                <p>La carte interactive des établissements sera bientôt disponible. Elle vous permettra de :</p>
+                <ul>
+                    <li>Visualiser géographiquement tous les établissements</li>
+                    <li>Filtrer par spécialisation BTS</li>
+                    <li>Calculer les distances depuis votre domicile</li>
+                    <li>Accéder aux fiches détaillées de chaque établissement</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- Placeholder carte -->
+    <div class="fr-grid-row fr-mt-6v">
+        <div class="fr-col-12">
+            <div style="height: 500px; background-color: #f6f6f6; border: 1px solid #ddd; display: flex; align-items: center; justify-content: center;">
+                <div style="text-align: center; padding: 2rem;">
+                    <span class="fr-icon-map-pin-2-line" aria-hidden="true" style="font-size: 4rem; color: #666;"></span>
+                    <p class="fr-text--lead" style="margin-top: 1rem; color: #666;">
+                        Carte interactive à venir
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Liens utiles -->
+    <div class="fr-grid-row fr-grid-row--gutters fr-mt-6v">
+        <div class="fr-col-12 fr-col-lg-4">
+            <div class="fr-callout">
+                <h3 class="fr-callout__title">Recherche d'établissements</h3>
+                <p class="fr-callout__text">
+                    Recherchez des établissements par critères.
+                </p>
+                <a class="fr-btn fr-btn--secondary" href="{{ path('app_etablissements') }}">
+                    Rechercher
+                </a>
+            </div>
+        </div>
+        <div class="fr-col-12 fr-col-lg-4">
+            <div class="fr-callout">
+                <h3 class="fr-callout__title">Formations disponibles</h3>
+                <p class="fr-callout__text">
+                    Consultez le catalogue des formations BTS.
+                </p>
+                <a class="fr-btn fr-btn--secondary" href="{{ path('app_formations') }}">
+                    Voir les formations
+                </a>
+            </div>
+        </div>
+        <div class="fr-col-12 fr-col-lg-4">
+            <div class="fr-callout fr-callout--green-emeraude">
+                <h3 class="fr-callout__title">Besoin d'aide ?</h3>
+                <p class="fr-callout__text">
+                    Contactez-nous pour plus d'informations.
+                </p>
+                <a class="fr-btn fr-btn--secondary" href="{{ path('app_contact') }}">
+                    Contact
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

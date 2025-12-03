@@ -31,11 +31,11 @@
     <!-- Contenu principal organisé en grille -->
     <div class="fr-grid-row fr-grid-row--gutters">
         <!-- Navigation principale -->
-        <div class="fr-col-12 fr-col-md-6 fr-col-lg-4">
+        <div class="fr-col-12 fr-col-md-6 fr-col-lg-4" id="navigation">
             <div class="fr-card fr-card--no-arrow fr-card--equal-height">
                 <div class="fr-card__body">
                     <div class="fr-card__content">
-                        <h2 class="fr-card__title fr-mb-1w">
+                        <h2 class="fr-h4 fr-mb-1w">
                             <span class="fr-icon-home-4-line" aria-hidden="true"></span>
                             Navigation principale
                         </h2>
@@ -73,46 +73,39 @@
         </div>
         
         <!-- Spécialisations BTS -->
-        <div class="fr-col-12 fr-col-md-6 fr-col-lg-4">
+        <div class="fr-col-12 fr-col-md-6 fr-col-lg-4" id="specialisations">
             <div class="fr-card fr-card--no-arrow fr-card--equal-height">
                 <div class="fr-card__body">
                     <div class="fr-card__content">
-                        <h2 class="fr-card__title fr-mb-1w">
+                        <h2 class="fr-h4 fr-mb-1w">
                             <span class="fr-icon-award-line" aria-hidden="true"></span>
                             Spécialisations BTS
                         </h2>
                         <nav aria-label="Spécialisations disponibles">
                             <ul class="fr-list">
-                                <li>
-                                    <a href="#" class="fr-link">
-                                        BTS Services Informatiques aux Organisations (SIO)
-                                    </a>
-                                </li>
-                                <li>
-                                    <a href="#" class="fr-link">
-                                        BTS Management Commercial Opérationnel (MCO)
-                                    </a>
-                                </li>
-                                <li>
-                                    <a href="#" class="fr-link">
-                                        BTS Comptabilité et Gestion (CG)
-                                    </a>
-                                </li>
-                                <li>
-                                    <a href="#" class="fr-link">
-                                        BTS Négociation et Digitalisation (NDRC)
-                                    </a>
-                                </li>
-                                <li>
-                                    <a href="#" class="fr-link">
-                                        BTS Support à l'Action Managériale (SAM)
-                                    </a>
-                                </li>
-                                <li>
-                                    <a href="#" class="fr-link fr-link--icon-right fr-icon-arrow-right-line">
-                                        Toutes les spécialisations
-                                    </a>
-                                </li>
+                                {% if specialisations is defined and specialisations|length > 0 %}
+                                    {% for specialisation in specialisations %}
+                                        <li>
+                                            <a href="{{ path('app_specialisation_detail', {'id': specialisation.id}) }}" class="fr-link">
+                                                {{ specialisation.libelle|default(specialisation.nom) }}
+                                            </a>
+                                            <p class="fr-text--sm fr-text--mention-grey">
+                                                {{ specialisation.description|length > 60 ? specialisation.description|slice(0, 60) ~ '...' : specialisation.description|default('Formation BTS') }}
+                                            </p>
+                                        </li>
+                                    {% endfor %}
+                                    <li>
+                                        <a href="{{ path('app_bts_liste') }}" class="fr-link fr-link--icon-right fr-icon-arrow-right-line">
+                                            Toutes les spécialisations
+                                        </a>
+                                    </li>
+                                {% else %}
+                                    <li>
+                                        <a href="{{ path('app_bts_liste') }}" class="fr-link fr-link--icon-right fr-icon-arrow-right-line">
+                                            Voir les spécialisations disponibles
+                                        </a>
+                                    </li>
+                                {% endif %}
                             </ul>
                         </nav>
                     </div>
@@ -121,7 +114,7 @@
         </div>
         
         <!-- Espace utilisateur -->
-        <div class="fr-col-12 fr-col-md-6 fr-col-lg-4">
+        <div class="fr-col-12 fr-col-md-6 fr-col-lg-4" id="utilisateur">
             <div class="fr-card fr-card--no-arrow fr-card--equal-height">
                 <div class="fr-card__body">
                     <div class="fr-card__content">
@@ -171,18 +164,18 @@
         </div>
         
         <!-- Ressources et aide -->
-        <div class="fr-col-12 fr-col-md-6 fr-col-lg-4">
+        <div class="fr-col-12 fr-col-md-6 fr-col-lg-4" id="ressources">
             <div class="fr-card fr-card--no-arrow fr-card--equal-height">
                 <div class="fr-card__body">
                     <div class="fr-card__content">
-                        <h2 class="fr-card__title fr-mb-1w">
+                        <h2 class="fr-h4 fr-mb-1w">
                             <span class="fr-icon-information-line" aria-hidden="true"></span>
                             Ressources et aide
                         </h2>
                         <nav aria-label="Ressources et aide">
                             <ul class="fr-list">
                                 <li>
-                                    <a href="#" class="fr-link">
+                                    <a href="{{ path('app_guide') }}" class="fr-link">
                                         Guide d'inscription
                                     </a>
                                     <p class="fr-text--sm fr-text--mention-grey">
@@ -190,7 +183,7 @@
                                     </p>
                                 </li>
                                 <li>
-                                    <a href="#" class="fr-link">
+                                    <a href="{{ path('app_faq') }}" class="fr-link">
                                         FAQ - Questions fréquentes
                                     </a>
                                     <p class="fr-text--sm fr-text--mention-grey">
@@ -198,7 +191,7 @@
                                     </p>
                                 </li>
                                 <li>
-                                    <a href="#" class="fr-link">
+                                    <a href="{{ path('app_calendrier') }}" class="fr-link">
                                         Calendrier des inscriptions
                                     </a>
                                     <p class="fr-text--sm fr-text--mention-grey">
@@ -206,7 +199,7 @@
                                     </p>
                                 </li>
                                 <li>
-                                    <a href="#" class="fr-link">
+                                    <a href="{{ path('app_aide_technique') }}" class="fr-link">
                                         Aide technique
                                     </a>
                                     <p class="fr-text--sm fr-text--mention-grey">
@@ -221,18 +214,18 @@
         </div>
         
         <!-- Établissements -->
-        <div class="fr-col-12 fr-col-md-6 fr-col-lg-4">
+        <div class="fr-col-12 fr-col-md-6 fr-col-lg-4" id="etablissements">
             <div class="fr-card fr-card--no-arrow fr-card--equal-height">
                 <div class="fr-card__body">
                     <div class="fr-card__content">
-                        <h2 class="fr-card__title fr-mb-1w">
+                        <h2 class="fr-h4 fr-mb-1w">
                             <span class="fr-icon-building-line" aria-hidden="true"></span>
                             Établissements
                         </h2>
                         <nav aria-label="Établissements et formations">
                             <ul class="fr-list">
                                 <li>
-                                    <a href="#" class="fr-link">
+                                    <a href="{{ path('app_etablissements') }}" class="fr-link">
                                         Recherche d'établissements
                                     </a>
                                     <p class="fr-text--sm fr-text--mention-grey">
@@ -240,7 +233,7 @@
                                     </p>
                                 </li>
                                 <li>
-                                    <a href="#" class="fr-link">
+                                    <a href="{{ path('app_formations') }}" class="fr-link">
                                         Formations proposées
                                     </a>
                                     <p class="fr-text--sm fr-text--mention-grey">
@@ -248,7 +241,7 @@
                                     </p>
                                 </li>
                                 <li>
-                                    <a href="#" class="fr-link">
+                                    <a href="{{ path('app_carte') }}" class="fr-link">
                                         Carte des établissements
                                     </a>
                                     <p class="fr-text--sm fr-text--mention-grey">
@@ -256,7 +249,7 @@
                                     </p>
                                 </li>
                                 <li>
-                                    <a href="#" class="fr-link">
+                                    <a href="{{ path('app_taux_reussite') }}" class="fr-link">
                                         Taux de réussite
                                     </a>
                                     <p class="fr-text--sm fr-text--mention-grey">
@@ -271,7 +264,7 @@
         </div>
         
         <!-- Informations légales -->
-        <div class="fr-col-12 fr-col-md-6 fr-col-lg-4">
+        <div class="fr-col-12 fr-col-md-6 fr-col-lg-4" id="legal">
             <div class="fr-card fr-card--no-arrow fr-card--equal-height">
                 <div class="fr-card__body">
                     <div class="fr-card__content">
@@ -394,22 +387,22 @@
                 <div class="fr-summary__title" id="fr-summary-title">Navigation rapide</div>
                 <ol class="fr-summary__list">
                     <li>
-                        <a class="fr-summary__link" href="#navigation">Navigation principale</a>
+                        <a class="fr-summary__link" href="#navigation" data-turbo="false">Navigation principale</a>
                     </li>
                     <li>
-                        <a class="fr-summary__link" href="#specialisations">Spécialisations BTS</a>
+                        <a class="fr-summary__link" href="#specialisations" data-turbo="false">Spécialisations BTS</a>
                     </li>
                     <li>
-                        <a class="fr-summary__link" href="# ">Espace utilisateur</a>
+                        <a class="fr-summary__link" href="#utilisateur" data-turbo="false">Espace utilisateur</a>
                     </li>
                     <li>
-                        <a class="fr-summary__link" href="#ressources">Ressources et aide</a>
+                        <a class="fr-summary__link" href="#ressources" data-turbo="false">Ressources et aide</a>
                     </li>
                     <li>
-                        <a class="fr-summary__link" href="#etablissements">Établissements</a>
+                        <a class="fr-summary__link" href="#etablissements" data-turbo="false">Établissements</a>
                     </li>
                     <li>
-                        <a class="fr-summary__link" href="#legal">Informations légales</a>
+                        <a class="fr-summary__link" href="#legal" data-turbo="false">Informations légales</a>
                     </li>
                 </ol>
             </div>

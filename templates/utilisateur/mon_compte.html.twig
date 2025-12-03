@@ -1,0 +1,333 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Mon compte - Inscription BTS{% endblock %}
+
+{% block body %}
+<!-- Fil d'ariane -->
+<nav class="fr-breadcrumb" aria-label="vous êtes ici :">
+    <button class="fr-breadcrumb__button" aria-expanded="false" aria-controls="breadcrumb-compte">Voir le fil d'Ariane</button>
+    <div class="fr-collapse" id="breadcrumb-compte">
+        <ol class="fr-breadcrumb__list">
+            <li><a class="fr-breadcrumb__link" href="{{ path('app_home') }}">Accueil</a></li>
+            <li><a class="fr-breadcrumb__link" aria-current="page">Mon compte</a></li>
+        </ol>
+    </div>
+</nav>
+
+<div class="fr-container fr-py-6v">
+    <!-- En-tête -->
+    <div class="fr-grid-row">
+        <div class="fr-col-12">
+            <h1 class="fr-h1">
+                <span class="fr-icon-user-line fr-mr-2w" aria-hidden="true"></span>
+                Mon compte
+            </h1>
+            <p class="fr-text--lead">Gérez vos informations personnelles et suivez vos dossiers d'inscription.</p>
+        </div>
+    </div>
+
+    <!-- Informations personnelles -->
+    <div class="fr-grid-row fr-grid-row--gutters fr-mt-6v">
+        <div class="fr-col-12">
+            <h2 class="fr-h2">
+                <span class="fr-icon-account-circle-line fr-mr-1w" aria-hidden="true"></span>
+                Informations personnelles
+            </h2>
+        </div>
+        <div class="fr-col-12 fr-col-lg-8">
+            <div class="fr-card fr-card--no-arrow">
+                <div class="fr-card__body">
+                    <div class="fr-card__content">
+                        <div class="fr-table fr-table--bordered">
+                            <table>
+                                <tbody>
+                                    <tr>
+                                        <th scope="row">Prénom</th>
+                                        <td>{{ app.user.prenom }}</td>
+                                    </tr>
+                                    <tr>
+                                        <th scope="row">Nom</th>
+                                        <td>{{ app.user.nom }}</td>
+                                    </tr>
+                                    <tr>
+                                        <th scope="row">Email</th>
+                                        <td>{{ app.user.email }}</td>
+                                    </tr>
+                                    {% if app.user.telephone %}
+                                    <tr>
+                                        <th scope="row">Téléphone</th>
+                                        <td>{{ app.user.telephone }}</td>
+                                    </tr>
+                                    {% endif %}
+                                    {% if app.user.dateNaissance %}
+                                    <tr>
+                                        <th scope="row">Date de naissance</th>
+                                        <td>{{ app.user.dateNaissance|date('d/m/Y') }}</td>
+                                    </tr>
+                                    {% endif %}
+                                    {% if app.user.adresse %}
+                                    <tr>
+                                        <th scope="row">Adresse</th>
+                                        <td>{{ app.user.adresse }}</td>
+                                    </tr>
+                                    {% endif %}
+                                    {% if app.user.departement %}
+                                    <tr>
+                                        <th scope="row">Département</th>
+                                        <td>{{ app.user.departement }}</td>
+                                    </tr>
+                                    {% endif %}
+                                    {% if app.user.dateCreation %}
+                                    <tr>
+                                        <th scope="row">Compte créé le</th>
+                                        <td>{{ app.user.dateCreation|date('d/m/Y') }}</td>
+                                    </tr>
+                                    {% endif %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Mes dossiers d'inscription -->
+    <div class="fr-grid-row fr-grid-row--gutters fr-mt-6v">
+        <div class="fr-col-12">
+            <h2 class="fr-h2">
+                <span class="fr-icon-folder-2-line fr-mr-1w" aria-hidden="true"></span>
+                Mes dossiers d'inscription
+            </h2>
+        </div>
+        <div class="fr-col-12">
+            {% if app.user.formulaireInscriptions|length > 0 %}
+                {% for formulaire in app.user.formulaireInscriptions %}
+                    <div class="fr-card fr-card--no-arrow fr-mb-2w">
+                        <div class="fr-card__body">
+                            <div class="fr-card__content">
+                                <h3 class="fr-card__title">
+                                    Dossier d'inscription #{{ formulaire.id }}
+                                </h3>
+                                
+                                {% if formulaire.dateSoumission %}
+                                <p class="fr-card__desc">
+                                    <strong>Date de soumission :</strong> {{ formulaire.dateSoumission|date('d/m/Y à H:i') }}
+                                </p>
+                                {% endif %}
+                                
+                                <p class="fr-card__desc">
+                                    <strong>Statut :</strong> 
+                                    {% if formulaire.statut == 'validé' or formulaire.statut == 'valide' %}
+                                        <span class="fr-badge fr-badge--success fr-badge--icon-left fr-icon-checkbox-circle-line">
+                                            Validé
+                                        </span>
+                                        <div class="fr-alert fr-alert--success fr-mt-2w">
+                                            <p class="fr-alert__title">Félicitations !</p>
+                                            <p>Votre dossier d'inscription a été validé par l'administration. Vous recevrez prochainement un email de confirmation avec les prochaines étapes.</p>
+                                        </div>
+                                    {% elseif formulaire.statut == 'refusé' or formulaire.statut == 'refuse' %}
+                                        <span class="fr-badge fr-badge--error fr-badge--icon-left fr-icon-close-circle-line">
+                                            Refusé
+                                        </span>
+                                        <div class="fr-alert fr-alert--error fr-mt-2w">
+                                            <p class="fr-alert__title">Dossier refusé</p>
+                                            <p>Votre dossier d'inscription a été refusé. Veuillez contacter l'administration pour plus d'informations.</p>
+                                            <a href="{{ path('app_contact') }}" class="fr-btn fr-btn--sm fr-mt-2w">
+                                                Contacter l'administration
+                                            </a>
+                                        </div>
+                                    {% elseif formulaire.statut == 'en_attente' or formulaire.statut == 'soumis' %}
+                                        <span class="fr-badge fr-badge--info fr-badge--icon-left fr-icon-time-line">
+                                            En attente de validation
+                                        </span>
+                                        <div class="fr-alert fr-alert--info fr-mt-2w">
+                                            <p>Votre dossier est en cours d'examen par l'administration. Vous serez notifié dès qu'une décision sera prise.</p>
+                                        </div>
+                                    {% elseif formulaire.statut == 'brouillon' or formulaire.statut == 'draft' %}
+                                        <span class="fr-badge fr-badge--warning fr-badge--icon-left fr-icon-draft-line">
+                                            Brouillon
+                                        </span>
+                                        <div class="fr-alert fr-alert--warning fr-mt-2w">
+                                            <p>Votre dossier n'est pas encore complet. Finalisez votre inscription pour le soumettre à l'administration.</p>
+                                        </div>
+                                    {% else %}
+                                        <span class="fr-badge fr-badge--new">{{ formulaire.statut|default('Non défini') }}</span>
+                                    {% endif %}
+                                </p>
+                            </div>
+                            <div class="fr-card__footer">
+                                {% if formulaire.statut == 'brouillon' or formulaire.statut == 'draft' %}
+                                    <a href="{{ path('app_bts_liste') }}" class="fr-btn fr-btn--secondary fr-btn--sm">
+                                        Continuer mon inscription
+                                    </a>
+                                {% else %}
+                                    <a href="{{ path('app_bts_liste') }}" class="fr-btn fr-btn--secondary fr-btn--sm">
+                                        Voir le dossier
+                                    </a>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            {% else %}
+                <div class="fr-alert fr-alert--info">
+                    <p>Vous n'avez pas encore de dossier d'inscription en cours.</p>
+                    <a href="{{ path('app_bts_liste') }}" class="fr-btn fr-btn--sm fr-mt-2w">
+                        Commencer une inscription
+                    </a>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Messages envoyés -->
+    <div class="fr-grid-row fr-grid-row--gutters fr-mt-6v">
+        <div class="fr-col-12">
+            <h2 class="fr-h2">
+                <span class="fr-icon-mail-line fr-mr-1w" aria-hidden="true"></span>
+                Messages envoyés
+            </h2>
+        </div>
+        <div class="fr-col-12">
+            {% if app.user.contacts|length > 0 %}
+                <div class="fr-table fr-table--bordered">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th scope="col">Date</th>
+                                <th scope="col">Sujet</th>
+                                <th scope="col">Message</th>
+                                <th scope="col">Statut</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for contact in app.user.contacts %}
+                            <tr>
+                                <td>{{ contact.createdAt|date('d/m/Y H:i') }}</td>
+                                <td>
+                                    {% if contact.sujet == 'inscription' %}
+                                        Inscription
+                                    {% elseif contact.sujet == 'documents' %}
+                                        Documents
+                                    {% elseif contact.sujet == 'specialisations' %}
+                                        Spécialisations
+                                    {% elseif contact.sujet == 'calendrier' %}
+                                        Calendrier
+                                    {% elseif contact.sujet == 'technique' %}
+                                        Support technique
+                                    {% else %}
+                                        Autre
+                                    {% endif %}
+                                </td>
+                                <td>{{ contact.message|length > 100 ? contact.message|slice(0, 100) ~ '...' : contact.message }}</td>
+                                <td>
+                                    {% if contact.status == 'nouveau' %}
+                                        <span class="fr-badge fr-badge--info">Nouveau</span>
+                                    {% elseif contact.status == 'en_cours' %}
+                                        <span class="fr-badge fr-badge--warning">En cours</span>
+                                    {% elseif contact.status == 'traité' or contact.status == 'traite' %}
+                                        <span class="fr-badge fr-badge--success">Traité</span>
+                                    {% else %}
+                                        <span class="fr-badge">{{ contact.status }}</span>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            {% else %}
+                <div class="fr-alert fr-alert--info">
+                    <p>Vous n'avez pas encore envoyé de message.</p>
+                    <a href="{{ path('app_contact') }}" class="fr-btn fr-btn--sm fr-mt-2w">
+                        Envoyer un nouveau message
+                    </a>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Actions rapides -->
+    <div class="fr-grid-row fr-grid-row--gutters fr-mt-6v">
+        <div class="fr-col-12">
+            <h2 class="fr-h2">Actions rapides</h2>
+        </div>
+        <div class="fr-col-12 fr-col-md-6 fr-col-lg-4">
+            <div class="fr-card fr-enlarge-link">
+                <div class="fr-card__body">
+                    <div class="fr-card__content">
+                        <h3 class="fr-card__title">
+                            <a href="{{ path('app_bts_liste') }}" class="fr-card__link">
+                                Mes inscriptions
+                            </a>
+                        </h3>
+                        <p class="fr-card__desc">
+                            Gérer mes dossiers d'inscription BTS
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="fr-col-12 fr-col-md-6 fr-col-lg-4">
+            <div class="fr-card fr-enlarge-link">
+                <div class="fr-card__body">
+                    <div class="fr-card__content">
+                        <h3 class="fr-card__title">
+                            <a href="{{ path('app_contact') }}" class="fr-card__link">
+                                Contacter le support
+                            </a>
+                        </h3>
+                        <p class="fr-card__desc">
+                            Poser une question ou signaler un problème
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="fr-col-12 fr-col-md-6 fr-col-lg-4">
+            <div class="fr-card fr-enlarge-link">
+                <div class="fr-card__body">
+                    <div class="fr-card__content">
+                        <h3 class="fr-card__title">
+                            <a href="{{ path('app_faq') }}" class="fr-card__link">
+                                FAQ
+                            </a>
+                        </h3>
+                        <p class="fr-card__desc">
+                            Questions fréquemment posées
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Sécurité -->
+    <div class="fr-grid-row fr-mt-6v">
+        <div class="fr-col-12">
+            <div class="fr-callout fr-callout--brown-caramel">
+                <h3 class="fr-callout__title">
+                    <span class="fr-icon-lock-line fr-mr-1w" aria-hidden="true"></span>
+                    Sécurité de votre compte
+                </h3>
+                <p class="fr-callout__text">
+                    Pour modifier votre mot de passe ou vos informations personnelles, veuillez contacter l'administration.
+                </p>
+                <a href="{{ path('app_contact') }}" class="fr-btn fr-btn--secondary">
+                    Contacter l'administration
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Déconnexion -->
+    <div class="fr-grid-row fr-mt-6v">
+        <div class="fr-col-12">
+            <a href="{{ path('app_logout') }}" class="fr-btn fr-btn--tertiary fr-btn--icon-left fr-icon-logout-box-r-line">
+                Se déconnecter
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}
