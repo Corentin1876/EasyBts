@@ -1,0 +1,136 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Mon dossier - {{ formulaire.typeFormulaire }}{% endblock %}
+
+{% block body %}
+<div class="fr-container fr-py-6w">
+    <div class="fr-grid-row">
+        <div class="fr-col-12">
+            <nav role="navigation" class="fr-breadcrumb" aria-label="vous êtes ici :">
+                <button class="fr-breadcrumb__button" aria-expanded="false" aria-controls="breadcrumb-1">Voir le fil d'Ariane</button>
+                <div class="fr-collapse" id="breadcrumb-1">
+                    <ol class="fr-breadcrumb__list">
+                        <li>
+                            <a class="fr-breadcrumb__link" href="{{ path('app_home') }}">Accueil</a>
+                        </li>
+                        <li>
+                            <a class="fr-breadcrumb__link" href="{{ path('app_mes_dossiers') }}">Mes dossiers</a>
+                        </li>
+                        <li>
+                            <a class="fr-breadcrumb__link" aria-current="page">{{ formulaire.typeFormulaire }}</a>
+                        </li>
+                    </ol>
+                </div>
+            </nav>
+        </div>
+    </div>
+
+    <div class="fr-grid-row fr-grid-row--center">
+        <div class="fr-col-12 fr-col-md-10">
+            <h1>{{ formulaire.typeFormulaire }}</h1>
+
+            {% if formulaire.statut == 'validé' %}
+            <div class="fr-alert fr-alert--success fr-mb-4w">
+                <h3 class="fr-alert__title">Dossier validé</h3>
+                <p>Félicitations ! Votre dossier d'inscription a été validé le {{ formulaire.dateSoumission|date('d/m/Y à H:i') }}.</p>
+            </div>
+            {% elseif formulaire.statut == 'soumis' or formulaire.statut == 'en_attente' %}
+            <div class="fr-alert fr-alert--info fr-mb-4w">
+                <h3 class="fr-alert__title">Dossier en attente</h3>
+                <p>Votre dossier a été soumis le {{ formulaire.dateSoumission|date('d/m/Y à H:i') }} et est en cours d'examen.</p>
+            </div>
+            {% elseif formulaire.statut == 'rejeté' %}
+            <div class="fr-alert fr-alert--error fr-mb-4w">
+                <h3 class="fr-alert__title">Dossier rejeté</h3>
+                <p>Votre dossier a été rejeté. Veuillez contacter l'administration pour plus d'informations.</p>
+            </div>
+            {% endif %}
+
+            <div class="fr-card fr-mb-4w">
+                <div class="fr-card__body">
+                    <div class="fr-card__content">
+                        <h2 class="fr-card__title">Informations personnelles</h2>
+                        <div class="fr-grid-row fr-grid-row--gutters">
+                            <div class="fr-col-12 fr-col-md-6">
+                                <p><strong>Civilité :</strong> {{ formData.sexe ?? '-' }}</p>
+                                <p><strong>Nom :</strong> {{ formData.nom ?? '-' }}</p>
+                                <p><strong>Prénom :</strong> {{ formData.prenom ?? '-' }}</p>
+                                <p><strong>Date de naissance :</strong> {{ formData.date_naissance ?? '-' }}</p>
+                            </div>
+                            <div class="fr-col-12 fr-col-md-6">
+                                <p><strong>Email :</strong> {{ formData.email_eleve ?? '-' }}</p>
+                                <p><strong>Téléphone :</strong> {{ formData.tel_eleve ?? '-' }}</p>
+                                <p><strong>Adresse :</strong> {{ formData.adresse_eleve ?? '-' }}</p>
+                                <p><strong>Ville :</strong> {{ formData.commune_eleve ?? '-' }} {{ formData.code_postal_eleve ?? '' }}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            {% if formData.nom_responsable1 is defined or formData.nom_responsable2 is defined %}
+            <div class="fr-card fr-mb-4w">
+                <div class="fr-card__body">
+                    <div class="fr-card__content">
+                        <h2 class="fr-card__title">Responsables légaux</h2>
+                        <div class="fr-grid-row fr-grid-row--gutters">
+                            {% if formData.nom_responsable1 is defined %}
+                            <div class="fr-col-12 fr-col-md-6">
+                                <h3>Responsable 1</h3>
+                                <p><strong>Nom :</strong> {{ formData.nom_responsable1 }}</p>
+                                <p><strong>Prénom :</strong> {{ formData.prenom_responsable1 ?? '-' }}</p>
+                                <p><strong>Lien :</strong> {{ formData.lien_responsable1 ?? '-' }}</p>
+                                <p><strong>Email :</strong> {{ formData.email_responsable1 ?? '-' }}</p>
+                                <p><strong>Téléphone :</strong> {{ formData.tel_responsable1 ?? '-' }}</p>
+                            </div>
+                            {% endif %}
+                            {% if formData.nom_responsable2 is defined %}
+                            <div class="fr-col-12 fr-col-md-6">
+                                <h3>Responsable 2</h3>
+                                <p><strong>Nom :</strong> {{ formData.nom_responsable2 }}</p>
+                                <p><strong>Prénom :</strong> {{ formData.prenom_responsable2 ?? '-' }}</p>
+                                <p><strong>Lien :</strong> {{ formData.lien_responsable2 ?? '-' }}</p>
+                                <p><strong>Email :</strong> {{ formData.email_responsable2 ?? '-' }}</p>
+                                <p><strong>Téléphone :</strong> {{ formData.tel_responsable2 ?? '-' }}</p>
+                            </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+
+            {% if formData.etablissement_n1 is defined %}
+            <div class="fr-card fr-mb-4w">
+                <div class="fr-card__body">
+                    <div class="fr-card__content">
+                        <h2 class="fr-card__title">Scolarité antérieure</h2>
+                        <p><strong>Établissement N-1 :</strong> {{ formData.etablissement_n1 }}</p>
+                        {% if formData.etablissement_n2 is defined %}
+                        <p><strong>Établissement N-2 :</strong> {{ formData.etablissement_n2 }}</p>
+                        {% endif %}
+                        <p><strong>Niveau/Classe :</strong> {{ formData.niveau_classe ?? '-' }}</p>
+                        <p><strong>Redoublement :</strong> {{ formData.redoublement ?? false ? 'Oui' : 'Non' }}</p>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+
+            <div class="fr-btns-group">
+                <a href="{{ path('app_mes_dossiers') }}" class="fr-btn fr-btn--secondary">
+                    Retour à mes dossiers
+                </a>
+                {% if formulaire.statut == 'validé' %}
+                <a href="{{ path('app_bts_inscription_pdf', {'id': formulaire.id}) }}" class="fr-btn fr-icon-download-line fr-btn--icon-left">
+                    Télécharger en PDF
+                </a>
+                {% elseif formulaire.statut == 'brouillon' %}
+                <a href="{{ path('app_bts_inscription', {'id': formulaire.typeFormulaire|replace({'BTS - ': ''}) }) }}" class="fr-btn">
+                    Continuer le dossier
+                </a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

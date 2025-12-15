@@ -11,6 +11,7 @@ use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\Mime\Address;
 use Symfony\Bridge\Twig\Mime\TemplatedEmail;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
+use Symfony\Bundle\SecurityBundle\Security;
 
 #[AsMessageHandler]
 class ContactMessageHandler
@@ -19,6 +20,7 @@ class ContactMessageHandler
         private MailerInterface $mailer,
         private LoggerInterface $logger,
         private EntityManagerInterface $entityManager,
+        private Security $security,
         #[Autowire(env: 'CONTACT_RECIPIENT')] private string $to,
         #[Autowire(env: 'CONTACT_RECIPIENT_BCC')] private ?string $bcc = null,
     )
@@ -40,18 +42,14 @@ class ContactMessageHandler
             $contact->setConsent($message->isConsent());
             $contact->setStatus('nouveau');
             
-            // Commenté temporairement pour tester
-            // $user = $this->security->getUser();
-            // if ($user) {
-            //     $contact->setUtilisateur($user);
-            // }
+            // Associer l'utilisateur connecté si disponible
+            $user = $this->security->getUser();
+            if ($user) {
+                $contact->setUtilisateur($user);
+            }
             
             $this->entityManager->persist($contact);
             $this->entityManager->flush();
-            
-            $this->logger->info('Message de contact sauvegardé en base', [
-                'contact_id' => $contact->getId(),
-            ]);
             
             // Envoyer l'email
             $from = new Address('yousri.bchk@gmail.com', 'Inscription BTS - Formulaire');
@@ -80,15 +78,12 @@ class ContactMessageHandler
                 'contact_id' => $contact->getId(),
                 'created_at' => $message->getCreatedAt()->format(DATE_ATOM),
             ]);
-            
             // Journal brut pour audit (optionnel)
             $logLine = sprintf("%s\t%s\t%s %s\t%s\n", date(DATE_ATOM), $message->getSujet(), $message->getCivilite(), $message->getNom(), substr($message->getMessage(),0,200));
             @file_put_contents(dirname(__DIR__,2).'/var/log/contact_emails_raw.log', $logLine, FILE_APPEND);
-            
         } catch (\Throwable $e) {
             $this->logger->error('Echec envoi email contact', [
                 'exception' => $e->getMessage(),
-                'trace' => $e->getTraceAsString(),
                 'channel' => 'contact_email',
             ]);
             // Option : relancer une exception pour retry Messenger
