@@ -418,9 +418,9 @@ class BtsInscriptionController extends AbstractController
         }
     }
 
-    #[Route('/bts/inscription/{id}/pdf', name: 'app_bts_inscription_pdf')]
+    #[Route('/bts/dossier/{id}', name: 'app_bts_dossier_view')]
     #[IsGranted('ROLE_USER')]
-    public function downloadPdf(
+    public function viewDossier(
         FormulaireInscription $formulaire,
         EntityManagerInterface $entityManager
     ): Response {
@@ -431,8 +431,41 @@ class BtsInscriptionController extends AbstractController
             throw $this->createAccessDeniedException('Vous ne pouvez pas accéder à ce dossier.');
         }
         
-        // Vérifier que le dossier est validé
-        if ($formulaire->getStatut() !== 'validé') {
+        // Si c'est un brouillon, rediriger vers le formulaire d'édition
+        if ($formulaire->getStatut() === 'brouillon') {
+            // Récupérer la spécialisation associée
+            $specialisation = $formulaire->getTypeFormulaire();
+            $specialisationEntity = $entityManager->getRepository(Specialisation::class)
+                ->findOneBy(['nom' => str_replace('BTS - ', '', $specialisation)]);
+            
+            if ($specialisationEntity) {
+                return $this->redirectToRoute('app_bts_inscription', ['id' => $specialisationEntity->getId()]);
+            }
+        }
+        
+        // Pour les dossiers validés/soumis, afficher le PDF directement
+        return $this->forward('App\Controller\BtsInscriptionController::downloadPdf', [
+            'formulaire' => $formulaire,
+            'inline' => true,
+        ]);
+    }
+
+    #[Route('/bts/inscription/{id}/pdf', name: 'app_bts_inscription_pdf')]
+    #[IsGranted('ROLE_USER')]
+    public function downloadPdf(
+        FormulaireInscription $formulaire,
+        EntityManagerInterface $entityManager,
+        bool $inline = false
+    ): Response {
+        $user = $this->getUser();
+        
+        // Vérifier que c'est bien le dossier de l'utilisateur
+        if ($formulaire->getRemplitFormulaire() !== $user) {
+            throw $this->createAccessDeniedException('Vous ne pouvez pas accéder à ce dossier.');
+        }
+        
+        // Vérifier que le dossier est validé (sauf si appelé en inline depuis viewDossier)
+        if (!$inline && $formulaire->getStatut() !== 'validé') {
             $this->addFlash('error', 'Seuls les dossiers validés peuvent être téléchargés en PDF.');
             return $this->redirectToRoute('app_bts_liste');
         }
@@ -440,8 +473,13 @@ class BtsInscriptionController extends AbstractController
         // Récupérer les données du formulaire
         $data = json_decode($formulaire->getDraftJson(), true) ?? [];
         
-        // Charger le template ODT
+        // Vérifier que le template existe
         $templatePath = $this->getParameter('kernel.project_dir') . '/dossier_inscription_bts.odt';
+        
+        if (!file_exists($templatePath)) {
+            $this->addFlash('error', 'Le template de dossier d\'inscription est introuvable.');
+            return $this->redirectToRoute('app_bts_liste');
+        }
         
         // Lire le contenu du template
         $zip = new \ZipArchive();
@@ -466,30 +504,33 @@ class BtsInscriptionController extends AbstractController
                     // Identité élève
                     'nom' => strtoupper($data['nom'] ?? $user->getNom() ?? ''),
                     'prenom' => $data['prenom'] ?? $user->getPrenom() ?? '',
-                    'date_naissance' => $data['date_naissance'] ?? '',
-                    'dep_naissance' => $data['dep_naissance'] ?? '',
-                    'lieu_naissance' => $data['lieu_naissance'] ?? '',
-                    'commune_naissance' => $data['commune_naissance'] ?? '',
-                    'nationalite' => $data['nationalite'] ?? '',
                     'sexe' => $data['sexe'] ?? '',
+                    'date_naissance' => $data['date_naissance'] ?? '',
+                    'nationalite' => $data['nationalite'] ?? '',
                     'numero_secu' => $data['numero_secu'] ?? '',
-                    'adresse' => $data['adresse'] ?? '',
-                    'code_postal' => $data['code_postal'] ?? '',
-                    'commune' => $data['commune'] ?? '',
-                    'tel_mobile' => $data['tel_mobile'] ?? '',
-                    'tel_fixe' => $data['tel_fixe'] ?? '',
-                    'email' => $data['email'] ?? $user->getEmail() ?? '',
+                    'dep_naissance' => $data['dep_naissance'] ?? '',
+                    'commune_naissance' => $data['commune_naissance'] ?? '',
+                    
+                    // Téléphone et email élève (formats compatibles avec ancien template)
+                    'tel_eleve' => $data['tel_eleve'] ?? '',
+                    'tel_mobile' => $data['tel_eleve'] ?? '',
+                    'tel_fixe' => '',
+                    'email_eleve' => $data['email_eleve'] ?? $user->getEmail() ?? '',
+                    'email' => $data['email_eleve'] ?? $user->getEmail() ?? '',
+                    
+                    // Adresse élève (non capturée dans le formulaire actuel)
+                    'adresse' => '',
+                    'commune' => '',
+                    
                     'sms_eleve' => ($data['sms_eleve'] ?? '') == '1' ? 'Oui' : 'Non',
                     
                     // Scolarité année en cours
-                    'etablissement_actuel' => $data['etablissement_actuel'] ?? '',
-                    'commune_etab' => $data['commune_etab'] ?? '',
-                    'classe_actuelle' => $data['classe_actuelle'] ?? '',
                     'specialite' => $data['specialite'] ?? '',
+                    'redoublement' => ($data['redoublement'] ?? '') == '1' ? 'Oui' : 'Non',
+                    'niveau_classe' => $data['niveau_classe'] ?? '',
+                    'regime_scolaire' => $data['regime_scolaire'] ?? '',
                     'lv1' => $data['lv1'] ?? '',
                     'lv2' => $data['lv2'] ?? '',
-                    'regime_scolaire' => $data['regime_scolaire'] ?? '',
-                    'redoublement' => $data['redoublement'] ?? '',
                     
                     // Transport
                     'transport' => ($data['transport'] ?? '') == '1' ? 'Oui' : 'Non',
@@ -502,6 +543,7 @@ class BtsInscriptionController extends AbstractController
                     'lv1_n1' => $data['lv1_n1'] ?? '',
                     'lv2_n1' => $data['lv2_n1'] ?? '',
                     'etablissement_n1' => $data['etablissement_n1'] ?? '',
+                    'etablisment_n1' => $data['etablissement_n1'] ?? '', // Support typo in template
                     'option_n1' => $data['option_n1'] ?? '',
                     
                     // Année N-2
@@ -510,6 +552,7 @@ class BtsInscriptionController extends AbstractController
                     'lv1_n2' => $data['lv1_n2'] ?? '',
                     'lv2_n2' => $data['lv2_n2'] ?? '',
                     'etablissement_n2' => $data['etablissement_n2'] ?? '',
+                    'etablisment_n2' => $data['etablissement_n2'] ?? '', // Support typo in template
                     'option_n2' => $data['option_n2'] ?? '',
                     
                     // Diplôme
@@ -548,9 +591,37 @@ class BtsInscriptionController extends AbstractController
                     'numero_dossier' => $formulaire->getId() ?? '',
                 ];
                 
+                // Nettoyer le contenu XML pour fusionner les balises fragmentées
+                // Dans LibreOffice, ${variable} peut être séparé en plusieurs balises <text:span>
+                $content = preg_replace('/<text:span[^>]*>/i', '', $content);
+                $content = str_replace('</text:span>', '', $content);
+                
+                // DEBUG: Sauvegarder le contenu avant remplacement
+                if ($_ENV['APP_ENV'] === 'dev') {
+                    file_put_contents($tempDir . '/content_before.xml', $content);
+                }
+                
                 // Remplacer dans le contenu XML
                 foreach ($replacements as $key => $value) {
-                    $content = str_replace('${' . $key . '}', htmlspecialchars($value, ENT_XML1, 'UTF-8'), $content);
+                    // Échapper les caractères XML
+                    $safeValue = htmlspecialchars((string)$value, ENT_XML1 | ENT_COMPAT, 'UTF-8');
+                    
+                    // Remplacer toutes les variantes possibles
+                    $patterns = [
+                        '${' . $key . '}',
+                        '$' . $key,
+                        '&lt;' . $key . '&gt;',
+                    ];
+                    
+                    foreach ($patterns as $pattern) {
+                        $content = str_replace($pattern, $safeValue, $content);
+                    }
+                }
+                
+                // DEBUG: Sauvegarder le contenu après remplacement
+                if ($_ENV['APP_ENV'] === 'dev') {
+                    file_put_contents($tempDir . '/content_after.xml', $content);
+                    file_put_contents($tempDir . '/replacements.json', json_encode($replacements, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE));
                 }
                 
                 // Mettre à jour le fichier
@@ -561,14 +632,26 @@ class BtsInscriptionController extends AbstractController
                 // Convertir en PDF avec LibreOffice
                 $tempPdfPath = $tempDir . '/dossier_' . $formulaire->getId() . '.pdf';
                 
-                $libreOfficePath = 'C:\\Program Files\\LibreOffice\\program\\soffice.exe';
-                if (!file_exists($libreOfficePath)) {
-                    $libreOfficePath = 'C:\\Program Files (x86)\\LibreOffice\\program\\soffice.exe';
+                // Chercher LibreOffice dans plusieurs emplacements possibles
+                $libreOfficePaths = [
+                    'C:\\Program Files\\LibreOffice\\program\\soffice.exe',
+                    'C:\\Program Files (x86)\\LibreOffice\\program\\soffice.exe',
+                    '/usr/bin/soffice',
+                    '/usr/local/bin/soffice',
+                    '/Applications/LibreOffice.app/Contents/MacOS/soffice'
+                ];
+                
+                $libreOfficePath = null;
+                foreach ($libreOfficePaths as $path) {
+                    if (file_exists($path)) {
+                        $libreOfficePath = $path;
+                        break;
+                    }
                 }
                 
-                if (file_exists($libreOfficePath)) {
+                if ($libreOfficePath) {
                     $command = sprintf(
-                        '"%s" --headless --convert-to pdf --outdir "%s" "%s"',
+                        '"%s" --headless --convert-to pdf --outdir "%s" "%s" 2>&1',
                         $libreOfficePath,
                         $tempDir,
                         $tempOdtPath
@@ -576,8 +659,13 @@ class BtsInscriptionController extends AbstractController
                     
                     exec($command, $output, $returnCode);
                     
-                    // Attendre que le fichier soit créé
-                    sleep(2);
+                    // Attendre que le fichier soit créé (LibreOffice peut être lent)
+                    $maxWait = 10; // 10 secondes max
+                    $waited = 0;
+                    while (!file_exists($tempPdfPath) && $waited < $maxWait) {
+                        sleep(1);
+                        $waited++;
+                    }
                     
                     if (file_exists($tempPdfPath)) {
                         $filename = sprintf(
@@ -589,13 +677,25 @@ class BtsInscriptionController extends AbstractController
                         
                         $response = new Response(file_get_contents($tempPdfPath));
                         $response->headers->set('Content-Type', 'application/pdf');
-                        $response->headers->set('Content-Disposition', sprintf('attachment; filename="%s"', $filename));
+                        
+                        // Si inline=true, afficher dans le navigateur, sinon télécharger
+                        if ($inline) {
+                            $response->headers->set('Content-Disposition', sprintf('inline; filename="%s"', $filename));
+                        } else {
+                            $response->headers->set('Content-Disposition', sprintf('attachment; filename="%s"', $filename));
+                        }
                         
                         unlink($tempOdtPath);
                         unlink($tempPdfPath);
                         
                         return $response;
+                    } else {
+                        // Si la conversion PDF échoue, logger l'erreur
+                        error_log("Échec conversion PDF - ReturnCode: $returnCode - Output: " . implode("\n", $output));
+                        $this->addFlash('warning', 'La conversion en PDF a échoué. Le document ODT sera téléchargé à la place.');
                     }
+                } else {
+                    $this->addFlash('warning', 'LibreOffice n\'est pas installé. Le document ODT sera téléchargé.');
                 }
                 
                 // Fallback: renvoyer le ODT

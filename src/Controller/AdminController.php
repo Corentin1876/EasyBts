@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Entity\Utilisateur;
 use App\Entity\FormulaireInscription;
 use App\Entity\PasswordResetToken;
+use App\Entity\AdhesionMDL;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
@@ -131,5 +132,58 @@ class AdminController extends AbstractController
         $this->addFlash('warning', 'Une demande de modification a été envoyée à ' . $formulaire->getRemplitFormulaire()->getPrenom() . ' ' . $formulaire->getRemplitFormulaire()->getNom());
 
         return $this->redirectToRoute('app_admin_dossiers_bts');
+    }
+
+    #[Route('/formulaires-supplementaires', name: 'app_admin_formulaires_supplementaires')]
+    public function formulairesSupplementaires(EntityManagerInterface $entityManager): Response
+    {
+        // Récupérer toutes les adhésions MDL
+        $adhesionsMDL = $entityManager->getRepository(AdhesionMDL::class)
+            ->createQueryBuilder('a')
+            ->where('a.statut = :soumis OR a.statut = :valide')
+            ->setParameter('soumis', 'soumis')
+            ->setParameter('valide', 'validé')
+            ->orderBy('a.date_soumission', 'DESC')
+            ->getQuery()
+            ->getResult();
+
+        // TODO: Récupérer les autres formulaires (intendance, fiche d'urgence) quand ils seront créés
+
+        return $this->render('admin/formulaires_supplementaires.html.twig', [
+            'adhesionsMDL' => $adhesionsMDL,
+        ]);
+    }
+
+    #[Route('/adhesion-mdl/{id}/valider', name: 'app_admin_adhesion_mdl_valider')]
+    public function validerAdhesionMDL(AdhesionMDL $adhesion, EntityManagerInterface $entityManager): Response
+    {
+        $adhesion->setStatut('validé');
+        $entityManager->flush();
+
+        $this->addFlash('success', 'L\'adhésion MDL de ' . $adhesion->getPrenom() . ' ' . $adhesion->getNom() . ' a été validée');
+
+        return $this->redirectToRoute('app_admin_formulaires_supplementaires');
+    }
+
+    #[Route('/adhesion-mdl/{id}/rejeter', name: 'app_admin_adhesion_mdl_rejeter')]
+    public function rejeterAdhesionMDL(AdhesionMDL $adhesion, EntityManagerInterface $entityManager): Response
+    {
+        $adhesion->setStatut('rejeté');
+        $entityManager->flush();
+
+        $this->addFlash('success', 'L\'adhésion MDL de ' . $adhesion->getPrenom() . ' ' . $adhesion->getNom() . ' a été rejetée');
+
+        return $this->redirectToRoute('app_admin_formulaires_supplementaires');
+    }
+
+    #[Route('/adhesion-mdl/{id}/modifier', name: 'app_admin_adhesion_mdl_modifier')]
+    public function demanderModificationAdhesionMDL(AdhesionMDL $adhesion, EntityManagerInterface $entityManager): Response
+    {
+        $adhesion->setStatut('à modifier');
+        $entityManager->flush();
+
+        $this->addFlash('warning', 'Une demande de modification a été envoyée pour l\'adhésion MDL de ' . $adhesion->getPrenom() . ' ' . $adhesion->getNom());
+
+        return $this->redirectToRoute('app_admin_formulaires_supplementaires');
     }
 }

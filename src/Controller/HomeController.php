@@ -169,6 +169,22 @@ class HomeController extends AbstractController
         ]);
     }
 
+    #[Route('/mes-dossiers', name: 'app_mes_dossiers')]
+    public function mesDossiers(EntityManagerInterface $entityManager): Response
+    {
+        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
+        
+        $user = $this->getUser();
+        
+        // Récupérer tous les dossiers de l'utilisateur
+        $dossiers = $entityManager->getRepository(FormulaireInscription::class)
+            ->findBy(['remplit_formulaire' => $user], ['date_soumission' => 'DESC']);
+        
+        return $this->render('bts/mes_dossiers.html.twig', [
+            'dossiers' => $dossiers,
+        ]);
+    }
+
     #[Route('/guide-inscription', name: 'app_guide')]
     public function guide(): Response
     {
