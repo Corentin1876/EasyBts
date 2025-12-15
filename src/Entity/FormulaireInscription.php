@@ -2,6 +2,8 @@
 
 namespace App\Entity;
 
+use App\Entity\Traits\DraftableTrait;
+use App\Entity\Traits\DocumentsTrait;
 use App\Repository\FormulaireInscriptionRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -11,6 +13,8 @@ use Doctrine\ORM\Mapping as ORM;
 #[ORM\Entity(repositoryClass: FormulaireInscriptionRepository::class)]
 class FormulaireInscription
 {
+    use DraftableTrait;
+    use DocumentsTrait;
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
@@ -66,29 +70,6 @@ class FormulaireInscription
      */
     #[ORM\OneToMany(targetEntity: AssuranceScolaire::class, mappedBy: 'formulaireInscription')]
     private Collection $couvert_par_assurance;
-
-    // Colonnes pour les brouillons
-    #[ORM\Column(type: Types::TEXT, nullable: true)]
-    private ?string $draft_json = null;
-
-    #[ORM\Column(type: Types::INTEGER, nullable: true)]
-    private ?int $draft_step = null;
-
-    #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
-    private ?\DateTimeInterface $draft_updated_at = null;
-
-    // Documents justificatifs
-    #[ORM\Column(type: Types::STRING, length: 255, nullable: true)]
-    private ?string $carte_identite_recto = null;
-
-    #[ORM\Column(type: Types::STRING, length: 255, nullable: true)]
-    private ?string $carte_identite_verso = null;
-
-    #[ORM\Column(type: Types::STRING, length: 255, nullable: true)]
-    private ?string $justificatif_domicile = null;
-
-    #[ORM\Column(type: Types::STRING, length: 255, nullable: true)]
-    private ?string $releves_notes = null;
 
     public function __construct()
     {
@@ -342,85 +323,6 @@ class FormulaireInscription
             }
         }
 
-        return $this;
-    }
-
-    // Getters et Setters pour les brouillons
-    public function getDraftJson(): ?string
-    {
-        return $this->draft_json;
-    }
-
-    public function setDraftJson(?string $draft_json): static
-    {
-        $this->draft_json = $draft_json;
-        return $this;
-    }
-
-    public function getDraftStep(): ?int
-    {
-        return $this->draft_step;
-    }
-
-    public function setDraftStep(?int $draft_step): static
-    {
-        $this->draft_step = $draft_step;
-        return $this;
-    }
-
-    public function getDraftUpdatedAt(): ?\DateTimeInterface
-    {
-        return $this->draft_updated_at;
-    }
-
-    public function setDraftUpdatedAt(?\DateTimeInterface $draft_updated_at): static
-    {
-        $this->draft_updated_at = $draft_updated_at;
-        return $this;
-    }
-
-    // Getters et Setters pour les documents
-    public function getCarteIdentiteRecto(): ?string
-    {
-        return $this->carte_identite_recto;
-    }
-
-    public function setCarteIdentiteRecto(?string $carte_identite_recto): static
-    {
-        $this->carte_identite_recto = $carte_identite_recto;
-        return $this;
-    }
-
-    public function getCarteIdentiteVerso(): ?string
-    {
-        return $this->carte_identite_verso;
-    }
-
-    public function setCarteIdentiteVerso(?string $carte_identite_verso): static
-    {
-        $this->carte_identite_verso = $carte_identite_verso;
-        return $this;
-    }
-
-    public function getJustificatifDomicile(): ?string
-    {
-        return $this->justificatif_domicile;
-    }
-
-    public function setJustificatifDomicile(?string $justificatif_domicile): static
-    {
-        $this->justificatif_domicile = $justificatif_domicile;
-        return $this;
-    }
-
-    public function getRelevesNotes(): ?string
-    {
-        return $this->releves_notes;
-    }
-
-    public function setRelevesNotes(?string $releves_notes): static
-    {
-        $this->releves_notes = $releves_notes;
         return $this;
     }
 }
