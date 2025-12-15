@@ -157,7 +157,6 @@ class HomeController extends AbstractController
         
         $user = $this->getUser();
         
-        // Utiliser le nom correct de la propriété
         $dossiers = $entityManager->getRepository(FormulaireInscription::class)
             ->findBy(['remplit_formulaire' => $user], ['date_soumission' => 'DESC']);
         
@@ -167,6 +166,22 @@ class HomeController extends AbstractController
         return $this->render('utilisateur/mon_compte.html.twig', [
             'dossiers' => $dossiers,
             'messages' => $messages,
+        ]);
+    }
+
+    #[Route('/mes-dossiers', name: 'app_mes_dossiers')]
+    public function mesDossiers(EntityManagerInterface $entityManager): Response
+    {
+        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
+        
+        $user = $this->getUser();
+        
+        // Récupérer tous les dossiers de l'utilisateur
+        $dossiers = $entityManager->getRepository(FormulaireInscription::class)
+            ->findBy(['remplit_formulaire' => $user], ['date_soumission' => 'DESC']);
+        
+        return $this->render('bts/mes_dossiers.html.twig', [
+            'dossiers' => $dossiers,
         ]);
     }
 
@@ -216,4 +231,3 @@ class HomeController extends AbstractController
         return $this->render('etablissements/taux_reussite.html.twig');
     }
 }
-

@@ -14,6 +14,8 @@ use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
 use Symfony\Component\Mailer\MailerInterface;
+use Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken;
+use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
 class InscriptionController extends AbstractController
 {
@@ -36,7 +38,8 @@ class InscriptionController extends AbstractController
     public function register(
         Request $request,
         UserPasswordHasherInterface $passwordHasher,
-        EntityManagerInterface $entityManager
+        EntityManagerInterface $entityManager,
+        TokenStorageInterface $tokenStorage
     ): Response {
         try {
             // Récupération des données du formulaire
@@ -104,8 +107,14 @@ class InscriptionController extends AbstractController
             $entityManager->flush();
 
             error_log("Inscription réussie pour: $email");
-            $this->addFlash('success', 'Votre compte a été créé avec succès. Vous pouvez maintenant vous connecter.');
-            return $this->redirectToRoute('app_inscription');
+            $this->addFlash('success', 'Votre compte a été créé avec succès. Vous êtes maintenant connecté.');
+            
+            // Connecter automatiquement l'utilisateur
+            $token = new UsernamePasswordToken($utilisateur, 'main', $utilisateur->getRoles());
+            $tokenStorage->setToken($token);
+            $request->getSession()->set('_security_main', serialize($token));
+            
+            return $this->redirectToRoute('app_home');
         } catch (\Exception $e) {
             error_log("Erreur lors de l'inscription: " . $e->getMessage());
             $this->addFlash('error', 'Une erreur est survenue lors de la création de votre compte : ' . $e->getMessage());
