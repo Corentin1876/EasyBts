@@ -14,6 +14,8 @@ use Psr\Log\LoggerInterface;
 use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 use Symfony\Component\Routing\Annotation\Route;
+use App\Entity\FormulaireInscription;
+use App\Entity\Contact;
 
 class HomeController extends AbstractController
 {
@@ -51,8 +53,8 @@ class HomeController extends AbstractController
     #[Route('/contact', name: 'app_contact', methods: ['GET', 'POST'])]
     public function contact(Request $request, MessageBusInterface $bus, ValidatorInterface $validator, LoggerInterface $logger): Response
     {
-    $formData = new ContactFormData();
-    $form = $this->createForm(ContactType::class, $formData);
+        $formData = new ContactFormData();
+        $form = $this->createForm(ContactType::class, $formData);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
@@ -72,7 +74,7 @@ class HomeController extends AbstractController
                 $formData->consent ?? false
             );
 
-            $errors = $validator->validate($message); // double sécurité
+            $errors = $validator->validate($message);
             if (count($errors) > 0) {
                 foreach ($errors as $error) {
                     $this->addFlash('error', $error->getPropertyPath() . ': ' . $error->getMessage());
@@ -90,7 +92,6 @@ class HomeController extends AbstractController
                 return $this->redirectToRoute('app_contact');
             }
         } elseif ($form->isSubmitted()) {
-            // Collecte explicite des erreurs pour debug
             $allErrors = [];
             foreach ($form->getErrors(true) as $err) {
                 $allErrors[] = ($err->getOrigin()?->getName() ?: 'form') . ' : ' . $err->getMessage();
@@ -149,17 +150,22 @@ class HomeController extends AbstractController
         return $this->render('faq/index.html.twig');
     }
 
-    
     #[Route('/mon-compte', name: 'app_mon_compte')]
-    public function monCompte(): Response
+    public function monCompte(EntityManagerInterface $entityManager): Response
     {
-        // Vérifier que l'utilisateur est connecté
         $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
         
         $user = $this->getUser();
         
+        $dossiers = $entityManager->getRepository(FormulaireInscription::class)
+            ->findBy(['remplit_formulaire' => $user], ['date_soumission' => 'DESC']);
+        
+        $messages = $entityManager->getRepository(Contact::class)
+            ->findBy(['utilisateur' => $user], ['id' => 'DESC']);
+        
         return $this->render('utilisateur/mon_compte.html.twig', [
-            'user' => $user,
+            'dossiers' => $dossiers,
+            'messages' => $messages,
         ]);
     }
 
@@ -184,7 +190,7 @@ class HomeController extends AbstractController
     #[Route('/etablissements', name: 'app_etablissements')]
     public function etablissements(): Response
     {
-        return $this->render('etablissements/recherche.html.twig');
+        return $this->render('etablissements/liste.html.twig');
     }
 
     #[Route('/formations', name: 'app_formations')]
@@ -197,7 +203,7 @@ class HomeController extends AbstractController
         ]);
     }
 
-    #[Route('/carte-etablissements', name: 'app_carte_etablissements')]
+    #[Route('/carte-etablissements', name: 'app_carte')]
     public function carteEtablissements(): Response
     {
         return $this->render('etablissements/carte.html.twig');

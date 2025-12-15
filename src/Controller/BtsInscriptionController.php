@@ -440,104 +440,187 @@ class BtsInscriptionController extends AbstractController
         // Récupérer les données du formulaire
         $data = json_decode($formulaire->getDraftJson(), true) ?? [];
         
-        // Charger le template Word
-        $templatePath = $this->getParameter('kernel.project_dir') . '/dossier_inscription_bts.docx';
-        $templateProcessor = new TemplateProcessor($templatePath);
+        // Charger le template ODT
+        $templatePath = $this->getParameter('kernel.project_dir') . '/dossier_inscription_bts.odt';
         
-        // Remplir le template avec les données
-        // Informations personnelles
-        $templateProcessor->setValue('nom', $data['nom'] ?? $user->getNom() ?? '');
-        $templateProcessor->setValue('prenom', $data['prenom'] ?? $user->getPrenom() ?? '');
-        $templateProcessor->setValue('date_naissance', $data['date_naissance'] ?? '');
-        $templateProcessor->setValue('lieu_naissance', $data['lieu_naissance'] ?? '');
-        $templateProcessor->setValue('nationalite', $data['nationalite'] ?? '');
-        $templateProcessor->setValue('sexe', $data['sexe'] ?? '');
-        $templateProcessor->setValue('adresse', $data['adresse'] ?? '');
-        $templateProcessor->setValue('code_postal', $data['code_postal'] ?? '');
-        $templateProcessor->setValue('commune', $data['commune'] ?? '');
-        $templateProcessor->setValue('tel_mobile', $data['tel_mobile'] ?? '');
-        $templateProcessor->setValue('tel_fixe', $data['tel_fixe'] ?? '');
-        $templateProcessor->setValue('email', $data['email'] ?? $user->getEmail() ?? '');
+        // Lire le contenu du template
+        $zip = new \ZipArchive();
+        $tempDir = sys_get_temp_dir();
+        $tempOdtPath = $tempDir . '/dossier_' . $formulaire->getId() . '.odt';
         
-        // Scolarité année en cours
-        $templateProcessor->setValue('etablissement_actuel', $data['etablissement_actuel'] ?? '');
-        $templateProcessor->setValue('commune_etab', $data['commune_etab'] ?? '');
-        $templateProcessor->setValue('classe_actuelle', $data['classe_actuelle'] ?? '');
-        $templateProcessor->setValue('specialite', $data['specialite'] ?? '');
-        $templateProcessor->setValue('lv1', $data['lv1'] ?? '');
-        $templateProcessor->setValue('lv2', $data['lv2'] ?? '');
-        $templateProcessor->setValue('regime_scolaire', $data['regime_scolaire'] ?? '');
-        
-        // Année N-1
-        $templateProcessor->setValue('etablissement_n1', $data['etablissement_n1'] ?? '');
-        $templateProcessor->setValue('commune_n1', $data['commune_n1'] ?? '');
-        $templateProcessor->setValue('classe_n1', $data['classe_n1'] ?? '');
-        $templateProcessor->setValue('option_n1', $data['option_n1'] ?? '');
-        
-        // Année N-2
-        $templateProcessor->setValue('etablissement_n2', $data['etablissement_n2'] ?? '');
-        $templateProcessor->setValue('commune_n2', $data['commune_n2'] ?? '');
-        $templateProcessor->setValue('classe_n2', $data['classe_n2'] ?? '');
-        $templateProcessor->setValue('option_n2', $data['option_n2'] ?? '');
-        
-        // Responsable légal 1
-        $templateProcessor->setValue('lien_resp1', $data['lien_resp1'] ?? '');
-        $templateProcessor->setValue('nom_resp1', $data['nom_resp1'] ?? '');
-        $templateProcessor->setValue('prenom_resp1', $data['prenom_resp1'] ?? '');
-        $templateProcessor->setValue('adresse_resp1', $data['adresse_resp1'] ?? '');
-        $templateProcessor->setValue('commune_resp1', $data['commune_resp1'] ?? '');
-        $templateProcessor->setValue('tel_mobile_resp1', $data['tel_mobile_resp1'] ?? '');
-        $templateProcessor->setValue('tel_travail_resp1', $data['tel_travail_resp1'] ?? '');
-        $templateProcessor->setValue('tel_domicile_resp1', $data['tel_domicile_resp1'] ?? '');
-        $templateProcessor->setValue('email_resp1', $data['email_resp1'] ?? '');
-        $templateProcessor->setValue('profession_resp1', $data['profession_resp1'] ?? '');
-        
-        // Responsable légal 2
-        $templateProcessor->setValue('lien_resp2', $data['lien_resp2'] ?? '');
-        $templateProcessor->setValue('nom_resp2', $data['nom_resp2'] ?? '');
-        $templateProcessor->setValue('prenom_resp2', $data['prenom_resp2'] ?? '');
-        $templateProcessor->setValue('adresse_resp2', $data['adresse_resp2'] ?? '');
-        $templateProcessor->setValue('commune_resp2', $data['commune_resp2'] ?? '');
-        $templateProcessor->setValue('tel_mobile_resp2', $data['tel_mobile_resp2'] ?? '');
-        $templateProcessor->setValue('tel_travail_resp2', $data['tel_travail_resp2'] ?? '');
-        $templateProcessor->setValue('tel_domicile_resp2', $data['tel_domicile_resp2'] ?? '');
-        $templateProcessor->setValue('email_resp2', $data['email_resp2'] ?? '');
-        $templateProcessor->setValue('profession_resp2', $data['profession_resp2'] ?? '');
-        
-        // Informations administratives
-        $templateProcessor->setValue('date_soumission', $formulaire->getDateSoumission()?->format('d/m/Y') ?? '');
-        $templateProcessor->setValue('numero_dossier', $formulaire->getId() ?? '');
-        
-        // Sauvegarder le document Word rempli temporairement
-        $tempWordPath = sys_get_temp_dir() . '/dossier_' . $formulaire->getId() . '.docx';
-        $templateProcessor->saveAs($tempWordPath);
-        
-        // Convertir le Word en PDF
-        Settings::setPdfRendererName(Settings::PDF_RENDERER_TCPDF);
-        Settings::setPdfRendererPath($this->getParameter('kernel.project_dir') . '/vendor/tecnickcom/tcpdf');
-        
-        $phpWord = IOFactory::load($tempWordPath);
-        $tempPdfPath = sys_get_temp_dir() . '/dossier_' . $formulaire->getId() . '.pdf';
-        
-        $pdfWriter = IOFactory::createWriter($phpWord, 'PDF');
-        $pdfWriter->save($tempPdfPath);
-        
-        // Nom du fichier PDF
-        $filename = sprintf(
-            'Dossier_Inscription_%s_%s_%s.pdf',
-            $user->getNom(),
-            $user->getPrenom(),
-            date('Y-m-d')
-        );
-        
-        $response = new Response(file_get_contents($tempPdfPath));
-        $response->headers->set('Content-Type', 'application/pdf');
-        $response->headers->set('Content-Disposition', sprintf('attachment; filename="%s"', $filename));
-        
-        // Supprimer les fichiers temporaires
-        unlink($tempWordPath);
-        unlink($tempPdfPath);
-        
-        return $response;
+        try {
+            // Copier le template
+            copy($templatePath, $tempOdtPath);
+            
+            // Ouvrir le fichier ODT (qui est un ZIP)
+            if ($zip->open($tempOdtPath) === TRUE) {
+                // Lire le contenu XML
+                $content = $zip->getFromName('content.xml');
+                
+                if ($content === false) {
+                    throw new \Exception('Impossible de lire le contenu du template ODT');
+                }
+                
+                // Remplacer toutes les variables
+                $replacements = [
+                    // Identité élève
+                    'nom' => strtoupper($data['nom'] ?? $user->getNom() ?? ''),
+                    'prenom' => $data['prenom'] ?? $user->getPrenom() ?? '',
+                    'date_naissance' => $data['date_naissance'] ?? '',
+                    'dep_naissance' => $data['dep_naissance'] ?? '',
+                    'lieu_naissance' => $data['lieu_naissance'] ?? '',
+                    'commune_naissance' => $data['commune_naissance'] ?? '',
+                    'nationalite' => $data['nationalite'] ?? '',
+                    'sexe' => $data['sexe'] ?? '',
+                    'numero_secu' => $data['numero_secu'] ?? '',
+                    'adresse' => $data['adresse'] ?? '',
+                    'code_postal' => $data['code_postal'] ?? '',
+                    'commune' => $data['commune'] ?? '',
+                    'tel_mobile' => $data['tel_mobile'] ?? '',
+                    'tel_fixe' => $data['tel_fixe'] ?? '',
+                    'email' => $data['email'] ?? $user->getEmail() ?? '',
+                    'sms_eleve' => ($data['sms_eleve'] ?? '') == '1' ? 'Oui' : 'Non',
+                    
+                    // Scolarité année en cours
+                    'etablissement_actuel' => $data['etablissement_actuel'] ?? '',
+                    'commune_etab' => $data['commune_etab'] ?? '',
+                    'classe_actuelle' => $data['classe_actuelle'] ?? '',
+                    'specialite' => $data['specialite'] ?? '',
+                    'lv1' => $data['lv1'] ?? '',
+                    'lv2' => $data['lv2'] ?? '',
+                    'regime_scolaire' => $data['regime_scolaire'] ?? '',
+                    'redoublement' => $data['redoublement'] ?? '',
+                    
+                    // Transport
+                    'transport' => ($data['transport'] ?? '') == '1' ? 'Oui' : 'Non',
+                    'type_transport' => $data['type_transport'] ?? '',
+                    'immatriculation' => $data['immatriculation'] ?? '',
+                    
+                    // Année N-1
+                    'annee_n1' => $data['annee_n1'] ?? '',
+                    'classe_n1' => $data['classe_n1'] ?? '',
+                    'lv1_n1' => $data['lv1_n1'] ?? '',
+                    'lv2_n1' => $data['lv2_n1'] ?? '',
+                    'etablissement_n1' => $data['etablissement_n1'] ?? '',
+                    'option_n1' => $data['option_n1'] ?? '',
+                    
+                    // Année N-2
+                    'annee_n2' => $data['annee_n2'] ?? '',
+                    'classe_n2' => $data['classe_n2'] ?? '',
+                    'lv1_n2' => $data['lv1_n2'] ?? '',
+                    'lv2_n2' => $data['lv2_n2'] ?? '',
+                    'etablissement_n2' => $data['etablissement_n2'] ?? '',
+                    'option_n2' => $data['option_n2'] ?? '',
+                    
+                    // Diplôme
+                    'dernier_diplome' => $data['dernier_diplome'] ?? '',
+                    
+                    // Responsable légal 1
+                    'lien_resp1' => $data['lien_resp1'] ?? '',
+                    'nom_resp1' => $data['nom_resp1'] ?? '',
+                    'prenom_resp1' => $data['prenom_resp1'] ?? '',
+                    'adresse_resp1' => $data['adresse_resp1'] ?? '',
+                    'commune_resp1' => $data['commune_resp1'] ?? '',
+                    'tel_mobile_resp1' => $data['tel_mobile_resp1'] ?? '',
+                    'tel_travail_resp1' => $data['tel_travail_resp1'] ?? '',
+                    'tel_domicile_resp1' => $data['tel_domicile_resp1'] ?? '',
+                    'email_resp1' => $data['email_resp1'] ?? '',
+                    'profession_resp1' => $data['profession_resp1'] ?? '',
+                    'sms_resp1' => ($data['sms_resp1'] ?? '') == '1' ? 'Oui' : 'Non',
+                    'comm_asso_resp1' => ($data['comm_asso_resp1'] ?? '') == '1' ? 'Oui' : 'Non',
+                    
+                    // Responsable légal 2
+                    'lien_resp2' => $data['lien_resp2'] ?? '',
+                    'nom_resp2' => $data['nom_resp2'] ?? '',
+                    'prenom_resp2' => $data['prenom_resp2'] ?? '',
+                    'adresse_resp2' => $data['adresse_resp2'] ?? '',
+                    'commune_resp2' => $data['commune_resp2'] ?? '',
+                    'tel_mobile_resp2' => $data['tel_mobile_resp2'] ?? '',
+                    'tel_travail_resp2' => $data['tel_travail_resp2'] ?? '',
+                    'tel_domicile_resp2' => $data['tel_domicile_resp2'] ?? '',
+                    'email_resp2' => $data['email_resp2'] ?? '',
+                    'profession_resp2' => $data['profession_resp2'] ?? '',
+                    'sms_resp2' => ($data['sms_resp2'] ?? '') == '1' ? 'Oui' : 'Non',
+                    'comm_asso_resp2' => ($data['comm_asso_resp2'] ?? '') == '1' ? 'Oui' : 'Non',
+                    
+                    // Informations administratives
+                    'date_soumission' => $formulaire->getDateSoumission()?->format('d/m/Y') ?? '',
+                    'numero_dossier' => $formulaire->getId() ?? '',
+                ];
+                
+                // Remplacer dans le contenu XML
+                foreach ($replacements as $key => $value) {
+                    $content = str_replace('${' . $key . '}', htmlspecialchars($value, ENT_XML1, 'UTF-8'), $content);
+                }
+                
+                // Mettre à jour le fichier
+                $zip->deleteName('content.xml');
+                $zip->addFromString('content.xml', $content);
+                $zip->close();
+                
+                // Convertir en PDF avec LibreOffice
+                $tempPdfPath = $tempDir . '/dossier_' . $formulaire->getId() . '.pdf';
+                
+                $libreOfficePath = 'C:\\Program Files\\LibreOffice\\program\\soffice.exe';
+                if (!file_exists($libreOfficePath)) {
+                    $libreOfficePath = 'C:\\Program Files (x86)\\LibreOffice\\program\\soffice.exe';
+                }
+                
+                if (file_exists($libreOfficePath)) {
+                    $command = sprintf(
+                        '"%s" --headless --convert-to pdf --outdir "%s" "%s"',
+                        $libreOfficePath,
+                        $tempDir,
+                        $tempOdtPath
+                    );
+                    
+                    exec($command, $output, $returnCode);
+                    
+                    // Attendre que le fichier soit créé
+                    sleep(2);
+                    
+                    if (file_exists($tempPdfPath)) {
+                        $filename = sprintf(
+                            'Dossier_Inscription_%s_%s_%s.pdf',
+                            $user->getNom(),
+                            $user->getPrenom(),
+                            date('Y-m-d')
+                        );
+                        
+                        $response = new Response(file_get_contents($tempPdfPath));
+                        $response->headers->set('Content-Type', 'application/pdf');
+                        $response->headers->set('Content-Disposition', sprintf('attachment; filename="%s"', $filename));
+                        
+                        unlink($tempOdtPath);
+                        unlink($tempPdfPath);
+                        
+                        return $response;
+                    }
+                }
+                
+                // Fallback: renvoyer le ODT
+                $filename = sprintf(
+                    'Dossier_Inscription_%s_%s_%s.odt',
+                    $user->getNom(),
+                    $user->getPrenom(),
+                    date('Y-m-d')
+                );
+                
+                $response = new Response(file_get_contents($tempOdtPath));
+                $response->headers->set('Content-Type', 'application/vnd.oasis.opendocument.text');
+                $response->headers->set('Content-Disposition', sprintf('attachment; filename="%s"', $filename));
+                
+                unlink($tempOdtPath);
+                
+                return $response;
+            } else {
+                throw new \Exception('Impossible d\'ouvrir le fichier ODT');
+            }
+        } catch (\Exception $e) {
+            if (file_exists($tempOdtPath)) {
+                unlink($tempOdtPath);
+            }
+            throw new \Exception('Erreur lors de la génération du document: ' . $e->getMessage());
+        }
     }
 }
