@@ -179,7 +179,7 @@
                                         Guide d'inscription
                                     </a>
                                     <p class="fr-text--sm fr-text--mention-grey">
-                                        Étapes détaillées du processus (à venir)
+                                        Étapes détaillées du processus
                                     </p>
                                 </li>
                                 <li>
@@ -187,7 +187,7 @@
                                         FAQ - Questions fréquentes
                                     </a>
                                     <p class="fr-text--sm fr-text--mention-grey">
-                                        Réponses aux questions courantes (à venir)
+                                        Réponses aux questions courantes
                                     </p>
                                 </li>
                                 <li>
@@ -195,7 +195,7 @@
                                         Calendrier des inscriptions
                                     </a>
                                     <p class="fr-text--sm fr-text--mention-grey">
-                                        Dates importantes à retenir (à venir)
+                                        Dates importantes à retenir
                                     </p>
                                 </li>
                                 <li>
@@ -203,7 +203,7 @@
                                         Aide technique
                                     </a>
                                     <p class="fr-text--sm fr-text--mention-grey">
-                                        Support pour problèmes techniques (à venir)
+                                        Support pour problèmes techniques
                                     </p>
                                 </li>
                             </ul>
@@ -229,7 +229,7 @@
                                         Recherche d'établissements
                                     </a>
                                     <p class="fr-text--sm fr-text--mention-grey">
-                                        Trouvez les établissements par région (à venir)
+                                        Trouvez les établissements par région
                                     </p>
                                 </li>
                                 <li>
@@ -237,15 +237,15 @@
                                         Formations proposées
                                     </a>
                                     <p class="fr-text--sm fr-text--mention-grey">
-                                        Catalogue complet des formations BTS (à venir)
+                                        Catalogue complet des formations BTS
                                     </p>
                                 </li>
                                 <li>
-                                    <a href="{{ path('app_carte') }}" class="fr-link">
+                                    <a href="{{ path('app_carte_etablissements') }}" class="fr-link">
                                         Carte des établissements
                                     </a>
                                     <p class="fr-text--sm fr-text--mention-grey">
-                                        Localisation interactive (à venir)
+                                        Localisation interactive
                                     </p>
                                 </li>
                                 <li>
@@ -253,7 +253,7 @@
                                         Taux de réussite
                                     </a>
                                     <p class="fr-text--sm fr-text--mention-grey">
-                                        Statistiques par établissement (à venir)
+                                        Statistiques par établissement
                                     </p>
                                 </li>
                             </ul>
@@ -342,28 +342,29 @@
     <!-- Navigation rapide vers les sections principales -->
     <div class="fr-grid-row fr-mt-6w">
         <div class="fr-col-12">
-            <div class="fr-summary" aria-labelledby="fr-summary-title">
-                <div class="fr-summary__title" id="fr-summary-title">Navigation rapide</div>
-                <ol class="fr-summary__list">
-                    <li>
-                        <a class="fr-summary__link" href="#navigation" data-turbo="false">Navigation principale</a>
-                    </li>
-                    <li>
-                        <a class="fr-summary__link" href="#specialisations" data-turbo="false">Spécialisations BTS</a>
-                    </li>
-                    <li>
-                        <a class="fr-summary__link" href="#utilisateur" data-turbo="false">Espace utilisateur</a>
-                    </li>
-                    <li>
-                        <a class="fr-summary__link" href="#ressources" data-turbo="false">Ressources et aide</a>
-                    </li>
-                    <li>
-                        <a class="fr-summary__link" href="#etablissements" data-turbo="false">Établissements</a>
-                    </li>
-                    <li>
-                        <a class="fr-summary__link" href="#legal" data-turbo="false">Informations légales</a>
-                    </li>
-                </ol>
+            <div class="fr-callout fr-callout--blue-ecume">
+                <h3 class="fr-callout__title">Accès rapide</h3>
+                <p class="fr-callout__text">Accédez directement aux principales sections du site :</p>
+                <div class="fr-btns-group fr-btns-group--inline">
+                    <a href="{{ path('app_home') }}" class="fr-btn fr-btn--secondary fr-btn--sm">
+                        Navigation principale
+                    </a>
+                    <a href="{{ path('app_formations') }}" class="fr-btn fr-btn--secondary fr-btn--sm">
+                        Spécialisations BTS
+                    </a>
+                    <a href="{{ path('app_inscription') }}" class="fr-btn fr-btn--secondary fr-btn--sm">
+                        Espace utilisateur
+                    </a>
+                    <a href="{{ path('app_guide') }}" class="fr-btn fr-btn--secondary fr-btn--sm">
+                        Ressources et aide
+                    </a>
+                    <a href="{{ path('app_etablissements') }}" class="fr-btn fr-btn--secondary fr-btn--sm">
+                        Établissements
+                    </a>
+                    <a href="{{ path('app_legal') }}" class="fr-btn fr-btn--secondary fr-btn--sm">
+                        Informations légales
+                    </a>
+                </div>
             </div>
         </div>
     </div>
