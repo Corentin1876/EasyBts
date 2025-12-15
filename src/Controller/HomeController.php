@@ -157,7 +157,6 @@ class HomeController extends AbstractController
         
         $user = $this->getUser();
         
-        // Utiliser le nom correct de la propriété
         $dossiers = $entityManager->getRepository(FormulaireInscription::class)
             ->findBy(['remplit_formulaire' => $user], ['date_soumission' => 'DESC']);
         
@@ -232,4 +231,3 @@ class HomeController extends AbstractController
         return $this->render('etablissements/taux_reussite.html.twig');
     }
 }
-
