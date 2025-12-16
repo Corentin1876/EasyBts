@@ -5,12 +5,15 @@ Application web permettant aux étudiants de s'inscrire en BTS via un formulaire
 ## ✨ Fonctionnalités
 
 ### Gestion des inscriptions
-- Formulaire d'inscription en 6 étapes avec sauvegarde automatique
+- Formulaire d'inscription BTS en 6 étapes avec sauvegarde automatique
+- Formulaire d'adhésion MDL (Maison Des Lycéens)
+- Fiche d'urgence avec informations médicales
+- **Formulaire d'intendance** avec gestion des représentants légaux et employeurs
 - Interface administrateur pour validation des dossiers
-- Génération automatique de PDF pour les dossiers validés
+- Génération automatique de PDF pour tous les formulaires validés
 - Upload de documents justificatifs
 - Système d'authentification sécurisé
-- Espace personnel "Mon compte" pour suivre ses dossiers et messages
+- Espace personnel "Mes dossiers" pour suivre tous ses formulaires et leur statut
 
 ### Pages d'information et ressources
 - Guide d'inscription étape par étape
@@ -397,18 +400,26 @@ php bin/console debug:config
 - **Symfony Security** - Authentification et autorisation
 - **Symfony Messenger** - Gestion asynchrone des messages (contacts)
 - **Monolog** - Logging
+- **LibreOffice** - Conversion ODT → PDF automatique
 
 ### Frontend
 - **DSFR (Design System FR)** - Design officiel République Française
 - **Bootstrap 5** - Framework CSS responsive
 - **Stimulus** - JavaScript framework léger
 - **Turbo** - Navigation SPA partielle
-- **Vanilla JavaScript** - Interactions dynamiques
+- **Vanilla JavaScript** - Interactions dynamiques et validation multi-étapes
 
 ### Base de données
 - **MySQL 8.0** ou **MariaDB 10.5+**
-- 15 tables avec relations complexes
+- 17+ tables avec relations complexes
 - Migrations versionnées
+
+### Formulaires disponibles
+- **Dossier d'inscription BTS** - 6 étapes avec sauvegarde automatique
+- **Adhésion MDL** - Formulaire complet avec photo d'identité
+- **Fiche d'urgence** - Informations médicales et contacts d'urgence
+- **Formulaire d'intendance** - Représentant légal, employeur et régime étudiant
+- Tous les formulaires génèrent des PDF à partir de templates ODT
 
 ### Outils
 - **Composer** - Gestionnaire de dépendances PHP
@@ -417,9 +428,15 @@ php bin/console debug:config
 - **LibreOffice** - Conversion ODT → PDF
 - **PHPUnit** - Tests unitaires
 
-## 🐛 Problèmes connus
+## 🐛 Problèmes connus et remarques
 
-- **Rafraîchissement page** : Recharger la page au début du formulaire après sauvegarde
+- **Formulaire d'intendance** : Accessible uniquement après validation du dossier BTS par l'admin
+- **Génération PDF** : Nécessite LibreOffice installé pour la conversion ODT → PDF
+- **Templates ODT** : Les fichiers suivants doivent être présents à la racine :
+  - `dossier_inscription_bts.odt`
+  - `formulaire Adhésion MDL.odt`
+  - `Fiche Urgence.odt`
+  - `Fiche intendance BTS.odt`
 
 ## 🔐 Comptes de test - Pour vous connecter
 
@@ -433,8 +450,10 @@ Mot de passe : Admin123!
 ```
 
 **Ce que vous pouvez faire :**
-- Voir tous les dossiers d'inscription
+- Voir tous les dossiers d'inscription (BTS, MDL, Fiches d'urgence, Intendance)
 - Valider ou rejeter les dossiers
+- Demander des modifications aux étudiants
+- Télécharger et visualiser les PDF générés
 - Gérer les spécialisations BTS
 
 ### 👨‍🎓 Compte Étudiant
@@ -445,9 +464,12 @@ Mot de passe : Password123!
 ```
 
 **Ce que vous pouvez faire :**
-- Créer un dossier d'inscription
-- Remplir le formulaire en 6 étapes
-- Télécharger le PDF une fois validé
+- Créer un dossier d'inscription BTS (6 étapes)
+- Remplir le formulaire d'adhésion MDL
+- Compléter la fiche d'urgence
+- Soumettre le formulaire d'intendance (après validation BTS)
+- Suivre l'état de tous vos formulaires dans "Mes dossiers"
+- Télécharger les PDF une fois validés
 
 ## ❓ Problèmes fréquents
 

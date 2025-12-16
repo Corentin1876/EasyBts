@@ -23,6 +23,13 @@
             <p class="fr-text--lead fr-mb-3v">
                 Complétez ce formulaire pour adhérer à la MDL et participer à la vie associative de l'établissement.
             </p>
+            
+            {% for message in app.flashes('warning') %}
+                <div class="fr-alert fr-alert--warning fr-mb-4v">
+                    <p><strong>{{ message }}</strong></p>
+                </div>
+            {% endfor %}
+            
             <div class="fr-alert fr-alert--info fr-mb-4v">
                 <p class="fr-text--sm">Votre progression est enregistrée automatiquement. Vous pouvez revenir plus tard pour compléter le formulaire.</p>
             </div>
@@ -83,9 +90,19 @@
                         </div>
                     </div>
 
-                    <div class="fr-input-group">
-                        <label class="fr-label" for="email_etudiant">Email étudiant <span class="fr-text--red">*</span></label>
-                        <input class="fr-input" type="email" id="email_etudiant" name="email_etudiant" value="{{ defaultData.email_etudiant ?? adhesion.emailEtudiant ?? '' }}" required>
+                    <div class="fr-grid-row fr-grid-row--gutters">
+                        <div class="fr-col-12 fr-col-md-6">
+                            <div class="fr-input-group">
+                                <label class="fr-label" for="email_etudiant">Email étudiant <span class="fr-text--red">*</span></label>
+                                <input class="fr-input" type="email" id="email_etudiant" name="email_etudiant" value="{{ defaultData.email_etudiant ?? adhesion.emailEtudiant ?? '' }}" required>
+                            </div>
+                        </div>
+                        <div class="fr-col-12 fr-col-md-6">
+                            <div class="fr-input-group">
+                                <label class="fr-label" for="telephone_etudiant">Téléphone étudiant <span class="fr-text--red">*</span></label>
+                                <input class="fr-input" type="tel" id="telephone_etudiant" name="telephone_etudiant" value="{{ adhesion.telephoneEtudiant ?? '' }}" required placeholder="06 12 34 56 78" pattern="[0-9\s]{10,14}">
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -116,27 +133,16 @@
                 <div class="fr-card__body">
                     <h2 class="fr-h2 fr-mb-3v">Modalités de paiement</h2>
 
-                    <fieldset class="fr-fieldset">
-                        <legend class="fr-fieldset__legend">Type de paiement <span class="fr-text--red">*</span></legend>
-                        <div class="fr-fieldset__content">
-                            <div class="fr-radio-group">
-                                <input type="radio" id="paiement-especes" name="type_paiement" value="especes" {% if adhesion.typePaiement == 'especes' %}checked{% endif %} required>
-                                <label class="fr-label" for="paiement-especes">Espèces</label>
-                            </div>
-                            <div class="fr-radio-group">
-                                <input type="radio" id="paiement-cheque" name="type_paiement" value="cheque" {% if adhesion.typePaiement == 'cheque' %}checked{% endif %}>
-                                <label class="fr-label" for="paiement-cheque">Chèque</label>
-                            </div>
-                            <div class="fr-radio-group">
-                                <input type="radio" id="paiement-cb" name="type_paiement" value="carte_bancaire" {% if adhesion.typePaiement == 'carte_bancaire' %}checked{% endif %}>
-                                <label class="fr-label" for="paiement-cb">Carte bancaire</label>
-                            </div>
-                            <div class="fr-radio-group">
-                                <input type="radio" id="paiement-virement" name="type_paiement" value="virement" {% if adhesion.typePaiement == 'virement' %}checked{% endif %}>
-                                <label class="fr-label" for="paiement-virement">Virement</label>
-                            </div>
-                        </div>
-                    </fieldset>
+                    <div class="fr-select-group">
+                        <label class="fr-label" for="type_paiement">Type de paiement <span class="fr-text--red">*</span></label>
+                        <select class="fr-select" id="type_paiement" name="type_paiement" required>
+                            <option value="" selected disabled>Sélectionner un mode de paiement</option>
+                            <option value="especes" {% if adhesion.typePaiement == 'especes' %}selected{% endif %}>Espèces</option>
+                            <option value="cheque" {% if adhesion.typePaiement == 'cheque' %}selected{% endif %}>Chèque</option>
+                            <option value="carte_bancaire" {% if adhesion.typePaiement == 'carte_bancaire' %}selected{% endif %}>Carte bancaire</option>
+                            <option value="virement" {% if adhesion.typePaiement == 'virement' %}selected{% endif %}>Virement</option>
+                        </select>
+                    </div>
                 </div>
             </div>
 
@@ -144,18 +150,17 @@
                 <div class="fr-card__body">
                     <h2 class="fr-h2 fr-mb-3v">Photo individuelle</h2>
 
-                    <div class="fr-upload-group">
+                    <div class="fr-upload-group" id="upload-photo-group">
                         <label class="fr-label" for="photo">
                             Photo d'identité <span class="fr-text--red">*</span>
                             <span class="fr-hint-text">Format JPG, PNG. Taille max : 2 Mo</span>
                         </label>
-                        <input class="fr-upload" type="file" id="photo" name="photo" accept="image/jpeg,image/png">
-                        {% if adhesion.photoIndividuelle %}
-                        <p class="fr-text--sm fr-mt-2v">
-                            <span class="fr-icon-check-line" aria-hidden="true"></span>
-                            Photo téléchargée : {{ adhesion.photoIndividuelle }}
-                        </p>
-                        {% endif %}
+                        <div class="uploaded-file-info" style="display:none; margin-bottom: 0.5rem;">
+                            <span class="fr-icon-check-circle-fill fr-icon--sm" style="color: green;" aria-hidden="true"></span>
+                            <a href="#" class="file-name photo-preview-link" style="text-decoration: underline; margin: 0 0.5rem;"></a>
+                            <button type="button" class="fr-btn fr-btn--tertiary-no-outline fr-btn--sm change-photo-btn">Changer</button>
+                        </div>
+                        <input class="fr-upload" type="file" id="photo" name="photo" accept="image/jpeg,image/png" required>
                     </div>
                 </div>
             </div>
@@ -184,7 +189,7 @@
                     <div class="fr-alert fr-alert--info fr-mt-3v">
                         <p class="fr-text--sm">
                             <strong>Note :</strong> Une fois votre adhésion soumise, vous recevrez une confirmation.
-                            Votre adhésion sera examinée par les services de la MDL.
+                            Votre adhésion sera examinée par l'administration.
                         </p>
                     </div>
                 </div>
@@ -260,42 +265,44 @@ document.addEventListener('DOMContentLoaded', function() {
     function validateStep(stepNumber) {
         const stepElement = document.getElementById('step-' + stepNumber);
         const inputs = stepElement.querySelectorAll('input[required], textarea[required], select[required]');
-        const radios = stepElement.querySelectorAll('input[type="radio"][required]');
         
         let isValid = true;
         let firstInvalid = null;
         
-        // Vérifier les champs normaux
+        // Vérifier tous les champs requis
         inputs.forEach(input => {
-            if (input.type !== 'radio' && input.type !== 'checkbox') {
-                if (!input.value.trim()) {
-                    isValid = false;
-                    input.classList.add('fr-input--error');
-                    if (!firstInvalid) firstInvalid = input;
-                } else {
-                    input.classList.remove('fr-input--error');
-                }
+            // Ignorer les champs cachés
+            if (input.style.display === 'none' || input.offsetParent === null) {
+                return;
             }
-        });
-        
-        // Vérifier les groupes de boutons radio
-        const radioGroups = {};
-        radios.forEach(radio => {
-            if (!radioGroups[radio.name]) {
-                radioGroups[radio.name] = [];
+            
+            let isEmpty = false;
+            
+            if (input.type === 'checkbox') {
+                isEmpty = !input.checked;
+            } else if (input.type === 'radio') {
+                // Pour les radios, on vérifie si au moins un du groupe est coché
+                const radioName = input.name;
+                const radios = stepElement.querySelectorAll(`input[type="radio"][name="${radioName}"]`);
+                isEmpty = !Array.from(radios).some(r => r.checked);
+            } else if (input.tagName === 'SELECT') {
+                isEmpty = !input.value || input.value === '';
+            } else {
+                isEmpty = !input.value.trim();
             }
-            radioGroups[radio.name].push(radio);
-        });
-        
-        Object.keys(radioGroups).forEach(groupName => {
-            const group = radioGroups[groupName];
-            const isChecked = group.some(radio => radio.checked);
-            if (!isChecked) {
+            
+            if (isEmpty) {
                 isValid = false;
-                group.forEach(radio => {
-                    const label = radio.closest('.fr-radio-group');
-                    if (label && !firstInvalid) firstInvalid = radio;
-                });
+                if (input.classList) {
+                    input.classList.add('fr-input--error');
+                    input.classList.add('fr-select--error');
+                }
+                if (!firstInvalid) firstInvalid = input;
+            } else {
+                if (input.classList) {
+                    input.classList.remove('fr-input--error');
+                    input.classList.remove('fr-select--error');
+                }
             }
         });
         
@@ -340,25 +347,121 @@ document.addEventListener('DOMContentLoaded', function() {
         .catch(error => console.error('Erreur:', error));
     });
 
-    // Upload photo
-    photoInput.addEventListener('change', function() {
-        if (this.files.length > 0) {
-            const formData = new FormData();
-            formData.append('photo', this.files[0]);
-            
-            fetch('{{ path('app_adhesion_mdl_upload_photo') }}', {
-                method: 'POST',
-                body: formData
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    alert('Photo téléchargée avec succès');
-                }
-            })
-            .catch(error => console.error('Erreur:', error));
+    // Fonction pour afficher l'aperçu d'une photo
+    function showPhotoPreview(filePath, fileName) {
+        const modalHtml = `
+            <div id="photo-modal-overlay" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 9999; display: flex; align-items: center; justify-content: center;">
+                <div id="photo-modal-content" style="background: white; padding: 2rem; border-radius: 8px; max-width: 90vw; max-height: 90vh; overflow: auto; box-shadow: 0 8px 24px rgba(0,0,0,0.3);">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; border-bottom: 2px solid #e5e5e5; padding-bottom: 1rem;">
+                        <h2 style="margin: 0; font-size: 1.5rem;">Aperçu de la photo</h2>
+                        <button id="close-photo-modal" class="fr-btn fr-btn--close" style="cursor: pointer;">Fermer</button>
+                    </div>
+                    <div style="text-align: center;">
+                        <img src="${filePath}" alt="${fileName}" style="max-width: 100%; max-height: 600px; border: 1px solid #ddd;" />
+                    </div>
+                </div>
+            </div>
+        `;
+        
+        const oldModal = document.getElementById('photo-modal-overlay');
+        if (oldModal) {
+            oldModal.remove();
         }
-    });
+        
+        document.body.insertAdjacentHTML('beforeend', modalHtml);
+        
+        const overlay = document.getElementById('photo-modal-overlay');
+        const closeBtn = document.getElementById('close-photo-modal');
+        
+        closeBtn.onclick = function() {
+            overlay.remove();
+        };
+        
+        overlay.onclick = function(e) {
+            if (e.target === overlay) {
+                overlay.remove();
+            }
+        };
+    }
+
+    // Fonction pour marquer la photo comme uploadée
+    function markPhotoAsUploaded(filePath) {
+        console.log('markPhotoAsUploaded appelé avec:', filePath);
+        const group = document.getElementById('upload-photo-group');
+        if (!group) {
+            console.error('Groupe upload-photo-group non trouvé');
+            return;
+        }
+        
+        const fileInfo = group.querySelector('.uploaded-file-info');
+        const photoInput = document.getElementById('photo');
+        const fileName = filePath.split('/').pop();
+        
+        if (fileInfo && photoInput) {
+            const fileLink = fileInfo.querySelector('.file-name');
+            if (!fileLink) {
+                console.error('Lien fichier non trouvé');
+                return;
+            }
+            
+            fileLink.textContent = fileName;
+            fileLink.href = '#';
+            fileLink.onclick = function(e) {
+                e.preventDefault();
+                showPhotoPreview(filePath, fileName);
+                return false;
+            };
+            
+            fileInfo.style.display = 'block';
+            photoInput.style.display = 'none';
+            photoInput.removeAttribute('required');
+            
+            const changeBtn = fileInfo.querySelector('.change-photo-btn');
+            if (changeBtn) {
+                changeBtn.onclick = function() {
+                    fileInfo.style.display = 'none';
+                    photoInput.style.display = 'block';
+                    photoInput.value = '';
+                };
+            }
+            console.log('Photo marquée comme uploadée:', fileName);
+        } else {
+            console.error('Elements non trouvés - fileInfo:', fileInfo, 'photoInput:', photoInput);
+        }
+    }
+
+    // Upload photo
+    if (photoInput) {
+        photoInput.addEventListener('change', function() {
+            if (this.files.length > 0) {
+                console.log('Upload de la photo:', this.files[0].name);
+                const formData = new FormData();
+                formData.append('photo', this.files[0]);
+                
+                fetch('{{ path('app_adhesion_mdl_upload_photo') }}', {
+                    method: 'POST',
+                    body: formData
+                })
+                .then(response => response.json())
+                .then(data => {
+                    console.log('Réponse upload photo:', data);
+                    if (data.success && data.path) {
+                        markPhotoAsUploaded(data.path);
+                    } else {
+                        alert('Erreur lors de l\'upload de la photo: ' + (data.error || 'Erreur inconnue'));
+                        photoInput.value = '';
+                    }
+                })
+                .catch(error => {
+                    console.error('Erreur upload:', error);
+                    alert('Erreur lors de l\'upload de la photo');
+                    photoInput.value = '';
+                });
+            }
+        });
+    } else {
+        console.error('Element photoInput non trouvé');
+    }
 
     // Soumission
     form.addEventListener('submit', function(e) {
@@ -389,6 +492,12 @@ document.addEventListener('DOMContentLoaded', function() {
         })
         .catch(error => console.error('Erreur:', error));
     });
+    
+    // Charger la photo existante si elle existe
+    {% if adhesion and adhesion.photoIndividuelle %}
+        console.log('Photo existante d\u00e9tect\u00e9e:', '{{ adhesion.photoIndividuelle }}');
+        markPhotoAsUploaded('/uploads/photos/{{ adhesion.photoIndividuelle }}');
+    {% endif %}
     
     // Initialiser à l'étape 1
     showStep(1);

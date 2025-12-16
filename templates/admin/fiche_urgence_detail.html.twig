@@ -1,0 +1,217 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Détail de la fiche d'urgence #{{ fiche.id }} - Administration{% endblock %}
+
+{% block body %}
+<div class="fr-container fr-my-4w">
+    <div class="fr-grid-row">
+        <div class="fr-col-12">
+            <div class="fr-mb-4w">
+                <a href="{{ path('app_admin_formulaires_supplementaires') }}" class="fr-btn fr-btn--secondary fr-btn--sm fr-btn--icon-left fr-icon-arrow-left-line">
+                    Retour à la liste
+                </a>
+            </div>
+
+            <h1 class="fr-h2">Fiche d'urgence #{{ fiche.id }}</h1>
+
+            <div class="fr-grid-row fr-grid-row--gutters fr-mt-4w">
+                <div class="fr-col-12 fr-col-md-6">
+                    <h2 class="fr-h3 fr-mb-3w">
+                        <span class="fr-icon-user-line fr-mr-1w" aria-hidden="true"></span>
+                        Informations de la fiche
+                    </h2>
+                    
+                    <!-- Toutes les informations -->
+                    <div class="fr-card fr-mb-2w">
+                        <div class="fr-card__body">
+                            <div class="fr-card__content">
+                                <div class="fr-table fr-table--no-scroll">
+                                    <table style="font-size: 0.875rem;">
+                                        <tbody>
+                                            <tr>
+                                                <th scope="row" style="padding: 0.5rem 0.75rem;">Nom</th>
+                                                <td style="padding: 0.5rem 0.75rem;">{{ fiche.nomEtudiant }}</td>
+                                            </tr>
+                                            <tr>
+                                                <th scope="row" style="padding: 0.5rem 0.75rem;">Prénom</th>
+                                                <td style="padding: 0.5rem 0.75rem;">{{ fiche.prenomEtudiant }}</td>
+                                            </tr>
+                                            <tr>
+                                                <th scope="row" style="padding: 0.5rem 0.75rem;">Classe</th>
+                                                <td style="padding: 0.5rem 0.75rem;">{{ fiche.classe }}</td>
+                                            </tr>
+                                            <tr>
+                                                <th scope="row" style="padding: 0.5rem 0.75rem;">Sexe</th>
+                                                <td style="padding: 0.5rem 0.75rem;">{{ fiche.sexe == 'M' ? 'Masculin' : (fiche.sexe == 'F' ? 'Féminin' : '-') }}</td>
+                                            </tr>
+                                            <tr>
+                                                <th scope="row" style="padding: 0.5rem 0.75rem;">Date de naissance</th>
+                                                <td style="padding: 0.5rem 0.75rem;">{{ fiche.dateNaissance ? fiche.dateNaissance|date('d/m/Y') : '-' }}</td>
+                                            </tr>
+                                            <tr>
+                                                <th scope="row" style="padding: 0.5rem 0.75rem;">Nom du responsable</th>
+                                                <td style="padding: 0.5rem 0.75rem;">{{ fiche.nomRepresentant }}</td>
+                                            </tr>
+                                            <tr>
+                                                <th scope="row" style="padding: 0.5rem 0.75rem;">Adresse du responsable</th>
+                                                <td style="padding: 0.5rem 0.75rem;">{{ fiche.adresseRepresentant }}</td>
+                                            </tr>
+                                            <tr>
+                                                <th scope="row" style="padding: 0.5rem 0.75rem;">Centre de sécurité sociale</th>
+                                                <td style="padding: 0.5rem 0.75rem;">{{ fiche.centreSecuNom }}</td>
+                                            </tr>
+                                            <tr>
+                                                <th scope="row" style="padding: 0.5rem 0.75rem;">Adresse du centre</th>
+                                                <td style="padding: 0.5rem 0.75rem;">{{ fiche.centreSecuAdresse }}</td>
+                                            </tr>
+                                            <tr>
+                                                <th scope="row" style="padding: 0.5rem 0.75rem;">Nom de l'assurance</th>
+                                                <td style="padding: 0.5rem 0.75rem;">{{ fiche.assuranceNom }}</td>
+                                            </tr>
+                                            <tr>
+                                                <th scope="row" style="padding: 0.5rem 0.75rem;">Adresse assurance</th>
+                                                <td style="padding: 0.5rem 0.75rem;">{{ fiche.assuranceAdresse }}</td>
+                                            </tr>
+                                            <tr>
+                                                <th scope="row" style="padding: 0.5rem 0.75rem;">Numéro d'assurance</th>
+                                                <td style="padding: 0.5rem 0.75rem;">{{ fiche.assuranceNumero }}</td>
+                                            </tr>
+                                            <tr>
+                                                <th scope="row" style="padding: 0.5rem 0.75rem;">Père - Tél domicile</th>
+                                                <td style="padding: 0.5rem 0.75rem;">{{ fiche.pereTelDomicile }}</td>
+                                            </tr>
+                                            <tr>
+                                                <th scope="row" style="padding: 0.5rem 0.75rem;">Père - Tél travail</th>
+                                                <td style="padding: 0.5rem 0.75rem;">{{ fiche.pereTelTravail }}</td>
+                                            </tr>
+                                            <tr>
+                                                <th scope="row" style="padding: 0.5rem 0.75rem;">Père - Tél personnel</th>
+                                                <td style="padding: 0.5rem 0.75rem;">{{ fiche.pereTelPerso }}</td>
+                                            </tr>
+                                            <tr>
+                                                <th scope="row" style="padding: 0.5rem 0.75rem;">Père - Poste/Profession</th>
+                                                <td style="padding: 0.5rem 0.75rem;">{{ fiche.perePoste }}</td>
+                                            </tr>
+                                            <tr>
+                                                <th scope="row" style="padding: 0.5rem 0.75rem;">Mère - Tél travail</th>
+                                                <td style="padding: 0.5rem 0.75rem;">{{ fiche.mereTelTravail }}</td>
+                                            </tr>
+                                            <tr>
+                                                <th scope="row" style="padding: 0.5rem 0.75rem;">Mère - Tél personnel</th>
+                                                <td style="padding: 0.5rem 0.75rem;">{{ fiche.mereTelPerso }}</td>
+                                            </tr>
+                                            <tr>
+                                                <th scope="row" style="padding: 0.5rem 0.75rem;">Mère - Poste/Profession</th>
+                                                <td style="padding: 0.5rem 0.75rem;">{{ fiche.merePoste }}</td>
+                                            </tr>
+                                            <tr>
+                                                <th scope="row" style="padding: 0.5rem 0.75rem;">Contact d'urgence - Nom</th>
+                                                <td style="padding: 0.5rem 0.75rem;">{{ fiche.nomContactUrgence }}</td>
+                                            </tr>
+                                            <tr>
+                                                <th scope="row" style="padding: 0.5rem 0.75rem;">Contact d'urgence - Téléphone</th>
+                                                <td style="padding: 0.5rem 0.75rem;">{{ fiche.telContactUrgence }}</td>
+                                            </tr>
+                                            <tr>
+                                                <th scope="row" style="padding: 0.5rem 0.75rem;">Date vaccin antitétanique</th>
+                                                <td style="padding: 0.5rem 0.75rem;">{{ fiche.dateVaccinAntitetanique ? fiche.dateVaccinAntitetanique|date('d/m/Y') : '-' }}</td>
+                                            </tr>
+                                            <tr>
+                                                <th scope="row" style="padding: 0.5rem 0.75rem;">Observations médicales</th>
+                                                <td style="padding: 0.5rem 0.75rem;">{{ fiche.observationEtudiant }}</td>
+                                            </tr>
+                                            <tr>
+                                                <th scope="row" style="padding: 0.5rem 0.75rem;">Médecin traitant - Nom</th>
+                                                <td style="padding: 0.5rem 0.75rem;">{{ fiche.medecinNom }}</td>
+                                            </tr>
+                                            <tr>
+                                                <th scope="row" style="padding: 0.5rem 0.75rem;">Médecin - Adresse</th>
+                                                <td style="padding: 0.5rem 0.75rem;">{{ fiche.medecinAdresse }}</td>
+                                            </tr>
+                                            <tr>
+                                                <th scope="row" style="padding: 0.5rem 0.75rem;">Médecin - Téléphone</th>
+                                                <td style="padding: 0.5rem 0.75rem;">{{ fiche.medecinNumero }}</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="fr-col-12 fr-col-md-6">
+                    <h2 class="fr-h3 fr-mb-3w">Statut de la fiche</h2>
+                    
+                    <!-- Statut de la fiche -->
+                    <div class="fr-card fr-mb-2w" style="height: fit-content;">
+                        <div class="fr-card__body">
+                            <div class="fr-card__content">
+                                <p class="fr-mb-2w">
+                                    {% if fiche.statut == 'soumis' %}
+                                        <span class="fr-badge fr-badge--warning">En attente</span>
+                                    {% elseif fiche.statut == 'validé' %}
+                                        <span class="fr-badge fr-badge--success">Validé</span>
+                                    {% elseif fiche.statut == 'rejeté' %}
+                                        <span class="fr-badge fr-badge--error">Rejeté</span>
+                                    {% elseif fiche.statut == 'à modifier' %}
+                                        <span class="fr-badge fr-badge--warning">À modifier</span>
+                                    {% else %}
+                                        <span class="fr-badge">{{ fiche.statut }}</span>
+                                    {% endif %}
+                                </p>
+
+                                <dl class="fr-text--sm">
+                                    <dt class="fr-text--bold">Type :</dt>
+                                    <dd class="fr-mb-1w">Fiche d'urgence</dd>
+
+                                    <dt class="fr-text--bold">Date de soumission :</dt>
+                                    <dd class="fr-mb-1w">{{ fiche.dateSoumission ? fiche.dateSoumission|date('d/m/Y à H:i') : '-' }}</dd>
+
+                                    {% if fiche.utilisateur %}
+                                    <dt class="fr-text--bold">Utilisateur :</dt>
+                                    <dd>{{ fiche.utilisateur.email }}</dd>
+                                    {% endif %}
+                                </dl>
+
+                                {% if fiche.statut == 'soumis' %}
+                                <div class="fr-mt-3w">
+                                    <a href="{{ path('app_admin_fiche_urgence_valider', {id: fiche.id}) }}" 
+                                       class="fr-btn fr-btn--success fr-btn--icon-left fr-icon-check-line"
+                                       onclick="return confirm('Êtes-vous sûr de vouloir valider cette fiche ?');">
+                                        Valider la fiche
+                                    </a>
+                                    <a href="{{ path('app_admin_fiche_urgence_modifier', {id: fiche.id}) }}" 
+                                       class="fr-btn fr-btn--warning fr-btn--icon-left fr-icon-edit-line fr-mt-2w"
+                                       onclick="return confirm('Demander des modifications à l\'étudiant pour cette fiche ?');">
+                                        Demander des modifications
+                                    </a>
+                                    <a href="{{ path('app_admin_fiche_urgence_rejeter', {id: fiche.id}) }}" 
+                                       class="fr-btn fr-btn--error fr-btn--icon-left fr-icon-close-line fr-mt-2w"
+                                       onclick="return confirm('Êtes-vous sûr de vouloir rejeter cette fiche ?');">
+                                        Rejeter la fiche
+                                    </a>
+                                </div>
+                                {% elseif fiche.statut == 'validé' %}
+                                <div class="fr-mt-3w">
+                                    <a href="{{ path('app_fiche_urgence_pdf', {id: fiche.id}) }}" 
+                                       class="fr-btn fr-btn--secondary fr-icon-download-line fr-btn--icon-left"
+                                       target="_blank">
+                                        Télécharger PDF
+                                    </a>
+                                    <a href="{{ path('app_fiche_urgence_voir', {id: fiche.id}) }}" 
+                                       class="fr-btn fr-btn--tertiary fr-icon-eye-line fr-btn--icon-left fr-mt-2w"
+                                       target="_blank">
+                                        Voir en ligne
+                                    </a>
+                                </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

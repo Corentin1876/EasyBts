@@ -140,17 +140,56 @@ class AdminController extends AbstractController
         // Récupérer toutes les adhésions MDL
         $adhesionsMDL = $entityManager->getRepository(AdhesionMDL::class)
             ->createQueryBuilder('a')
-            ->where('a.statut = :soumis OR a.statut = :valide')
+            ->where('a.statut = :soumis OR a.statut = :valide OR a.statut = :modifier')
             ->setParameter('soumis', 'soumis')
             ->setParameter('valide', 'validé')
+            ->setParameter('modifier', 'à modifier')
             ->orderBy('a.date_soumission', 'DESC')
             ->getQuery()
             ->getResult();
 
-        // TODO: Récupérer les autres formulaires (intendance, fiche d'urgence) quand ils seront créés
+        // Récupérer toutes les fiches d'urgence
+        $fichesUrgence = $entityManager->getRepository(\App\Entity\FicheUrgence::class)
+            ->createQueryBuilder('f')
+            ->where('f.statut = :soumis OR f.statut = :valide OR f.statut = :modifier')
+            ->setParameter('soumis', 'soumis')
+            ->setParameter('valide', 'validé')
+            ->setParameter('modifier', 'à modifier')
+            ->orderBy('f.date_soumission', 'DESC')
+            ->getQuery()
+            ->getResult();
+
+        // Récupérer tous les formulaires d'intendance
+        $formulairesIntendance = $entityManager->getRepository(\App\Entity\FormulaireIntendance::class)
+            ->createQueryBuilder('fi')
+            ->where('fi.statut = :soumis OR fi.statut = :valide OR fi.statut = :modifier')
+            ->setParameter('soumis', 'soumis')
+            ->setParameter('valide', 'validé')
+            ->setParameter('modifier', 'à modifier')
+            ->orderBy('fi.date_soumission', 'DESC')
+            ->getQuery()
+            ->getResult();
 
         return $this->render('admin/formulaires_supplementaires.html.twig', [
             'adhesionsMDL' => $adhesionsMDL,
+            'fichesUrgence' => $fichesUrgence,
+            'formulairesIntendance' => $formulairesIntendance,
+        ]);
+    }
+
+    #[Route('/adhesion-mdl/{id}/detail', name: 'app_admin_adhesion_mdl_detail')]
+    public function detailAdhesionMDL(AdhesionMDL $adhesion): Response
+    {
+        return $this->render('admin/adhesion_mdl_detail.html.twig', [
+            'adhesion' => $adhesion,
+        ]);
+    }
+
+    #[Route('/fiche-urgence/{id}/detail', name: 'app_admin_fiche_urgence_detail')]
+    public function detailFicheUrgence(\App\Entity\FicheUrgence $fiche): Response
+    {
+        return $this->render('admin/fiche_urgence_detail.html.twig', [
+            'fiche' => $fiche,
         ]);
     }
 
@@ -183,6 +222,80 @@ class AdminController extends AbstractController
         $entityManager->flush();
 
         $this->addFlash('warning', 'Une demande de modification a été envoyée pour l\'adhésion MDL de ' . $adhesion->getPrenom() . ' ' . $adhesion->getNom());
+
+        return $this->redirectToRoute('app_admin_formulaires_supplementaires');
+    }
+
+    #[Route('/fiche-urgence/{id}/valider', name: 'app_admin_fiche_urgence_valider')]
+    public function validerFicheUrgence(\App\Entity\FicheUrgence $fiche, EntityManagerInterface $entityManager): Response
+    {
+        $fiche->setStatut('validé');
+        $entityManager->flush();
+
+        $this->addFlash('success', 'La fiche d\'urgence de ' . $fiche->getPrenomEtudiant() . ' ' . $fiche->getNomEtudiant() . ' a été validée');
+
+        return $this->redirectToRoute('app_admin_formulaires_supplementaires');
+    }
+
+    #[Route('/fiche-urgence/{id}/rejeter', name: 'app_admin_fiche_urgence_rejeter')]
+    public function rejeterFicheUrgence(\App\Entity\FicheUrgence $fiche, EntityManagerInterface $entityManager): Response
+    {
+        $fiche->setStatut('rejeté');
+        $entityManager->flush();
+
+        $this->addFlash('success', 'La fiche d\'urgence de ' . $fiche->getPrenomEtudiant() . ' ' . $fiche->getNomEtudiant() . ' a été rejetée');
+
+        return $this->redirectToRoute('app_admin_formulaires_supplementaires');
+    }
+
+    #[Route('/fiche-urgence/{id}/modifier', name: 'app_admin_fiche_urgence_modifier')]
+    public function demanderModificationFicheUrgence(\App\Entity\FicheUrgence $fiche, EntityManagerInterface $entityManager): Response
+    {
+        $fiche->setStatut('à modifier');
+        $entityManager->flush();
+
+        $this->addFlash('warning', 'Une demande de modification a été envoyée pour la fiche d\'urgence de ' . $fiche->getPrenomEtudiant() . ' ' . $fiche->getNomEtudiant());
+
+        return $this->redirectToRoute('app_admin_formulaires_supplementaires');
+    }
+
+    #[Route('/formulaire-intendance/{id}', name: 'app_admin_formulaire_intendance_detail')]
+    public function formulaireIntendanceDetail(\App\Entity\FormulaireIntendance $formulaire): Response
+    {
+        return $this->render('admin/formulaire_intendance_detail.html.twig', [
+            'formulaire' => $formulaire,
+        ]);
+    }
+
+    #[Route('/formulaire-intendance/{id}/valider', name: 'app_admin_valider_formulaire_intendance')]
+    public function validerFormulaireIntendance(\App\Entity\FormulaireIntendance $formulaire, EntityManagerInterface $entityManager): Response
+    {
+        $formulaire->setStatut('validé');
+        $entityManager->flush();
+
+        $this->addFlash('success', 'Le formulaire d\'intendance de ' . $formulaire->getPrenomEtudiant() . ' ' . $formulaire->getNomEtudiant() . ' a été validé');
+
+        return $this->redirectToRoute('app_admin_formulaires_supplementaires');
+    }
+
+    #[Route('/formulaire-intendance/{id}/rejeter', name: 'app_admin_rejeter_formulaire_intendance')]
+    public function rejeterFormulaireIntendance(\App\Entity\FormulaireIntendance $formulaire, EntityManagerInterface $entityManager): Response
+    {
+        $formulaire->setStatut('rejeté');
+        $entityManager->flush();
+
+        $this->addFlash('error', 'Le formulaire d\'intendance de ' . $formulaire->getPrenomEtudiant() . ' ' . $formulaire->getNomEtudiant() . ' a été rejeté');
+
+        return $this->redirectToRoute('app_admin_formulaires_supplementaires');
+    }
+
+    #[Route('/formulaire-intendance/{id}/modifier', name: 'app_admin_demander_modification_formulaire_intendance')]
+    public function demanderModificationFormulaireIntendance(\App\Entity\FormulaireIntendance $formulaire, EntityManagerInterface $entityManager): Response
+    {
+        $formulaire->setStatut('à modifier');
+        $entityManager->flush();
+
+        $this->addFlash('warning', 'Une demande de modification a été envoyée pour le formulaire d\'intendance de ' . $formulaire->getPrenomEtudiant() . ' ' . $formulaire->getNomEtudiant());
 
         return $this->redirectToRoute('app_admin_formulaires_supplementaires');
     }
