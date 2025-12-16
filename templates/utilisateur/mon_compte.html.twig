@@ -162,6 +162,10 @@
                                     <a href="{{ path('app_bts_liste') }}" class="fr-btn fr-btn--secondary fr-btn--sm">
                                         Continuer mon inscription
                                     </a>
+                                {% elseif formulaire.statut == 'validé' or formulaire.statut == 'valide' %}
+                                    <a href="{{ path('app_mes_dossiers') }}" class="fr-btn fr-btn--secondary fr-btn--sm">
+                                        Voir le dossier
+                                    </a>
                                 {% else %}
                                     <a href="{{ path('app_bts_liste') }}" class="fr-btn fr-btn--secondary fr-btn--sm">
                                         Voir le dossier
@@ -183,76 +187,8 @@
     </div>
     {% endif %}
 
-    <!-- Messages envoyés -->
-    {% if 'ROLE_ADMIN' not in app.user.roles %}
-    <div class="fr-grid-row fr-grid-row--gutters fr-mt-6v">
-        <div class="fr-col-12">
-            <h2 class="fr-h2">
-                <span class="fr-icon-mail-line fr-mr-1w" aria-hidden="true"></span>
-                Messages envoyés
-            </h2>
-        </div>
-        <div class="fr-col-12">
-            {% if app.user.contacts|length > 0 %}
-                <div class="fr-table fr-table--bordered">
-                    <table>
-                        <thead>
-                            <tr>
-                                <th scope="col">Date</th>
-                                <th scope="col">Sujet</th>
-                                <th scope="col">Message</th>
-                                <th scope="col">Statut</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {% for contact in app.user.contacts %}
-                            <tr>
-                                <td>{{ contact.createdAt|date('d/m/Y H:i') }}</td>
-                                <td>
-                                    {% if contact.sujet == 'inscription' %}
-                                        Inscription
-                                    {% elseif contact.sujet == 'documents' %}
-                                        Documents
-                                    {% elseif contact.sujet == 'specialisations' %}
-                                        Spécialisations
-                                    {% elseif contact.sujet == 'calendrier' %}
-                                        Calendrier
-                                    {% elseif contact.sujet == 'technique' %}
-                                        Support technique
-                                    {% else %}
-                                        Autre
-                                    {% endif %}
-                                </td>
-                                <td>{{ contact.message|length > 100 ? contact.message|slice(0, 100) ~ '...' : contact.message }}</td>
-                                <td>
-                                    {% if contact.status == 'nouveau' %}
-                                        <span class="fr-badge fr-badge--info">Nouveau</span>
-                                    {% elseif contact.status == 'en_cours' %}
-                                        <span class="fr-badge fr-badge--warning">En cours</span>
-                                    {% elseif contact.status == 'traité' or contact.status == 'traite' %}
-                                        <span class="fr-badge fr-badge--success">Traité</span>
-                                    {% else %}
-                                        <span class="fr-badge">{{ contact.status }}</span>
-                                    {% endif %}
-                                </td>
-                            </tr>
-                            {% endfor %}
-                        </tbody>
-                    </table>
-                </div>
-            {% else %}
-                <div class="fr-alert fr-alert--info">
-                    <p>Vous n'avez pas encore envoyé de message.</p>
-                    <a href="{{ path('app_contact') }}" class="fr-btn fr-btn--sm fr-mt-2w">
-                        Envoyer un nouveau message
-                    </a>
-                </div>
-            {% endif %}
-        </div>
-    </div>
-    {% endif %}
-
     <!-- Actions rapides -->
+    {% if 'ROLE_ADMIN' not in app.user.roles %}
     <div class="fr-grid-row fr-grid-row--gutters fr-mt-6v">
         <div class="fr-col-12">
             <h2 class="fr-h2">Actions rapides</h2>
@@ -306,8 +242,10 @@
             </div>
         </div>
     </div>
+    {% endif %}
 
     <!-- Sécurité -->
+    {% if 'ROLE_ADMIN' not in app.user.roles %}
     <div class="fr-grid-row fr-mt-6v">
         <div class="fr-col-12">
             <div class="fr-callout fr-callout--brown-caramel">
@@ -324,6 +262,7 @@
             </div>
         </div>
     </div>
+    {% endif %}
 
     <!-- Déconnexion -->
     <div class="fr-grid-row fr-mt-6v">

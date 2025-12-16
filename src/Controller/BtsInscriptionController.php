@@ -450,6 +450,25 @@ class BtsInscriptionController extends AbstractController
         ]);
     }
 
+    #[Route('/bts/inscription/{id}/voir', name: 'app_bts_inscription_voir')]
+    #[IsGranted('ROLE_USER')]
+    public function voirDossier(
+        FormulaireInscription $formulaire
+    ): Response {
+        $user = $this->getUser();
+        
+        // Vérifier que c'est bien le dossier de l'utilisateur OU que c'est un admin
+        if ($formulaire->getRemplitFormulaire() !== $user && !$this->isGranted('ROLE_ADMIN')) {
+            throw $this->createAccessDeniedException('Vous ne pouvez pas accéder à ce dossier.');
+        }
+        
+        // Afficher le PDF directement en ligne
+        return $this->forward('App\Controller\BtsInscriptionController::downloadPdf', [
+            'formulaire' => $formulaire,
+            'inline' => true,
+        ]);
+    }
+
     #[Route('/bts/inscription/{id}/pdf', name: 'app_bts_inscription_pdf')]
     #[IsGranted('ROLE_USER')]
     public function downloadPdf(
@@ -459,8 +478,8 @@ class BtsInscriptionController extends AbstractController
     ): Response {
         $user = $this->getUser();
         
-        // Vérifier que c'est bien le dossier de l'utilisateur
-        if ($formulaire->getRemplitFormulaire() !== $user) {
+        // Vérifier que c'est bien le dossier de l'utilisateur OU que c'est un admin
+        if ($formulaire->getRemplitFormulaire() !== $user && !$this->isGranted('ROLE_ADMIN')) {
             throw $this->createAccessDeniedException('Vous ne pouvez pas accéder à ce dossier.');
         }
         

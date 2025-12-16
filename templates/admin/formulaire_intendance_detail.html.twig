@@ -1,0 +1,155 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Détail Formulaire d'intendance #{{ formulaire.id }}{% endblock %}
+
+{% block body %}
+<nav class="fr-breadcrumb" aria-label="vous êtes ici :">
+    <button class="fr-breadcrumb__button" aria-expanded="false" aria-controls="breadcrumb-detail">Voir le fil d'Ariane</button>
+    <div class="fr-collapse" id="breadcrumb-detail">
+        <ol class="fr-breadcrumb__list">
+            <li><a class="fr-breadcrumb__link" href="{{ path('app_home') }}">Accueil</a></li>
+            <li><a class="fr-breadcrumb__link" href="{{ path('app_admin_formulaires_supplementaires') }}">Formulaires supplémentaires</a></li>
+            <li><a class="fr-breadcrumb__link" aria-current="page">Formulaire #{{ formulaire.id }}</a></li>
+        </ol>
+    </div>
+</nav>
+
+<section class="fr-container fr-py-6v">
+    <div class="fr-grid-row">
+        <div class="fr-col-12">
+            <h1 class="fr-h2">Formulaire d'intendance #{{ formulaire.id }}</h1>
+
+            <div class="fr-grid-row fr-grid-row--gutters fr-mt-4w">
+                <div class="fr-col-12 fr-col-md-6">
+                    <h2 class="fr-h3 fr-mb-3w">
+                        <span class="fr-icon-bank-line fr-mr-1w" aria-hidden="true"></span>
+                        Informations du formulaire
+                    </h2>
+                    
+                    <div class="fr-card fr-mb-2w">
+                        <div class="fr-card__body">
+                            <div class="fr-card__content">
+                                <div class="fr-table fr-table--no-scroll">
+                                    <table style="font-size: 0.875rem;">
+                                        <tbody>
+                                            <tr>
+                                                <th scope="row" style="padding: 0.5rem 0.75rem;">Nom</th>
+                                                <td style="padding: 0.5rem 0.75rem;">{{ formulaire.nomEtudiant }}</td>
+                                            </tr>
+                                            <tr>
+                                                <th scope="row" style="padding: 0.5rem 0.75rem;">Prénom</th>
+                                                <td style="padding: 0.5rem 0.75rem;">{{ formulaire.prenomEtudiant }}</td>
+                                            </tr>
+                                            <tr>
+                                                <th scope="row" style="padding: 0.5rem 0.75rem;">Classe</th>
+                                                <td style="padding: 0.5rem 0.75rem;">{{ formulaire.classe }}</td>
+                                            </tr>
+                                            <tr>
+                                                <th scope="row" style="padding: 0.5rem 0.75rem;">Date de naissance</th>
+                                                <td style="padding: 0.5rem 0.75rem;">{{ formulaire.dateNaissance ? formulaire.dateNaissance|date('d/m/Y') : '-' }}</td>
+                                            </tr>
+                                            <tr>
+                                                <th scope="row" style="padding: 0.5rem 0.75rem;">Régime</th>
+                                                <td style="padding: 0.5rem 0.75rem;">{{ formulaire.etudiantRegime }}</td>
+                                            </tr>
+                                            <tr>
+                                                <th scope="row" style="padding: 0.5rem 0.75rem;">Nom représentant</th>
+                                                <td style="padding: 0.5rem 0.75rem;">{{ formulaire.nomRepresentant }} {{ formulaire.prenomRepresentant }}</td>
+                                            </tr>
+                                            <tr>
+                                                <th scope="row" style="padding: 0.5rem 0.75rem;">Adresse représentant</th>
+                                                <td style="padding: 0.5rem 0.75rem;">{{ formulaire.adresseRepresentant }}</td>
+                                            </tr>
+                                            <tr>
+                                                <th scope="row" style="padding: 0.5rem 0.75rem;">Code postal</th>
+                                                <td style="padding: 0.5rem 0.75rem;">{{ formulaire.codePostalRepresentant }}</td>
+                                            </tr>
+                                            <tr>
+                                                <th scope="row" style="padding: 0.5rem 0.75rem;">Ville</th>
+                                                <td style="padding: 0.5rem 0.75rem;">{{ formulaire.villeRepresentant }}</td>
+                                            </tr>
+                                            <tr>
+                                                <th scope="row" style="padding: 0.5rem 0.75rem;">Téléphone représentant</th>
+                                                <td style="padding: 0.5rem 0.75rem;">{{ formulaire.telephoneRepresentant }}</td>
+                                            </tr>
+                                            <tr>
+                                                <th scope="row" style="padding: 0.5rem 0.75rem;">Email représentant</th>
+                                                <td style="padding: 0.5rem 0.75rem;">{{ formulaire.mailRepresentant }}</td>
+                                            </tr>
+                                            <tr>
+                                                <th scope="row" style="padding: 0.5rem 0.75rem;">Nom employeur</th>
+                                                <td style="padding: 0.5rem 0.75rem;">{{ formulaire.nomEmployeur }}</td>
+                                            </tr>
+                                            <tr>
+                                                <th scope="row" style="padding: 0.5rem 0.75rem;">Adresse employeur</th>
+                                                <td style="padding: 0.5rem 0.75rem;">{{ formulaire.adresseEmployeur }}</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="fr-col-12 fr-col-md-6">
+                    <h2 class="fr-h3 fr-mb-3w">Statut du formulaire</h2>
+                    
+                    <div class="fr-card">
+                        <div class="fr-card__body">
+                            <div class="fr-card__content">
+                                {% if formulaire.statut == 'soumis' %}
+                                    <p class="fr-badge fr-badge--warning fr-badge--lg">En attente de validation</p>
+                                {% elseif formulaire.statut == 'validé' %}
+                                    <p class="fr-badge fr-badge--success fr-badge--lg">Validé</p>
+                                {% elseif formulaire.statut == 'à modifier' %}
+                                    <p class="fr-badge fr-badge--error fr-badge--lg">À modifier</p>
+                                {% else %}
+                                    <p class="fr-badge fr-badge--info fr-badge--lg">{{ formulaire.statut }}</p>
+                                {% endif %}
+
+                                <dl class="fr-mt-3w">
+                                    <dt class="fr-text--sm fr-text--bold fr-mb-1v">Date de soumission</dt>
+                                    <dd class="fr-text--sm fr-mb-2v">{{ formulaire.dateSoumission ? formulaire.dateSoumission|date('d/m/Y à H:i') : '-' }}</dd>
+                                </dl>
+
+                                {% if formulaire.statut == 'soumis' %}
+                                <div class="fr-mt-3w">
+                                    <a href="{{ path('app_admin_valider_formulaire_intendance', {id: formulaire.id}) }}"
+                                       class="fr-btn fr-btn--success fr-btn--icon-left fr-icon-check-line"
+                                       onclick="return confirm('Êtes-vous sûr de vouloir valider ce formulaire ?');">
+                                        Valider le formulaire
+                                    </a>
+                                    <a href="{{ path('app_admin_demander_modification_formulaire_intendance', {id: formulaire.id}) }}"
+                                       class="fr-btn fr-btn--secondary fr-btn--icon-left fr-icon-edit-line fr-mt-2w">
+                                        Demander modification
+                                    </a>
+                                    <a href="{{ path('app_admin_rejeter_formulaire_intendance', {id: formulaire.id}) }}"
+                                       class="fr-btn fr-btn--error fr-btn--icon-left fr-icon-close-line fr-mt-2w"
+                                       onclick="return confirm('Êtes-vous sûr de vouloir rejeter ce formulaire ?');">
+                                        Rejeter le formulaire
+                                    </a>
+                                </div>
+                                {% elseif formulaire.statut == 'validé' %}
+                                <div class="fr-mt-3w">
+                                    <a href="{{ path('app_formulaire_intendance_pdf', {id: formulaire.id}) }}" 
+                                       class="fr-btn fr-btn--secondary fr-icon-download-line fr-btn--icon-left"
+                                       target="_blank">
+                                        Télécharger PDF
+                                    </a>
+                                    <a href="{{ path('app_formulaire_intendance_voir', {id: formulaire.id}) }}" 
+                                       class="fr-btn fr-btn--tertiary fr-icon-eye-line fr-btn--icon-left fr-mt-2w"
+                                       target="_blank">
+                                        Voir en ligne
+                                    </a>
+                                </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
