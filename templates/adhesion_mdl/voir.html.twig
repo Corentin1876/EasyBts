@@ -1,0 +1,213 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Mon adhésion MDL{% endblock %}
+
+{% block body %}
+<div class="fr-container fr-my-4w">
+    <div class="fr-grid-row">
+        <div class="fr-col-12">
+            <div class="fr-mb-4w">
+                <a href="{{ path('app_mes_dossiers') }}" class="fr-btn fr-btn--secondary fr-btn--sm fr-btn--icon-left fr-icon-arrow-left-line">
+                    Retour à mes dossiers
+                </a>
+            </div>
+
+            <h1 class="fr-h2">Mon adhésion à la Maison Des Lycéens</h1>
+
+            <div class="fr-grid-row fr-grid-row--gutters fr-mt-4w">
+                <div class="fr-col-12 fr-col-md-6">
+                    <h2 class="fr-h3 fr-mb-3w">
+                        <span class="fr-icon-user-line fr-mr-1w" aria-hidden="true"></span>
+                        Mes informations
+                    </h2>
+                    
+                    <div class="fr-card fr-mb-2w">
+                        <div class="fr-card__body">
+                            <div class="fr-card__content">
+                                <div class="fr-table fr-table--no-scroll">
+                                    <table style="font-size: 0.875rem;">
+                                        <tbody>
+                                            <tr>
+                                                <th scope="row" style="padding: 0.5rem 0.75rem;">Nom</th>
+                                                <td style="padding: 0.5rem 0.75rem;">{{ adhesion.nom }}</td>
+                                            </tr>
+                                            <tr>
+                                                <th scope="row" style="padding: 0.5rem 0.75rem;">Prénom</th>
+                                                <td style="padding: 0.5rem 0.75rem;">{{ adhesion.prenom }}</td>
+                                            </tr>
+                                            <tr>
+                                                <th scope="row" style="padding: 0.5rem 0.75rem;">Classe</th>
+                                                <td style="padding: 0.5rem 0.75rem;">{{ adhesion.classe }}</td>
+                                            </tr>
+                                            <tr>
+                                                <th scope="row" style="padding: 0.5rem 0.75rem;">Date de naissance</th>
+                                                <td style="padding: 0.5rem 0.75rem;">{{ adhesion.dateNaissance ? adhesion.dateNaissance|date('d/m/Y') : '-' }}</td>
+                                            </tr>
+                                            <tr>
+                                                <th scope="row" style="padding: 0.5rem 0.75rem;">Email</th>
+                                                <td style="padding: 0.5rem 0.75rem;">{{ adhesion.emailEtudiant }}</td>
+                                            </tr>
+                                            <tr>
+                                                <th scope="row" style="padding: 0.5rem 0.75rem;">Téléphone</th>
+                                                <td style="padding: 0.5rem 0.75rem;">{{ adhesion.telephoneEtudiant }}</td>
+                                            </tr>
+                                            <tr>
+                                                <th scope="row" style="padding: 0.5rem 0.75rem;">Nom du responsable</th>
+                                                <td style="padding: 0.5rem 0.75rem;">{{ adhesion.nomResponsable }}</td>
+                                            </tr>
+                                            <tr>
+                                                <th scope="row" style="padding: 0.5rem 0.75rem;">Adresse du responsable</th>
+                                                <td style="padding: 0.5rem 0.75rem;">{{ adhesion.adresseResponsable }}</td>
+                                            </tr>
+                                            <tr>
+                                                <th scope="row" style="padding: 0.5rem 0.75rem;">Type de paiement</th>
+                                                <td style="padding: 0.5rem 0.75rem;">
+                                                    {% if adhesion.typePaiement == 'especes' %}
+                                                        Espèces
+                                                    {% elseif adhesion.typePaiement == 'cheque' %}
+                                                        Chèque
+                                                    {% elseif adhesion.typePaiement == 'carte_bancaire' %}
+                                                        Carte bancaire
+                                                    {% elseif adhesion.typePaiement == 'virement' %}
+                                                        Virement
+                                                    {% else %}
+                                                        {{ adhesion.typePaiement }}
+                                                    {% endif %}
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <th scope="row" style="padding: 0.5rem 0.75rem;">Autorisation droit à l'image</th>
+                                                <td style="padding: 0.5rem 0.75rem;">
+                                                    {% if adhesion.autorisationDroitImage %}
+                                                        <span class="fr-badge fr-badge--success fr-badge--sm">Oui</span>
+                                                    {% else %}
+                                                        <span class="fr-badge fr-badge--sm">Non</span>
+                                                    {% endif %}
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <th scope="row" style="padding: 0.5rem 0.75rem;">Photo d'identité</th>
+                                                <td style="padding: 0.5rem 0.75rem;">
+                                                    {% if adhesion.photoIndividuelle %}
+                                                        <a href="#" onclick="showPhotoPreview('/uploads/photos/{{ adhesion.photoIndividuelle }}'); return false;" class="fr-link">
+                                                            <span class="fr-icon-eye-line fr-mr-1w" aria-hidden="true"></span>
+                                                            Voir ma photo
+                                                        </a>
+                                                    {% else %}
+                                                        -
+                                                    {% endif %}
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="fr-col-12 fr-col-md-6">
+                    <h2 class="fr-h3 fr-mb-3w">Statut de mon adhésion</h2>
+                    
+                    <div class="fr-card fr-mb-2w" style="height: fit-content;">
+                        <div class="fr-card__body">
+                            <div class="fr-card__content">
+                                <p class="fr-mb-2w">
+                                    {% if adhesion.statut == 'soumis' %}
+                                        <span class="fr-badge fr-badge--info">En attente de validation</span>
+                                    {% elseif adhesion.statut == 'validé' %}
+                                        <span class="fr-badge fr-badge--success">Validé</span>
+                                    {% elseif adhesion.statut == 'à modifier' %}
+                                        <span class="fr-badge fr-badge--warning">À modifier</span>
+                                    {% else %}
+                                        <span class="fr-badge">{{ adhesion.statut }}</span>
+                                    {% endif %}
+                                </p>
+
+                                <dl class="fr-text--sm">
+                                    <dt class="fr-text--bold">Type :</dt>
+                                    <dd class="fr-mb-1w">Adhésion MDL</dd>
+
+                                    <dt class="fr-text--bold">Date de soumission :</dt>
+                                    <dd class="fr-mb-1w">{{ adhesion.dateSoumission ? adhesion.dateSoumission|date('d/m/Y à H:i') : '-' }}</dd>
+                                </dl>
+
+                                {% if adhesion.statut == 'à modifier' %}
+                                <div class="fr-alert fr-alert--warning fr-mt-3w">
+                                    <p class="fr-text--sm">
+                                        <strong>Action requise :</strong> L'administration a demandé des modifications sur votre dossier. 
+                                        Veuillez apporter les corrections nécessaires et resoumettre votre dossier.
+                                    </p>
+                                </div>
+                                <div class="fr-mt-3w">
+                                    <a href="{{ path('app_adhesion_mdl') }}" class="fr-btn fr-btn--icon-left fr-icon-edit-line">
+                                        Modifier mon dossier
+                                    </a>
+                                </div>
+                                {% elseif adhesion.statut == 'validé' %}
+                                <div class="fr-alert fr-alert--success fr-mt-3w">
+                                    <p class="fr-text--sm">
+                                        Votre adhésion a été validée par l'administration. Vous êtes maintenant membre de la Maison Des Lycéens !
+                                    </p>
+                                </div>
+                                <div class="fr-mt-3w">
+                                    <a href="{{ path('app_adhesion_mdl_pdf', {id: adhesion.id}) }}" 
+                                       class="fr-btn fr-btn--secondary fr-icon-download-line fr-btn--icon-left"
+                                       target="_blank">
+                                        Télécharger PDF
+                                    </a>
+                                </div>
+                                {% else %}
+                                <div class="fr-alert fr-alert--info fr-mt-3w">
+                                    <p class="fr-text--sm">
+                                        Votre demande d'adhésion est en cours de traitement par l'administration. Vous serez notifié dès qu'une décision sera prise.
+                                    </p>
+                                </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+function showPhotoPreview(photoPath) {
+    const modalHtml = `
+        <div id="photo-modal-overlay" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 9999; display: flex; align-items: center; justify-content: center;">
+            <div id="photo-modal-content" style="background: white; padding: 2rem; border-radius: 8px; max-width: 90vw; max-height: 90vh; overflow: auto; box-shadow: 0 8px 24px rgba(0,0,0,0.3);">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; border-bottom: 2px solid #e5e5e5; padding-bottom: 1rem;">
+                    <h2 style="margin: 0; font-size: 1.5rem;">Photo d'identité</h2>
+                    <button id="close-photo-modal" class="fr-btn fr-btn--close" style="cursor: pointer;">Fermer</button>
+                </div>
+                <div style="text-align: center;">
+                    <img src="${photoPath}" alt="Photo d'identité" style="max-width: 100%; max-height: 600px; border: 1px solid #ddd;" />
+                </div>
+            </div>
+        </div>
+    `;
+    
+    const oldModal = document.getElementById('photo-modal-overlay');
+    if (oldModal) {
+        oldModal.remove();
+    }
+    
+    document.body.insertAdjacentHTML('beforeend', modalHtml);
+    
+    const overlay = document.getElementById('photo-modal-overlay');
+    const closeBtn = document.getElementById('close-photo-modal');
+    
+    closeBtn.onclick = function() {
+        overlay.remove();
+    };
+    
+    overlay.onclick = function(e) {
+        if (e.target === overlay) {
+            overlay.remove();
+        }
+    };
+}
+</script>
+{% endblock %}

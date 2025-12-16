@@ -1,0 +1,245 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Détail de l'adhésion MDL #{{ adhesion.id }} - Administration{% endblock %}
+
+{% block body %}
+<div class="fr-container fr-my-4w">
+    <div class="fr-grid-row">
+        <div class="fr-col-12">
+            <div class="fr-mb-4w">
+                <a href="{{ path('app_admin_formulaires_supplementaires') }}" class="fr-btn fr-btn--secondary fr-btn--sm fr-btn--icon-left fr-icon-arrow-left-line">
+                    Retour à la liste
+                </a>
+            </div>
+
+            <h1 class="fr-h2">Adhésion MDL #{{ adhesion.id }}</h1>
+
+            <div class="fr-grid-row fr-grid-row--gutters fr-mt-4w">
+                <div class="fr-col-12 fr-col-md-6">
+                    <h2 class="fr-h3 fr-mb-3w">
+                        <span class="fr-icon-user-line fr-mr-1w" aria-hidden="true"></span>
+                        Informations de l'adhésion
+                    </h2>
+                    
+                    <!-- Toutes les informations -->
+                    <div class="fr-card fr-mb-2w">
+                        <div class="fr-card__body">
+                            <div class="fr-card__content">
+                                <div class="fr-table fr-table--no-scroll">
+                                    <table style="font-size: 0.875rem;">
+                                        <tbody>
+                                            <tr>
+                                                <th scope="row" style="padding: 0.5rem 0.75rem;">Nom</th>
+                                                <td style="padding: 0.5rem 0.75rem;">{{ adhesion.nom }}</td>
+                                            </tr>
+                                            <tr>
+                                                <th scope="row" style="padding: 0.5rem 0.75rem;">Prénom</th>
+                                                <td style="padding: 0.5rem 0.75rem;">{{ adhesion.prenom }}</td>
+                                            </tr>
+                                            <tr>
+                                                <th scope="row" style="padding: 0.5rem 0.75rem;">Classe</th>
+                                                <td style="padding: 0.5rem 0.75rem;">{{ adhesion.classe }}</td>
+                                            </tr>
+                                            <tr>
+                                                <th scope="row" style="padding: 0.5rem 0.75rem;">Date de naissance</th>
+                                                <td style="padding: 0.5rem 0.75rem;">{{ adhesion.dateNaissance ? adhesion.dateNaissance|date('d/m/Y') : '-' }}</td>
+                                            </tr>
+                                            <tr>
+                                                <th scope="row" style="padding: 0.5rem 0.75rem;">Email</th>
+                                                <td style="padding: 0.5rem 0.75rem;">{{ adhesion.emailEtudiant }}</td>
+                                            </tr>
+                                            <tr>
+                                                <th scope="row" style="padding: 0.5rem 0.75rem;">Téléphone</th>
+                                                <td style="padding: 0.5rem 0.75rem;">{{ adhesion.telephoneEtudiant }}</td>
+                                            </tr>
+                                            <tr>
+                                                <th scope="row" style="padding: 0.5rem 0.75rem;">Nom du responsable</th>
+                                                <td style="padding: 0.5rem 0.75rem;">{{ adhesion.nomResponsable }}</td>
+                                            </tr>
+                                            <tr>
+                                                <th scope="row" style="padding: 0.5rem 0.75rem;">Adresse du responsable</th>
+                                                <td style="padding: 0.5rem 0.75rem;">{{ adhesion.adresseResponsable }}</td>
+                                            </tr>
+                                            <tr>
+                                                <th scope="row" style="padding: 0.5rem 0.75rem;">Type de paiement</th>
+                                                <td style="padding: 0.5rem 0.75rem;">
+                                                    {% if adhesion.typePaiement == 'especes' %}
+                                                        Espèces
+                                                    {% elseif adhesion.typePaiement == 'cheque' %}
+                                                        Chèque
+                                                    {% elseif adhesion.typePaiement == 'carte_bancaire' %}
+                                                        Carte bancaire
+                                                    {% elseif adhesion.typePaiement == 'virement' %}
+                                                        Virement
+                                                    {% else %}
+                                                        {{ adhesion.typePaiement }}
+                                                    {% endif %}
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <th scope="row" style="padding: 0.5rem 0.75rem;">Autorisation droit à l'image</th>
+                                                <td style="padding: 0.5rem 0.75rem;">
+                                                    {% if adhesion.autorisationDroitImage %}
+                                                        <span class="fr-badge fr-badge--success fr-badge--sm">Oui</span>
+                                                    {% else %}
+                                                        <span class="fr-badge fr-badge--sm">Non</span>
+                                                    {% endif %}
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <th scope="row" style="padding: 0.5rem 0.75rem;">Photo d'identité</th>
+                                                <td style="padding: 0.5rem 0.75rem;">
+                                                    {% if adhesion.photoIndividuelle %}
+                                                        <a href="#" onclick="showDocumentPreview('/uploads/photos/{{ adhesion.photoIndividuelle }}', 'Photo d\'identité'); return false;" class="fr-link">
+                                                            <span class="fr-icon-eye-line fr-mr-1w" aria-hidden="true"></span>
+                                                            Voir la photo
+                                                        </a>
+                                                    {% else %}
+                                                        -
+                                                    {% endif %}
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="fr-col-12 fr-col-md-6">
+                    <h2 class="fr-h3 fr-mb-3w">Statut de l'adhésion</h2>
+                    
+                    <!-- Statut de l'adhésion -->
+                    <div class="fr-card fr-mb-2w" style="height: fit-content;">
+                        <div class="fr-card__body">
+                            <div class="fr-card__content">
+                                <p class="fr-mb-2w">
+                                    {% if adhesion.statut == 'soumis' %}
+                                        <span class="fr-badge fr-badge--warning">En attente</span>
+                                    {% elseif adhesion.statut == 'validé' %}
+                                        <span class="fr-badge fr-badge--success">Validé</span>
+                                    {% elseif adhesion.statut == 'rejeté' %}
+                                        <span class="fr-badge fr-badge--error">Rejeté</span>
+                                    {% elseif adhesion.statut == 'à modifier' %}
+                                        <span class="fr-badge fr-badge--warning">À modifier</span>
+                                    {% else %}
+                                        <span class="fr-badge">{{ adhesion.statut }}</span>
+                                    {% endif %}
+                                </p>
+
+                                <dl class="fr-text--sm">
+                                    <dt class="fr-text--bold">Type :</dt>
+                                    <dd class="fr-mb-1w">Adhésion MDL</dd>
+
+                                    <dt class="fr-text--bold">Date de soumission :</dt>
+                                    <dd class="fr-mb-1w">{{ adhesion.dateSoumission ? adhesion.dateSoumission|date('d/m/Y à H:i') : '-' }}</dd>
+
+                                    {% if adhesion.utilisateur %}
+                                    <dt class="fr-text--bold">Utilisateur :</dt>
+                                    <dd>{{ adhesion.utilisateur.email }}</dd>
+                                    {% endif %}
+                                </dl>
+
+                                {% if adhesion.statut == 'soumis' %}
+                                <div class="fr-mt-3w">
+                                    <a href="{{ path('app_admin_adhesion_mdl_valider', {id: adhesion.id}) }}" 
+                                       class="fr-btn fr-btn--success fr-btn--icon-left fr-icon-check-line"
+                                       onclick="return confirm('Êtes-vous sûr de vouloir valider cette adhésion ?');">
+                                        Valider l'adhésion
+                                    </a>
+                                    <a href="{{ path('app_admin_adhesion_mdl_modifier', {id: adhesion.id}) }}" 
+                                       class="fr-btn fr-btn--warning fr-btn--icon-left fr-icon-edit-line fr-mt-2w"
+                                       onclick="return confirm('Demander des modifications à l\'étudiant pour cette adhésion ?');">
+                                        Demander des modifications
+                                    </a>
+                                    <a href="{{ path('app_admin_adhesion_mdl_rejeter', {id: adhesion.id}) }}" 
+                                       class="fr-btn fr-btn--error fr-btn--icon-left fr-icon-close-line fr-mt-2w"
+                                       onclick="return confirm('Êtes-vous sûr de vouloir rejeter cette adhésion ?');">
+                                        Rejeter l'adhésion
+                                    </a>
+                                </div>
+                                {% elseif adhesion.statut == 'validé' %}
+                                <div class="fr-mt-3w">
+                                    <a href="{{ path('app_adhesion_mdl_pdf', {id: adhesion.id}) }}" 
+                                       class="fr-btn fr-btn--secondary fr-icon-download-line fr-btn--icon-left"
+                                       target="_blank">
+                                        Télécharger PDF
+                                    </a>
+                                    <a href="{{ path('app_adhesion_mdl_voir', {id: adhesion.id}) }}" 
+                                       class="fr-btn fr-btn--tertiary fr-icon-eye-line fr-btn--icon-left fr-mt-2w"
+                                       target="_blank">
+                                        Voir en ligne
+                                    </a>
+                                </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+function showDocumentPreview(filePath, fileName) {
+    const extension = filePath.split('.').pop().toLowerCase();
+    
+    // Créer le HTML du contenu
+    let contentHtml = '';
+    
+    if (extension === 'pdf') {
+        contentHtml = `
+            <iframe src="${filePath}" style="width: 100%; height: 600px; border: 1px solid #ddd;"></iframe>
+        `;
+    } else if (['jpg', 'jpeg', 'png'].includes(extension)) {
+        contentHtml = `
+            <img src="${filePath}" alt="${fileName}" style="max-width: 100%; max-height: 600px; border: 1px solid #ddd;" />
+        `;
+    } else {
+        contentHtml = `
+            <p>Aperçu non disponible pour ce type de fichier.</p>
+        `;
+    }
+    
+    // Créer le modal complet
+    const modalHtml = `
+        <div id="custom-modal-overlay" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 9999; display: flex; align-items: center; justify-content: center;">
+            <div id="custom-modal-content" style="background: white; padding: 2rem; border-radius: 8px; max-width: 90vw; max-height: 90vh; overflow: auto; box-shadow: 0 8px 24px rgba(0,0,0,0.3);">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; border-bottom: 2px solid #e5e5e5; padding-bottom: 1rem;">
+                    <h2 style="margin: 0; font-size: 1.5rem;">${fileName}</h2>
+                    <button id="close-custom-modal" class="fr-btn fr-btn--close" style="cursor: pointer;">Fermer</button>
+                </div>
+                <div style="text-align: center;">
+                    ${contentHtml}
+                </div>
+            </div>
+        </div>
+    `;
+    
+    // Supprimer l'ancien modal s'il existe
+    const oldModal = document.getElementById('custom-modal-overlay');
+    if (oldModal) {
+        oldModal.remove();
+    }
+    
+    // Insérer le nouveau modal
+    document.body.insertAdjacentHTML('beforeend', modalHtml);
+    
+    // Gérer la fermeture
+    const overlay = document.getElementById('custom-modal-overlay');
+    const closeBtn = document.getElementById('close-custom-modal');
+    
+    closeBtn.onclick = function() {
+        overlay.remove();
+    };
+    
+    overlay.onclick = function(e) {
+        if (e.target === overlay) {
+            overlay.remove();
+        }
+    };
+}
+</script>
+{% endblock %}

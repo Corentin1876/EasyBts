@@ -176,12 +176,48 @@ class HomeController extends AbstractController
         
         $user = $this->getUser();
         
-        // Récupérer tous les dossiers de l'utilisateur
+        // Récupérer tous les dossiers BTS de l'utilisateur
         $dossiers = $entityManager->getRepository(FormulaireInscription::class)
             ->findBy(['remplit_formulaire' => $user], ['date_soumission' => 'DESC']);
         
+        // Récupérer les dossiers d'adhésion MDL (sauf brouillons)
+        $dossiersAdhesion = $entityManager->getRepository(\App\Entity\AdhesionMDL::class)
+            ->createQueryBuilder('a')
+            ->where('a.utilisateur = :user')
+            ->andWhere('a.statut IN (:statuts)')
+            ->setParameter('user', $user)
+            ->setParameter('statuts', ['soumis', 'à modifier', 'validé'])
+            ->orderBy('a.date_soumission', 'DESC')
+            ->getQuery()
+            ->getResult();
+        
+        // Récupérer les fiches d'urgence (sauf brouillons)
+        $fichesUrgence = $entityManager->getRepository(\App\Entity\FicheUrgence::class)
+            ->createQueryBuilder('f')
+            ->where('f.utilisateur = :user')
+            ->andWhere('f.statut IN (:statuts)')
+            ->setParameter('user', $user)
+            ->setParameter('statuts', ['soumis', 'à modifier', 'validé'])
+            ->orderBy('f.date_soumission', 'DESC')
+            ->getQuery()
+            ->getResult();
+        
+        // Récupérer les formulaires d'intendance (sauf brouillons)
+        $formulairesIntendance = $entityManager->getRepository(\App\Entity\FormulaireIntendance::class)
+            ->createQueryBuilder('f')
+            ->where('f.utilisateur = :user')
+            ->andWhere('f.statut IN (:statuts)')
+            ->setParameter('user', $user)
+            ->setParameter('statuts', ['soumis', 'à modifier', 'validé'])
+            ->orderBy('f.date_soumission', 'DESC')
+            ->getQuery()
+            ->getResult();
+        
         return $this->render('bts/mes_dossiers.html.twig', [
             'dossiers' => $dossiers,
+            'dossiersAdhesion' => $dossiersAdhesion,
+            'fichesUrgence' => $fichesUrgence,
+            'formulairesIntendance' => $formulairesIntendance,
         ]);
     }
 
