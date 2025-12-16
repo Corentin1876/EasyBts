@@ -87,7 +87,241 @@
             </div>
             {% endfor %}
         </div>
+    {% endif %}
+
+    {% if dossiersAdhesion is defined and dossiersAdhesion|length > 0 %}
+        <h2 class="fr-h2 fr-mb-3v fr-mt-6v">Dossier d'adhésion MDL</h2>
+        <div class="fr-grid-row fr-grid-row--gutters">
+            {% for adhesion in dossiersAdhesion %}
+            <div class="fr-col-12">
+                <div class="fr-card">
+                    <div class="fr-card__body">
+                        <div class="fr-card__content">
+                            <h3 class="fr-card__title">
+                                <span class="fr-icon-team-line fr-mr-1w" aria-hidden="true"></span>
+                                Adhésion à la Maison Des Lycéens
+                            </h3>
+                            <p class="fr-card__desc">
+                                <strong>Statut :</strong> 
+                                {% if adhesion.statut == 'à modifier' %}
+                                    <span class="fr-badge fr-badge--warning">À modifier</span>
+                                {% elseif adhesion.statut == 'validé' %}
+                                    <span class="fr-badge fr-badge--success">Validé</span>
+                                {% else %}
+                                    <span class="fr-badge fr-badge--info">En attente de vérification</span>
+                                {% endif %}
+                            </p>
+                            <p class="fr-card__desc">
+                                <strong>Date de soumission :</strong> 
+                                {{ adhesion.dateSoumission ? adhesion.dateSoumission|date('d/m/Y à H:i') : 'Non soumis' }}
+                            </p>
+                            {% if adhesion.statut == 'à modifier' %}
+                                <div class="fr-alert fr-alert--warning fr-mt-2w">
+                                    <p class="fr-text--sm">
+                                        <strong>Action requise :</strong> L'administration a demandé des modifications sur votre dossier. 
+                                        Veuillez apporter les corrections nécessaires et resoumettre votre dossier.
+                                    </p>
+                                </div>
+                            {% elseif adhesion.statut != 'validé' %}
+                                <div class="fr-alert fr-alert--info fr-mt-2w">
+                                    <p class="fr-text--sm">Votre demande d'adhésion est en cours de traitement par l'administration. Vous serez notifié dès qu'une décision sera prise.</p>
+                                </div>
+                            {% endif %}
+                        </div>
+                        <div class="fr-card__footer">
+                            <ul class="fr-btns-group fr-btns-group--inline-sm">
+                                {% if adhesion.statut == 'à modifier' %}
+                                <li>
+                                    <a href="{{ path('app_adhesion_mdl') }}" class="fr-btn fr-btn--sm">
+                                        Modifier le dossier
+                                    </a>
+                                </li>
+                                {% else %}
+                                <li>
+                                    <a href="{{ path('app_adhesion_mdl_voir', {id: adhesion.id}) }}" class="fr-btn fr-btn--sm fr-btn--secondary">
+                                        Voir le dossier
+                                    </a>
+                                </li>
+                                {% endif %}
+                                {% if adhesion.statut == 'validé' %}
+                                <li>
+                                    <a href="{{ path('app_adhesion_mdl_pdf', {id: adhesion.id}) }}" class="fr-btn fr-btn--sm fr-btn--secondary fr-icon-download-line fr-btn--icon-left" target="_blank">
+                                        Télécharger PDF
+                                    </a>
+                                </li>
+                                {% endif %}
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    {% if fichesUrgence is defined and fichesUrgence|length > 0 %}
+        <div class="fr-mt-6v">
+            <h2 class="fr-h2 fr-mb-3v">
+                <span class="fr-icon-phone-line fr-mr-1w" aria-hidden="true"></span>
+                Ma fiche d'urgence
+            </h2>
+            
+            {% for fiche in fichesUrgence %}
+            <div class="fr-mb-3w">
+                <div class="fr-card fr-card--horizontal">
+                    <div class="fr-card__body">
+                        <div class="fr-card__content">
+                            <h3 class="fr-card__title">
+                                <span class="fr-icon-phone-line fr-mr-1w" aria-hidden="true"></span>
+                                Fiche d'urgence
+                            </h3>
+                            <p class="fr-card__desc">
+                                <strong>Statut :</strong> 
+                                {% if fiche.statut == 'à modifier' %}
+                                    <span class="fr-badge fr-badge--warning">À modifier</span>
+                                {% elseif fiche.statut == 'validé' %}
+                                    <span class="fr-badge fr-badge--success">Validé</span>
+                                {% else %}
+                                    <span class="fr-badge fr-badge--info">En attente de vérification</span>
+                                {% endif %}
+                            </p>
+                            <p class="fr-card__desc">
+                                <strong>Date de soumission :</strong> 
+                                {{ fiche.dateSoumission ? fiche.dateSoumission|date('d/m/Y à H:i') : 'Non soumis' }}
+                            </p>
+                            {% if fiche.statut == 'à modifier' %}
+                                <div class="fr-alert fr-alert--warning fr-mt-2w">
+                                    <p class="fr-text--sm">
+                                        <strong>Action requise :</strong> L'administration a demandé des modifications sur votre fiche. 
+                                        Veuillez apporter les corrections nécessaires et resoumettre votre fiche.
+                                    </p>
+                                </div>
+                            {% elseif fiche.statut != 'validé' %}
+                                <div class="fr-alert fr-alert--info fr-mt-2w">
+                                    <p class="fr-text--sm">Votre fiche d'urgence est en cours de traitement par l'administration. Vous serez notifié dès qu'une décision sera prise.</p>
+                                </div>
+                            {% endif %}
+                        </div>
+                        <div class="fr-card__footer">
+                            <ul class="fr-btns-group fr-btns-group--inline-sm">
+                                {% if fiche.statut == 'à modifier' %}
+                                <li>
+                                    <a href="{{ path('app_fiche_urgence') }}" class="fr-btn fr-btn--sm">
+                                        Modifier la fiche
+                                    </a>
+                                </li>
+                                {% else %}
+                                <li>
+                                    <a href="{{ path('app_fiche_urgence_voir', {id: fiche.id}) }}" class="fr-btn fr-btn--sm fr-btn--secondary">
+                                        Voir la fiche
+                                    </a>
+                                </li>
+                                {% endif %}
+                                {% if fiche.statut == 'validé' %}
+                                <li>
+                                    <a href="{{ path('app_fiche_urgence_pdf', {id: fiche.id}) }}" class="fr-btn fr-btn--sm fr-btn--secondary fr-icon-download-line fr-btn--icon-left" target="_blank">
+                                        Télécharger PDF
+                                    </a>
+                                </li>
+                                {% endif %}
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    {# Formulaires d'intendance #}
+    {% if formulairesIntendance is defined and formulairesIntendance|length > 0 %}
+        <div class="fr-mt-6v">
+            <h2 class="fr-h2 fr-mb-3v">
+                <span class="fr-icon-bank-line fr-mr-1w" aria-hidden="true"></span>
+                Mon formulaire d'intendance
+            </h2>
+            
+            {% for formulaire in formulairesIntendance %}
+            <div class="fr-mb-3w">
+                <div class="fr-card fr-card--horizontal">
+                    <div class="fr-card__body">
+                        <div class="fr-card__content">
+                            <h3 class="fr-card__title">
+                                <span class="fr-icon-bank-line fr-mr-1w" aria-hidden="true"></span>
+                                Formulaire d'intendance
+                            </h3>
+                            <p class="fr-card__desc">
+                                <strong>Statut :</strong> 
+                                {% if formulaire.statut == 'à modifier' %}
+                                    <span class="fr-badge fr-badge--warning">À modifier</span>
+                                {% elseif formulaire.statut == 'validé' %}
+                                    <span class="fr-badge fr-badge--success">Validé</span>
+                                {% else %}
+                                    <span class="fr-badge fr-badge--info">En attente de vérification</span>
+                                {% endif %}
+                            </p>
+                            <p class="fr-card__desc">
+                                <strong>Date de soumission :</strong> 
+                                {{ formulaire.dateSoumission ? formulaire.dateSoumission|date('d/m/Y à H:i') : 'Non soumis' }}
+                            </p>
+                            {% if formulaire.statut == 'à modifier' %}
+                                <div class="fr-alert fr-alert--warning fr-mt-2w">
+                                    <p class="fr-text--sm">
+                                        <strong>Action requise :</strong> L'administration a demandé des modifications sur votre formulaire. 
+                                        Veuillez apporter les corrections nécessaires et resoumettre votre formulaire.
+                                    </p>
+                                </div>
+                            {% elseif formulaire.statut != 'validé' %}
+                                <div class="fr-alert fr-alert--info fr-mt-2w">
+                                    <p class="fr-text--sm">Votre formulaire d'intendance est en cours de traitement par l'administration. Vous serez notifié dès qu'une décision sera prise.</p>
+                                </div>
+                            {% endif %}
+                        </div>
+                        <div class="fr-card__footer">
+                            <ul class="fr-btns-group fr-btns-group--inline-sm">
+                                {% if formulaire.statut == 'à modifier' %}
+                                <li>
+                                    <a href="{{ path('app_formulaire_intendance') }}" class="fr-btn fr-btn--sm">
+                                        Modifier le formulaire
+                                    </a>
+                                </li>
+                                {% elseif formulaire.statut == 'validé' %}
+                                <li>
+                                    <a href="{{ path('app_formulaire_intendance_voir', {id: formulaire.id}) }}" class="fr-btn fr-btn--sm fr-btn--secondary">
+                                        Voir le formulaire
+                                    </a>
+                                </li>
+                                {% endif %}
+                                {% if formulaire.statut == 'validé' %}
+                                <li>
+                                    <a href="{{ path('app_formulaire_intendance_pdf', {id: formulaire.id}) }}" class="fr-btn fr-btn--sm fr-btn--secondary fr-icon-download-line fr-btn--icon-left" target="_blank">
+                                        Télécharger PDF
+                                    </a>
+                                </li>
+                                {% endif %}
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    {% if (dossiers is not defined or dossiers|length == 0) and (dossiersAdhesion is not defined or dossiersAdhesion|length == 0) %}
+        <div class="fr-alert fr-alert--info">
+            <p class="fr-alert__title">Aucun dossier</p>
+            <p>Vous n'avez pas encore de dossier d'inscription.</p>
+        </div>
         
+        <div class="fr-mt-4v">
+            <a href="{{ path('app_bts_liste') }}" class="fr-btn fr-icon-add-line fr-btn--icon-left">
+                Créer mon premier dossier
+            </a>
+        </div>
+    {% endif %}
+    
+    {% if dossiers|length > 0 %}
         <!-- Formulaires complémentaires -->
         {% set hasDossierValide = false %}
         {% for dossier in dossiers %}
@@ -109,31 +343,6 @@
                         <div class="fr-card__body">
                             <div class="fr-card__content">
                                 <h3 class="fr-card__title">
-                                    <span class="fr-icon-bank-line fr-icon--lg" aria-hidden="true"></span>
-                                    Formulaire d'intendance
-                                </h3>
-                                <p class="fr-card__desc">
-                                    Renseignez les informations nécessaires pour la gestion de votre inscription administrative et financière.
-                                </p>
-                            </div>
-                            <div class="fr-card__footer">
-                                <ul class="fr-btns-group">
-                                    <li>
-                                        <button class="fr-btn fr-icon-arrow-right-line fr-btn--icon-right" disabled>
-                                            Accéder au formulaire (bientôt disponible)
-                                        </button>
-                                    </li>
-                                </ul>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="fr-col-12 fr-col-md-6 fr-col-lg-4">
-                    <div class="fr-card">
-                        <div class="fr-card__body">
-                            <div class="fr-card__content">
-                                <h3 class="fr-card__title">
                                     <span class="fr-icon-team-line fr-icon--lg" aria-hidden="true"></span>
                                     Adhésion MDL
                                 </h3>
@@ -144,10 +353,31 @@
                             <div class="fr-card__footer">
                                 <ul class="fr-btns-group">
                                     <li>
-                                        <a href="{{ path('app_adhesion_mdl') }}" class="fr-btn fr-btn--sm" style="width: 100%;">
-                                            <span class="fr-icon-arrow-right-line fr-icon--sm" aria-hidden="true"></span>
-                                            Adhérer
-                                        </a>
+                                        {% if dossiersAdhesion is defined and dossiersAdhesion|length > 0 %}
+                                            {% set adhesionValidee = false %}
+                                            {% for adh in dossiersAdhesion %}
+                                                {% if adh.statut == 'validé' %}
+                                                    {% set adhesionValidee = true %}
+                                                {% endif %}
+                                            {% endfor %}
+                                            
+                                            {% if adhesionValidee %}
+                                                <button class="fr-btn fr-btn--sm" disabled style="width: 100%;">
+                                                    <span class="fr-icon-check-line fr-icon--sm" aria-hidden="true"></span>
+                                                    Adhésion validée
+                                                </button>
+                                            {% else %}
+                                                <button class="fr-btn fr-btn--sm" disabled style="width: 100%;">
+                                                    <span class="fr-icon-check-line fr-icon--sm" aria-hidden="true"></span>
+                                                    Adhésion déjà effectuée
+                                                </button>
+                                            {% endif %}
+                                        {% else %}
+                                            <a href="{{ path('app_adhesion_mdl') }}" class="fr-btn fr-btn--sm" style="width: 100%;">
+                                                <span class="fr-icon-arrow-right-line fr-icon--sm" aria-hidden="true"></span>
+                                                Adhérer
+                                            </a>
+                                        {% endif %}
                                     </li>
                                 </ul>
                             </div>
@@ -170,9 +400,78 @@
                             <div class="fr-card__footer">
                                 <ul class="fr-btns-group">
                                     <li>
-                                        <button class="fr-btn fr-icon-arrow-right-line fr-btn--icon-right" disabled>
-                                            Remplir la fiche (bientôt disponible)
-                                        </button>
+                                        {% if fichesUrgence is defined and fichesUrgence|length > 0 %}
+                                            {% set ficheValidee = false %}
+                                            {% for fiche in fichesUrgence %}
+                                                {% if fiche.statut == 'validé' %}
+                                                    {% set ficheValidee = true %}
+                                                {% endif %}
+                                            {% endfor %}
+                                            
+                                            {% if ficheValidee %}
+                                                <button class="fr-btn fr-btn--sm" disabled style="width: 100%;">
+                                                    <span class="fr-icon-check-line fr-icon--sm" aria-hidden="true"></span>
+                                                    Fiche validée
+                                                </button>
+                                            {% else %}
+                                                <button class="fr-btn fr-btn--sm" disabled style="width: 100%;">
+                                                    <span class="fr-icon-check-line fr-icon--sm" aria-hidden="true"></span>
+                                                    Fiche déjà remplie
+                                                </button>
+                                            {% endif %}
+                                        {% else %}
+                                            <a href="{{ path('app_fiche_urgence') }}" class="fr-btn fr-btn--sm" style="width: 100%;">
+                                                <span class="fr-icon-arrow-right-line fr-icon--sm" aria-hidden="true"></span>
+                                                Remplir la fiche
+                                            </a>
+                                        {% endif %}
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="fr-col-12 fr-col-md-6 fr-col-lg-4">
+                    <div class="fr-card">
+                        <div class="fr-card__body">
+                            <div class="fr-card__content">
+                                <h3 class="fr-card__title">
+                                    <span class="fr-icon-bank-line fr-icon--lg" aria-hidden="true"></span>
+                                    Formulaire d'intendance
+                                </h3>
+                                <p class="fr-card__desc">
+                                    Complétez le formulaire d'intendance avec vos informations et celles de votre représentant légal.
+                                </p>
+                            </div>
+                            <div class="fr-card__footer">
+                                <ul class="fr-btns-group">
+                                    <li>
+                                        {% if formulairesIntendance is defined and formulairesIntendance|length > 0 %}
+                                            {% set formulaireValide = false %}
+                                            {% for form in formulairesIntendance %}
+                                                {% if form.statut == 'validé' %}
+                                                    {% set formulaireValide = true %}
+                                                {% endif %}
+                                            {% endfor %}
+                                            
+                                            {% if formulaireValide %}
+                                                <button class="fr-btn fr-btn--sm" disabled style="width: 100%;">
+                                                    <span class="fr-icon-check-line fr-icon--sm" aria-hidden="true"></span>
+                                                    Formulaire validé
+                                                </button>
+                                            {% else %}
+                                                <button class="fr-btn fr-btn--sm" disabled style="width: 100%;">
+                                                    <span class="fr-icon-check-line fr-icon--sm" aria-hidden="true"></span>
+                                                    Formulaire déjà rempli
+                                                </button>
+                                            {% endif %}
+                                        {% else %}
+                                            <a href="{{ path('app_formulaire_intendance') }}" class="fr-btn fr-btn--sm" style="width: 100%;">
+                                                <span class="fr-icon-arrow-right-line fr-icon--sm" aria-hidden="true"></span>
+                                                Remplir le formulaire
+                                            </a>
+                                        {% endif %}
                                     </li>
                                 </ul>
                             </div>

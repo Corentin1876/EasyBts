@@ -41,6 +41,9 @@ class AdhesionMDL
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $email_etudiant = null;
 
+    #[ORM\Column(length: 20, nullable: true)]
+    private ?string $telephone_etudiant = null;
+
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $nom_responsable = null;
 
@@ -172,6 +175,17 @@ class AdhesionMDL
     public function setEmailEtudiant(?string $email_etudiant): static
     {
         $this->email_etudiant = $email_etudiant;
+        return $this;
+    }
+
+    public function getTelephoneEtudiant(): ?string
+    {
+        return $this->telephone_etudiant;
+    }
+
+    public function setTelephoneEtudiant(?string $telephone_etudiant): static
+    {
+        $this->telephone_etudiant = $telephone_etudiant;
         return $this;
     }
 

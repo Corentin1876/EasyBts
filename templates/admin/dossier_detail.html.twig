@@ -180,6 +180,19 @@
                                         Rejeter le dossier
                                     </a>
                                 </div>
+                                {% elseif formulaire.statut == 'validé' %}
+                                <div class="fr-mt-3w">
+                                    <a href="{{ path('app_bts_inscription_pdf', {id: formulaire.id}) }}" 
+                                       class="fr-btn fr-btn--secondary fr-icon-download-line fr-btn--icon-left"
+                                       target="_blank">
+                                        Télécharger PDF
+                                    </a>
+                                    <a href="{{ path('app_bts_inscription_voir', {id: formulaire.id}) }}" 
+                                       class="fr-btn fr-btn--tertiary fr-icon-eye-line fr-btn--icon-left fr-mt-2w"
+                                       target="_blank">
+                                        Voir en ligne
+                                    </a>
+                                </div>
                                 {% endif %}
                             </div>
                         </div>

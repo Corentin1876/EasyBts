@@ -1,0 +1,404 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Formulaire d'intendance{% endblock %}
+
+{% block body %}
+<!-- Fil d'ariane -->
+<nav class="fr-breadcrumb" aria-label="vous êtes ici :">
+    <button class="fr-breadcrumb__button" aria-expanded="false" aria-controls="breadcrumb-intendance">Voir le fil d'Ariane</button>
+    <div class="fr-collapse" id="breadcrumb-intendance">
+        <ol class="fr-breadcrumb__list">
+            <li><a class="fr-breadcrumb__link" href="{{ path('app_home') }}">Accueil</a></li>
+            <li><a class="fr-breadcrumb__link" href="{{ path('app_mes_dossiers') }}">Mes dossiers</a></li>
+            <li><a class="fr-breadcrumb__link" aria-current="page">Formulaire d'intendance</a></li>
+        </ol>
+    </div>
+</nav>
+
+<!-- En-tête -->
+<section class="fr-container fr-py-6v">
+    <div class="fr-grid-row">
+        <div class="fr-col-12">
+            <h1 class="fr-h1">Formulaire d'intendance</h1>
+            <p class="fr-text--lead fr-mb-3v">
+                Remplissez les informations nécessaires pour votre dossier d'intendance. Votre progression est sauvegardée automatiquement.
+            </p>
+            <div class="fr-alert fr-alert--info fr-mb-4v">
+                <p class="fr-text--sm">Tous les champs sont obligatoires. Vous pouvez revenir plus tard : votre progression est enregistrée automatiquement.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Indicateur de progression -->
+<section class="fr-container fr-mb-4v">
+    <div class="fr-stepper">
+        <h2 class="fr-stepper__title">
+            <span class="fr-stepper__state">Étape <span id="current-step">1</span> sur 3</span>
+        </h2>
+        <div class="fr-stepper__steps" data-fr-current-step="1" data-fr-steps="3"></div>
+        <p class="fr-stepper__details">
+            <span class="fr-text--bold" id="step-title">Informations de l'élève</span>
+        </p>
+    </div>
+</section>
+
+<!-- Formulaire -->
+<section class="fr-container fr-pb-6v">
+    <form class="fr-form" id="formulaireIntendanceForm" method="post" novalidate>
+        
+        <!-- Étape 1: Informations de l'élève -->
+        <div class="form-step" id="step-1">
+            <div class="fr-card">
+                <div class="fr-card__body">
+                    <h2 class="fr-h2 fr-mb-3v">Informations de l'élève</h2>
+                    <div class="fr-grid-row fr-grid-row--gutters">
+                        <div class="fr-col-12 fr-col-md-6">
+                            <div class="fr-input-group">
+                                <label class="fr-label" for="nom_etudiant">Nom <span class="fr-text--red">*</span></label>
+                                <input class="fr-input" type="text" id="nom_etudiant" name="nom_etudiant" value="{{ formulaire.nomEtudiant }}" required>
+                            </div>
+                        </div>
+                        <div class="fr-col-12 fr-col-md-6">
+                            <div class="fr-input-group">
+                                <label class="fr-label" for="prenom_etudiant">Prénom <span class="fr-text--red">*</span></label>
+                                <input class="fr-input" type="text" id="prenom_etudiant" name="prenom_etudiant" value="{{ formulaire.prenomEtudiant }}" required>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="fr-grid-row fr-grid-row--gutters">
+                        <div class="fr-col-12 fr-col-md-6">
+                            <div class="fr-input-group">
+                                <label class="fr-label" for="classe">Classe <span class="fr-text--red">*</span></label>
+                                <input class="fr-input" type="text" id="classe" name="classe" value="{{ formulaire.classe }}" placeholder="Ex: BTS CG 1ère année" required>
+                            </div>
+                        </div>
+                        <div class="fr-col-12 fr-col-md-6">
+                            <div class="fr-input-group">
+                                <label class="fr-label" for="date_naissance">Date de naissance <span class="fr-text--red">*</span></label>
+                                <input class="fr-input" type="date" id="date_naissance" name="date_naissance" value="{{ formulaire.dateNaissance ? formulaire.dateNaissance|date('Y-m-d') : '' }}" required>
+                            </div>
+                        </div>
+                    </div>
+
+                    <h3 class="fr-h4 fr-mt-4w fr-mb-3v">Régime étudiant</h3>
+                    <div class="fr-select-group">
+                        <label class="fr-label" for="etudiant_regime">Régime <span class="fr-text--red">*</span></label>
+                        <select class="fr-select" id="etudiant_regime" name="etudiant_regime" required>
+                            <option value="" disabled {{ not formulaire.etudiantRegime ? 'selected' : '' }}>Sélectionner un régime</option>
+                            <option value="Externe" {{ formulaire.etudiantRegime == 'Externe' ? 'selected' : '' }}>Externe</option>
+                            <option value="Demi-pensionnaire" {{ formulaire.etudiantRegime == 'Demi-pensionnaire' ? 'selected' : '' }}>Demi-pensionnaire</option>
+                            <option value="Interne" {{ formulaire.etudiantRegime == 'Interne' ? 'selected' : '' }}>Interne</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Étape 2: Représentant légal -->
+        <div class="form-step" id="step-2" style="display: none;">
+            <div class="fr-card">
+                <div class="fr-card__body">
+                    <h2 class="fr-h2 fr-mb-3v">Représentant légal</h2>
+                    <div class="fr-grid-row fr-grid-row--gutters">
+                        <div class="fr-col-12 fr-col-md-6">
+                            <div class="fr-input-group">
+                                <label class="fr-label" for="nom_representant">Nom <span class="fr-text--red">*</span></label>
+                                <input class="fr-input" type="text" id="nom_representant" name="nom_representant" value="{{ formulaire.nomRepresentant }}" required>
+                            </div>
+                        </div>
+                        <div class="fr-col-12 fr-col-md-6">
+                            <div class="fr-input-group">
+                                <label class="fr-label" for="prenom_representant">Prénom <span class="fr-text--red">*</span></label>
+                                <input class="fr-input" type="text" id="prenom_representant" name="prenom_representant" value="{{ formulaire.prenomRepresentant }}" required>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="fr-input-group">
+                        <label class="fr-label" for="adresse_representant">Adresse <span class="fr-text--red">*</span></label>
+                        <textarea class="fr-input" id="adresse_representant" name="adresse_representant" rows="2" required>{{ formulaire.adresseRepresentant }}</textarea>
+                    </div>
+                    <div class="fr-grid-row fr-grid-row--gutters">
+                        <div class="fr-col-12 fr-col-md-4">
+                            <div class="fr-input-group">
+                                <label class="fr-label" for="code_postal_representant">Code postal <span class="fr-text--red">*</span></label>
+                                <input class="fr-input" type="text" id="code_postal_representant" name="code_postal_representant" value="{{ formulaire.codePostalRepresentant }}" required>
+                            </div>
+                        </div>
+                        <div class="fr-col-12 fr-col-md-8">
+                            <div class="fr-input-group">
+                                <label class="fr-label" for="ville_representant">Ville <span class="fr-text--red">*</span></label>
+                                <input class="fr-input" type="text" id="ville_representant" name="ville_representant" value="{{ formulaire.villeRepresentant }}" required>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="fr-grid-row fr-grid-row--gutters">
+                        <div class="fr-col-12 fr-col-md-6">
+                            <div class="fr-input-group">
+                                <label class="fr-label" for="telephone_representant">Téléphone <span class="fr-text--red">*</span></label>
+                                <input class="fr-input" type="tel" id="telephone_representant" name="telephone_representant" value="{{ formulaire.telephoneRepresentant }}" required>
+                            </div>
+                        </div>
+                        <div class="fr-col-12 fr-col-md-6">
+                            <div class="fr-input-group">
+                                <label class="fr-label" for="mail_representant">Email <span class="fr-text--red">*</span></label>
+                                <input class="fr-input" type="email" id="mail_representant" name="mail_representant" value="{{ formulaire.mailRepresentant }}" required>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Étape 3: Informations employeur -->
+        <div class="form-step" id="step-3" style="display: none;">
+            <div class="fr-card">
+                <div class="fr-card__body">
+                    <h2 class="fr-h2 fr-mb-3v">Informations employeur</h2>
+                    <div class="fr-input-group">
+                        <label class="fr-label" for="nom_employeur">Nom de l'employeur <span class="fr-text--red">*</span></label>
+                        <input class="fr-input" type="text" id="nom_employeur" name="nom_employeur" value="{{ formulaire.nomEmployeur }}" required>
+                    </div>
+                    <div class="fr-input-group">
+                        <label class="fr-label" for="adresse_employeur">Adresse de l'employeur <span class="fr-text--red">*</span></label>
+                        <textarea class="fr-input" id="adresse_employeur" name="adresse_employeur" rows="3" required>{{ formulaire.adresseEmployeur }}</textarea>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        </div>
+
+        <!-- Boutons de navigation -->
+        <div class="fr-btns-group fr-btns-group--inline-md fr-mt-4v">
+            <button class="fr-btn fr-btn--secondary" type="button" id="btn-previous" style="display: none;">
+                Étape précédente
+            </button>
+            <button class="fr-btn fr-btn--secondary" type="button" id="btn-save">
+                <span class="fr-icon-save-line fr-icon--sm" aria-hidden="true"></span>
+                Sauvegarder et continuer plus tard
+            </button>
+            <button class="fr-btn" type="button" id="btn-next">
+                Étape suivante
+            </button>
+            <button class="fr-btn" type="submit" id="btn-submit" style="display: none;">
+                Soumettre mon formulaire d'intendance
+            </button>
+        </div>
+    </form>
+</section>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const form = document.getElementById('formulaireIntendanceForm');
+    const btnPrevious = document.getElementById('btn-previous');
+    const btnNext = document.getElementById('btn-next');
+    const btnSave = document.getElementById('btn-save');
+    const btnSubmit = document.getElementById('btn-submit');
+    const currentStepEl = document.getElementById('current-step');
+    const stepTitleEl = document.getElementById('step-title');
+
+    let currentStep = 1;
+    const totalSteps = 3;
+
+    // Titres des étapes
+    const stepTitles = {
+        1: "Informations de l'élève",
+        2: "Représentant légal",
+        3: "Informations employeur"
+    };
+
+    // Afficher une étape
+    function showStep(step) {
+        // Cacher toutes les étapes
+        for (let i = 1; i <= totalSteps; i++) {
+            const stepEl = document.getElementById(`step-${i}`);
+            if (stepEl) {
+                stepEl.style.display = i === step ? 'block' : 'none';
+            }
+        }
+
+        currentStepEl.textContent = step;
+        stepTitleEl.textContent = stepTitles[step];
+
+        // Mettre à jour l'indicateur de progression
+        const stepper = document.querySelector('.fr-stepper__steps');
+        if (stepper) {
+            stepper.setAttribute('data-fr-current-step', step);
+        }
+
+        // Gérer l'affichage des boutons
+        btnPrevious.style.display = step > 1 ? 'inline-block' : 'none';
+        btnNext.style.display = step < totalSteps ? 'inline-block' : 'none';
+        btnSubmit.style.display = step === totalSteps ? 'inline-block' : 'none';
+
+        // Scroll vers le haut
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    // Valider l'étape courante
+    function validateCurrentStep() {
+        const currentStepDiv = document.getElementById(`step-${currentStep}`);
+        if (!currentStepDiv) return true;
+
+        const requiredInputs = currentStepDiv.querySelectorAll('[required]');
+        const emptyFields = [];
+
+        for (let input of requiredInputs) {
+            if (!input.value || input.value.trim() === '') {
+                emptyFields.push(input.labels[0]?.textContent?.replace('*', '').trim() || input.name);
+                input.classList.add('fr-input--error');
+            } else {
+                input.classList.remove('fr-input--error');
+            }
+        }
+
+        if (emptyFields.length > 0) {
+            alert('⚠️ Veuillez remplir tous les champs obligatoires :\n\n' + emptyFields.join('\n'));
+            return false;
+        }
+
+        return true;
+    }
+
+    // Sauvegarder la progression
+    function saveProgress() {
+        btnSave.disabled = true;
+        btnSave.innerHTML = '<span class="fr-icon-refresh-line fr-icon--sm" aria-hidden="true"></span> Sauvegarde en cours...';
+
+        const formData = new FormData(form);
+        
+        fetch('{{ path('app_formulaire_intendance_save') }}', {
+            method: 'POST',
+            body: formData
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                btnSave.innerHTML = '<span class="fr-icon-check-line fr-icon--sm" aria-hidden="true"></span> Sauvegardé avec succès !';
+                setTimeout(() => {
+                    btnSave.innerHTML = '<span class="fr-icon-save-line fr-icon--sm" aria-hidden="true"></span> Sauvegarder et continuer plus tard';
+                    btnSave.disabled = false;
+                }, 3000);
+            } else {
+                throw new Error('Save failed');
+            }
+        })
+        .catch(error => {
+            console.error('Erreur:', error);
+            alert('Erreur lors de la sauvegarde');
+            btnSave.innerHTML = '<span class="fr-icon-save-line fr-icon--sm" aria-hidden="true"></span> Sauvegarder et continuer plus tard';
+            btnSave.disabled = false;
+        });
+    }
+
+    // Initialiser l'affichage
+    showStep(1);
+
+    // Événement bouton Précédent
+    btnPrevious.addEventListener('click', function() {
+        if (currentStep > 1) {
+            currentStep--;
+            showStep(currentStep);
+        }
+    });
+
+    // Événement bouton Suivant
+    btnNext.addEventListener('click', function() {
+        if (!validateCurrentStep()) {
+            return;
+        }
+
+        if (currentStep < totalSteps) {
+            currentStep++;
+            showStep(currentStep);
+        }
+    });
+
+    // Événement bouton Sauvegarder
+    btnSave.addEventListener('click', function() {
+        saveProgress();
+    });
+
+    // Soumission du formulaire
+    form.addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        console.log('Formulaire soumis, validation en cours...');
+        
+        // Valider toutes les étapes
+        let allStepsValid = true;
+        for (let i = 1; i <= totalSteps; i++) {
+            const stepDiv = document.getElementById(`step-${i}`);
+            if (!stepDiv) continue;
+
+            const requiredInputs = stepDiv.querySelectorAll('[required]');
+            const emptyFields = [];
+
+            for (let input of requiredInputs) {
+                if (!input.value || input.value.trim() === '') {
+                    emptyFields.push(input.labels[0]?.textContent?.replace('*', '').trim() || input.name);
+                    input.classList.add('fr-input--error');
+                    allStepsValid = false;
+                } else {
+                    input.classList.remove('fr-input--error');
+                }
+            }
+
+            if (emptyFields.length > 0) {
+                alert('⚠️ Veuillez remplir tous les champs obligatoires de l\'étape ' + i + ' :\n\n' + emptyFields.join('\n'));
+                currentStep = i;
+                showStep(i);
+                return;
+            }
+        }
+        
+        if (!allStepsValid) {
+            console.log('Validation échouée');
+            return;
+        }
+        
+        console.log('Validation réussie, confirmation...');
+        
+        if (!confirm('Êtes-vous sûr de vouloir soumettre le formulaire ? Vous ne pourrez plus le modifier.')) {
+            console.log('Soumission annulée par l\'utilisateur');
+            return;
+        }
+
+        console.log('Envoi de la requête...');
+        btnSubmit.disabled = true;
+        btnSubmit.innerHTML = '<span class="fr-icon-refresh-line fr-icon--sm" aria-hidden="true"></span> Soumission en cours...';
+        
+        const formData = new FormData(form);
+        
+        fetch('{{ path('app_formulaire_intendance_soumettre') }}', {
+            method: 'POST',
+            body: formData
+        })
+        .then(response => {
+            console.log('Réponse reçue:', response);
+            return response.json();
+        })
+        .then(data => {
+            console.log('Données:', data);
+            if (data.success) {
+                alert('✓ ' + data.message);
+                if (data.redirect) {
+                    window.location.href = data.redirect;
+                }
+            } else {
+                alert('Erreur : ' + (data.error || 'Une erreur est survenue'));
+                btnSubmit.disabled = false;
+                btnSubmit.innerHTML = 'Soumettre mon formulaire d\'intendance';
+            }
+        })
+        .catch(error => {
+            console.error('Erreur:', error);
+            alert('Erreur lors de la soumission : ' + error.message);
+            btnSubmit.disabled = false;
+            btnSubmit.innerHTML = 'Soumettre mon formulaire d\'intendance';
+        });
+    });
+});
+</script>
+{% endblock %}
