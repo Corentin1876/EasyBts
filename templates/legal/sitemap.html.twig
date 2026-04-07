@@ -141,19 +141,69 @@
                                     </p>
                                 </li>
                                 <li>
-                                    <a href="{{ path('app_bts_liste') }}" class="fr-link">
-                                        Mon dossier
+                                    <a href="{{ path('app_mes_dossiers') }}" class="fr-link">
+                                        Mes dossiers
                                     </a>
                                     <p class="fr-text--sm fr-text--mention-grey">
-                                        Gestion de votre dossier d'inscription
+                                        Suivi de tous vos formulaires et dossiers
                                     </p>
                                 </li>
                                 <li>
-                                    <a href="{{ path('app_bts_liste') }}" class="fr-link">
-                                        Suivi de candidature
+                                    <a href="{{ path('app_mon_compte') }}" class="fr-link">
+                                        Mon compte
                                     </a>
                                     <p class="fr-text--sm fr-text--mention-grey">
-                                        État d'avancement de vos candidatures
+                                        Gestion de vos informations personnelles
+                                    </p>
+                                </li>
+                            </ul>
+                        </nav>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Formulaires et inscriptions -->
+        <div class="fr-col-12 fr-col-md-6 fr-col-lg-4" id="formulaires">
+            <div class="fr-card fr-card--no-arrow fr-card--equal-height">
+                <div class="fr-card__body">
+                    <div class="fr-card__content">
+                        <h2 class="fr-h4 fr-mb-1w">
+                            <span class="fr-icon-file-text-line" aria-hidden="true"></span>
+                            Formulaires et inscriptions
+                        </h2>
+                        <nav aria-label="Formulaires disponibles">
+                            <ul class="fr-list">
+                                <li>
+                                    <a href="{{ path('app_bts_liste') }}" class="fr-link">
+                                        Dossier d'inscription BTS
+                                    </a>
+                                    <p class="fr-text--sm fr-text--mention-grey">
+                                        Formulaire principal en 6 étapes
+                                    </p>
+                                </li>
+                                <li>
+                                    <a href="{{ path('app_adhesion_mdl') }}" class="fr-link">
+                                        Adhésion MDL
+                                    </a>
+                                    <p class="fr-text--sm fr-text--mention-grey">
+                                        Maison Des Lycéens - Formulaire d'adhésion
+                                    </p>
+                                </li>
+                                <li>
+                                    <a href="{{ path('app_fiche_urgence') }}" class="fr-link">
+                                        Fiche d'urgence
+                                    </a>
+                                    <p class="fr-text--sm fr-text--mention-grey">
+                                        Informations médicales et contacts d'urgence
+                                    </p>
+                                </li>
+                                <li>
+                                    <a href="{{ path('app_formulaire_intendance') }}" class="fr-link">
+                                        Formulaire d'intendance
+                                    </a>
+                                    <p class="fr-text--sm fr-text--mention-grey">
+                                        Représentant légal et informations employeur
                                     </p>
                                 </li>
                             </ul>
@@ -241,7 +291,7 @@
                                     </p>
                                 </li>
                                 <li>
-                                    <a href="{{ path('app_carte_etablissements') }}" class="fr-link">
+                                    <a href="{{ path('app_carte') }}" class="fr-link">
                                         Carte des établissements
                                     </a>
                                     <p class="fr-text--sm fr-text--mention-grey">

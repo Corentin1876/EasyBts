@@ -214,10 +214,19 @@ EasyBts/
 │   ├── images/          # Images et assets
 │   └── js/              # Scripts JavaScript
 ├── src/
-│   ├── Controller/      # Contrôleurs
-│   ├── Entity/          # Entités Doctrine
+│   ├── Command/         # Commandes console
+│   ├── Controller/      # 19 contrôleurs (136 routes)
+│   ├── Dto/             # Data Transfer Objects
+│   ├── Entity/          # 17 entités Doctrine
+│   │   └── Traits/      # Traits réutilisables (Draftable, Documents)
+│   ├── EventSubscriber/ # Abonnés aux événements
 │   ├── Form/            # Types de formulaires
-│   └── Repository/      # Repositories Doctrine
+│   ├── Message/         # Messages Symfony Messenger
+│   ├── MessageHandler/  # Handlers de messages asynchrones
+│   ├── Repository/      # 17 repositories Doctrine
+│   ├── Security/        # Logique d'authentification
+│   ├── Service/         # 4 services métier (PDF, formulaires, statuts)
+│   └── Twig/            # Extensions Twig personnalisées
 ├── templates/           # Templates Twig
 ├── translations/        # Fichiers de traduction
 └── var/                 # Cache et logs
@@ -298,15 +307,172 @@ Les principales entités :
 - **ScolariteDes2AnneeAnterieur** : Historique scolaire
 - **Sante** : Informations médicales et vaccins
 - **Medecin** : Médecins traitants
-- **Contact** : Messages de contact liés aux utilisateurs (nouveau)
+- **Contact** : Messages de contact liés aux utilisateurs
 - **SecuriteSociale** : Informations sécurité sociale
 - **AssuranceScolaire** : Assurances des élèves
 - **AdhesionMDL** : Adhésion Maison Des Lycéens
+- **FicheUrgence** : Fiche d'urgence médicale et contacts
+- **FormulaireIntendance** : Formulaire d'intendance (représentant, employeur, régime)
 - **AnneeScolaire** : Périodes académiques
 - **TypeResponsable** : Types de responsabilité légale
-- **PasswordResetToken** : Tokens de réinitialisation
+- **PasswordResetToken** : Tokens de réinitialisation de mot de passe
 
-**Total : 15 entités avec relations OneToMany, ManyToOne**
+**Total : 17 entités, 18 relations (OneToOne, OneToMany, ManyToOne), ~120 colonnes**
+
+### Diagramme de classes UML
+
+```mermaid
+classDiagram
+    class Utilisateur {
+        -int id
+        -string email
+        -string mot_de_passe
+        -json roles
+        -string nom
+        -string prenom
+        -string telephone
+        -date date_naissance
+        -string adresse
+        -string departement
+        -date date_creation
+    }
+    class FormulaireInscription {
+        -int id
+        -string type_formulaire
+        -string statut
+        -bool est_signe
+        -date date_soumission
+        -text draft_json
+        -int draft_step
+        -string carte_identite_recto
+        -string carte_identite_verso
+        -string justificatif_domicile
+        -string releves_notes
+    }
+    class InformationEleve {
+        -int id
+        -string NiveauClasse
+        -string Sexe
+        -int NumeroSecuriterSocial
+        -string Nationalite
+        -string Naissance_Departement
+        -string Naissance_Commune
+        -bool Redoublement
+        -bool Transport
+        -string TypeTransport
+        -string RegimeChoisi
+        -bool est_majeur
+    }
+    class Responsable {
+        -int id
+        -string nom
+        -string prenom
+        -string profession
+        -string adresse
+        -string ville
+        -string mail
+        -string Nom_Employeur
+        -string lien_avec_eleve
+    }
+    class TypeResponsable {
+        -int id
+        -string nom
+    }
+    class Sante {
+        -int id
+        -date Date_Vaccin
+        -string Observation
+        -string Tel_Medecin
+    }
+    class Medecin {
+        -int id
+        -string nom
+    }
+    class ScolariteDes2AnneeAnterieur {
+        -int id
+        -string Classe
+        -string LangueLV1
+        -string LangueLV2
+        -string Etablisement
+    }
+    class AnneeScolaire {
+        -int id
+        -date Date
+    }
+    class Specialisation {
+        -int id
+        -string nom
+        -text description
+        -string duree
+        -string niveau
+    }
+    class AssuranceScolaire {
+        -int id
+        -string nom
+        -string adresse
+        -int numero
+    }
+    class SecuriteSociale {
+        -int id
+        -string nom
+        -string adresse
+    }
+    class AdhesionMDL {
+        -int id
+        -int Montant_Adhesion
+        -string Mode_Reglement
+        -string nom
+        -string prenom
+        -string statut
+    }
+    class FicheUrgence {
+        -int id
+        -string nom_etudiant
+        -string prenom_etudiant
+        -string classe
+        -string statut
+    }
+    class FormulaireIntendance {
+        -int id
+        -string nom_etudiant
+        -string prenom_etudiant
+        -string classe
+        -string statut
+    }
+    class Contact {
+        -int id
+        -string civilite
+        -string nom
+        -string email
+        -string sujet
+        -text message
+        -string status
+    }
+    class PasswordResetToken {
+        -int id
+        -string token
+        -datetime expiresAt
+        -bool used
+    }
+    Utilisateur "1" --> "0..*" FormulaireInscription : remplit
+    Utilisateur "1" --> "0..1" InformationEleve : contient
+    Utilisateur "1" --> "0..*" Contact : envoie
+    Utilisateur "1" --> "0..*" FicheUrgence : possede
+    Utilisateur "1" --> "0..*" FormulaireIntendance : possede
+    Utilisateur "1" --> "0..*" AdhesionMDL : possede
+    Utilisateur "1" --> "0..*" PasswordResetToken : a
+    FormulaireInscription "1" --> "0..*" Sante : sante
+    FormulaireInscription "1" --> "0..*" ScolariteDes2AnneeAnterieur : scolarite
+    FormulaireInscription "1" --> "0..*" AdhesionMDL : adhesion
+    FormulaireInscription "1" --> "0..*" Responsable : responsable
+    FormulaireInscription "1" --> "0..*" SecuriteSociale : secu
+    FormulaireInscription "1" --> "0..*" AssuranceScolaire : assurance
+    Responsable "1" --> "0..*" TypeResponsable : type
+    Sante "1" --> "0..*" Medecin : medecin
+    InformationEleve "1" --> "0..*" Specialisation : specialisation
+    InformationEleve "1" --> "0..*" AnneeScolaire : annee
+    ScolariteDes2AnneeAnterieur "1" --> "0..*" AnneeScolaire : annee
+```
 
 ## 🎨 Design et accessibilité
 
@@ -342,10 +508,21 @@ Le projet utilise le **Design System de l'État (DSFR)** :
 | Calendrier | `/calendrier-inscriptions` | Dates importantes |
 | Formations | `/formations` | Catalogue des BTS |
 | Aide technique | `/aide-technique` | Support technique |
-| Admin Dashboard | `/admin/dashboard` | Tableau de bord admin |
+| Mes dossiers | `/bts/mes-dossiers` | Suivi des dossiers étudiant |
+| Adhésion MDL | `/bts/adhesion-mdl` | Formulaire adhésion MDL |
+| Fiche d'urgence | `/bts/fiche-urgence` | Fiche d'urgence médicale |
+| Intendance | `/bts/formulaire-intendance` | Formulaire d'intendance |
+| Admin Dashboard | `/bts/admin` | Tableau de bord admin |
+| Admin Formulaires | `/admin/formulaires-supplementaires` | Gestion des formulaires |
 | Plan du site | `/plan-du-site` | Navigation complète |
+| Sitemap XML | `/sitemap.xml` | Sitemap pour moteurs de recherche |
 
 ## 🧪 Tests
+
+6 fichiers de tests PHPUnit couvrant :
+- **Tests fonctionnels contrôleurs** : HomeControllerTest, InscriptionControllerTest, BtsInscriptionControllerTest
+- **Tests unitaires entités** : UtilisateurTest, FormulaireInscriptionTest
+- **Tests services** : FormulaireStatutServiceTest
 
 Pour lancer les tests :
 
@@ -394,25 +571,29 @@ php bin/console debug:config
 
 ### Backend
 - **PHP 8.2+** - Langage serveur
-- **Symfony 6.4 LTS** - Framework MVC
-- **Doctrine ORM** - Mapping objet-relationnel
+- **Symfony 7.3** - Framework MVC
+- **Doctrine ORM 3.5** - Mapping objet-relationnel
 - **Twig** - Moteur de templates
-- **Symfony Security** - Authentification et autorisation
+- **Symfony Security** - Authentification et autorisation (bcrypt/argon2)
 - **Symfony Messenger** - Gestion asynchrone des messages (contacts)
 - **Monolog** - Logging
 - **LibreOffice** - Conversion ODT → PDF automatique
+- **PHPWord** - Manipulation de templates ODT
+- **DomPDF / TCPDF** - Génération alternative de PDF
 
 ### Frontend
-- **DSFR (Design System FR)** - Design officiel République Française
+- **DSFR v1.14 (Design System FR)** - Design officiel République Française
 - **Bootstrap 5** - Framework CSS responsive
 - **Stimulus** - JavaScript framework léger
 - **Turbo** - Navigation SPA partielle
 - **Vanilla JavaScript** - Interactions dynamiques et validation multi-étapes
+- **Interface responsive** - Compatible mobile, tablette et desktop
 
 ### Base de données
-- **MySQL 8.0** ou **MariaDB 10.5+**
-- 17+ tables avec relations complexes
-- Migrations versionnées
+- **MySQL 8.0** (développement via XAMPP) ou **PostgreSQL 16** (production Docker)
+- 17 tables avec relations complexes (OneToOne, OneToMany, ManyToOne)
+- 18 migrations versionnées
+- ~120 colonnes au total
 
 ### Formulaires disponibles
 - **Dossier d'inscription BTS** - 6 étapes avec sauvegarde automatique

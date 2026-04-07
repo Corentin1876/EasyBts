@@ -120,6 +120,21 @@ class HomeController extends AbstractController
         ]);
     }
 
+    #[Route('/sitemap.xml', name: 'app_sitemap_xml')]
+    public function sitemapXml(EntityManagerInterface $entityManager): Response
+    {
+        $specialisations = $entityManager->getRepository(Specialisation::class)->findAll();
+        
+        $response = new Response(
+            $this->renderView('sitemap.xml.twig', [
+                'specialisations' => $specialisations,
+            ])
+        );
+        $response->headers->set('Content-Type', 'application/xml');
+        
+        return $response;
+    }
+
     #[Route('/accessibilite', name: 'app_accessibility')]
     public function accessibility(): Response
     {
