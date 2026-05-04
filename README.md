@@ -272,7 +272,13 @@ EasyBts/
 - 📅 Gestion des années scolaires : Configuration des périodes
 - 👥 Gestion des utilisateurs : Administration des comptes
 
-## 🔧 Configuration LibreOffice (pour PDF)
+## � Diagramme Use Case
+
+![Diagramme Use Case EasyBTS](use%20case%20easy%20bts.png)
+
+Ce diagramme montre les interactions entre les **étudiants** et les **administrateurs** avec tous les cas d'usage du système (inscription, remplissage des formulaires, validation, gestion, etc.).
+
+## �🔧 Configuration LibreOffice (pour PDF)
 
 Pour la génération de PDF, LibreOffice doit être installé :
 
